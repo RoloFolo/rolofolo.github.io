@@ -58,3 +58,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 footer p { font-size: 0.9rem; color: var(--muted); }
 .icon-title { display: flex; gap: 18px; align-items: center; }
 .icon-title img { width: 84px; height: 84px; border-radius: 18px; }
+
+/* The hero with the colour blocks: words left, blocks right; stacked on phones. */
+.hero-split { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); align-items: end; gap: 32px; }
+.hero-words { display: grid; gap: 18px; }
+.blocks { width: 100%; height: auto; display: block; }
+@media (max-width: 720px) { .hero-split { grid-template-columns: minmax(0, 1fr); } .blocks { max-width: 420px; } }

@@ -1,0 +1,60 @@
+/* Naberius Games house style (see _brand/HUISSTIJL.md): night first, one sulphur accent per screen. */
+@font-face { font-family: "Grenze Gotisch"; src: url("fonts/GrenzeGotisch-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Hanken Grotesk"; src: url("fonts/HankenGrotesk-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Hanken Grotesk"; src: url("fonts/HankenGrotesk-SemiBold.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url("fonts/IBMPlexMono-Medium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+
+:root {
+  color-scheme: dark;
+  --obsidiaan: #0f0d12;
+  --raised: #1a1720;
+  --bot: #eee9df;
+  --muted: #a8a1ad;
+  --zwavel: #e8b931;
+  --ossebloed: #7a1f2f;
+  --kraan: #5e5868;
+  --display: "Grenze Gotisch", "Georgia", serif;
+  --sans: "Hanken Grotesk", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--obsidiaan); }
+body { margin: 0; background: var(--obsidiaan); color: var(--bot); font: 400 17px/1.65 var(--sans); }
+a { color: var(--bot); text-decoration-color: var(--zwavel); text-underline-offset: 3px; }
+a:hover { color: var(--zwavel); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--zwavel); outline-offset: 3px; }
+.wrap { max-width: 56rem; margin: 0 auto; padding-inline: 20px; }
+header.top { padding-block: 22px; border-bottom: 1px solid #241f2b; }
+header.top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+header.top img { height: 40px; width: auto; display: block; }
+nav { display: flex; gap: 20px; flex-wrap: wrap; }
+nav a { font: 500 0.78rem/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; color: var(--muted); }
+nav a:hover, nav a[aria-current="page"] { color: var(--bot); }
+main { padding-block: 56px 72px; display: grid; gap: 56px; }
+.label { font: 500 0.78rem/1.4 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1, h2 { font-family: var(--display); font-weight: 700; margin: 0; text-wrap: balance; line-height: 1.05; }
+h1 { font-size: clamp(2.6rem, 8vw, 4.2rem); }
+h2 { font-size: clamp(2rem, 5vw, 2.6rem); }
+p { margin: 0; max-width: 62ch; }
+.lead { font-size: 1.2rem; color: var(--bot); }
+.muted { color: var(--muted); }
+.stack { display: grid; gap: 16px; }
+.hero { display: grid; gap: 18px; }
+.hero .seal { width: 96px; height: 96px; }
+.game { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; overflow: hidden; text-decoration: none; color: inherit; }
+.game img { width: 100%; height: auto; display: block; aspect-ratio: 1024 / 500; object-fit: cover; }
+.game .body { padding: 22px; display: grid; gap: 10px; }
+.game:hover { border-color: var(--kraan); color: inherit; }
+.button { display: inline-block; background: var(--zwavel); color: var(--obsidiaan); font: 600 1rem/1 var(--sans); padding: 14px 22px; border-radius: 4px; text-decoration: none; }
+.button:hover { color: var(--obsidiaan); filter: brightness(1.08); }
+.button.quiet { background: transparent; color: var(--bot); border: 1px solid var(--kraan); }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 12px; }
+.facts div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 16px; display: grid; gap: 4px; }
+.facts strong { font-weight: 600; }
+.email { font: 500 1.05rem/1.4 var(--mono); user-select: all; color: var(--zwavel); }
+footer { border-top: 1px solid #241f2b; padding-block: 28px; }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer p { font-size: 0.9rem; color: var(--muted); }
+.icon-title { display: flex; gap: 18px; align-items: center; }
+.icon-title img { width: 84px; height: 84px; border-radius: 18px; }

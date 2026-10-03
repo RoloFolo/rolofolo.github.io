@@ -20,6 +20,11 @@
   .feature h2 { font-size: clamp(1.7rem, 4vw, 2.2rem); }
   .bosses { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 12px; }
   .bosses div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+  .ratings { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 12px; }
+  .ratings div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+  .ratings strong { font-size: 1.15rem; }
+  .ratings span, .ratings em { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-style: normal; }
+  .ratings em { letter-spacing: 0.06em; text-transform: none; font-family: var(--sans); font-size: 0.85rem; }
   .bosses span { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 </style>
 </head>
@@ -119,6 +124,22 @@
     <p class="label" id="fair">Fair play</p>
     <h2>A game that makes fun of ads, played the fair way</h2>
     <p>No purchases with real money, ever. Every chance in a chest is shown before you open it. An ad only plays when you choose to watch one for a reward, and the game never shows one you did not ask for. Made for players of all ages, with a privacy-friendly setup for children.</p>
+  </section>
+  <section class="stack" aria-labelledby="ratings-title">
+    <p class="label">Age ratings (IARC)</p>
+    <h2 id="ratings-title">Rated for everyone</h2>
+    <div class="ratings">
+      <div><span>Europe · PEGI</span><strong>PEGI 3</strong></div>
+      <div><span>North America · ESRB</span><strong>Everyone</strong><em>Violent references, crude humor</em></div>
+      <div><span>Germany · USK</span><strong>USK 6</strong><em>Abstract violence</em></div>
+      <div><span>Australia · ACB</span><strong>PG</strong><em>Mild crude humour</em></div>
+      <div><span>Brazil · ClassInd</span><strong>All ages</strong></div>
+      <div><span>South Korea · GRAC</span><strong>All ages</strong></div>
+      <div><span>Taiwan · DGSC</span><strong>PG 12</strong><em>Violence</em></div>
+      <div><span>Saudi Arabia · Gmedia</span><strong>3+</strong></div>
+      <div><span>Rest of the world · IARC</span><strong>3+</strong></div>
+    </div>
+    <p class="muted">The violence is cartoon fantasy: imps throw fireballs at toy-like ad soldiers who fall over and vanish. No blood. The crude humour is a whoopee cushion or two.</p>
   </section>
 </main>
 

@@ -4,9 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ImpLegion</title>
-<meta name="description" content="ImpLegion: the real game behind the fake ads. A lane shooter for Android by Naberius Games.">
+<meta name="description" content="ImpLegion: the real game behind the fake ads. Lead a legion of imps against an army of ad soldiers. A lane shooter for Android by Naberius Games.">
 <link rel="icon" href="/assets/naberius-mark-mini-zwavel.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* The game page: a strip of phone screenshots, feature rows and the line-up of bosses. */
+  .shots { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
+  .shots figure { margin: 0; flex: 0 0 auto; width: min(46vw, 210px); scroll-snap-align: start; display: grid; gap: 8px; }
+  .shots img { width: 100%; height: auto; aspect-ratio: 540 / 1200; object-fit: cover; border-radius: 14px; border: 1px solid #2c2634; display: block; }
+  .shots figcaption { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: center; }
+  @media (min-width: 720px) { .feature { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); } .feature.flip > img { order: -1; } }
+  .feature > img { width: 100%; max-width: 260px; justify-self: center; height: auto; border-radius: 14px; border: 1px solid #2c2634; }
+  .feature .stack { gap: 10px; }
+  .feature h2 { font-size: clamp(1.7rem, 4vw, 2.2rem); }
+  .bosses { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 12px; }
+  .bosses div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+  .bosses span { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+</style>
 </head>
 <body>
 <header class="top">
@@ -29,28 +44,81 @@
         <h1>ImpLegion</h1>
       </div>
     </div>
-    <p class="lead">The real game behind the fake ads. Your legion of imps holds the line and spits fireballs at an endless march of ad soldiers. Pick up the +1 gates, crack the weapon crates, and take back the land one boss at a time.</p>
+    <p class="lead">The real game behind the fake ads. The ad soldiers marched into the Underworld and took everything, even the snacks. Your legion of imps holds the line, spits fireballs at their endless march, and takes the land back one boss at a time.</p>
     <div class="row">
       <span class="button" aria-disabled="true">Google Play: soon</span>
       <a class="button quiet" href="/implegion/privacy.html">Privacy policy</a>
     </div>
   </section>
 
-  <img src="/implegion/feature.png" alt="ImpLegion key art" width="1024" height="500" style="width:100%;height:auto;border-radius:6px">
+  <img src="/implegion/feature.png" alt="ImpLegion key art: a legion of imps charges at a horde of blue ad soldiers" width="1024" height="500" style="width:100%;height:auto;border-radius:6px">
+
+  <section class="stack" aria-labelledby="shots-title">
+    <p class="label" id="shots-title">Screenshots</p>
+    <div class="shots" role="list">
+      <figure role="listitem"><img src="/implegion/shots/run-big.jpg" alt="A big legion of imps firing at the ad soldiers on the road" width="540" height="1200" loading="lazy"><figcaption>Hold the line</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/boss-algorithm.jpg" alt="The final boss, The Algorithm, a robot with a screen for a face" width="540" height="1200" loading="lazy"><figcaption>Beat the bosses</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/soldiers.jpg" alt="Special soldiers: a billboard shield, a gold premium soldier and a cookie banner" width="540" height="1200" loading="lazy"><figcaption>Outsmart the ads</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/village-decor.jpg" alt="The imp village with the mushroom tower Community Hall" width="540" height="1200" loading="lazy"><figcaption>Rebuild the village</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/inside-forge.jpg" alt="Inside the Forge, a smith imp forges a weapon shard" width="540" height="1200" loading="lazy"><figcaption>Every building has a job</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/chest.jpg" alt="The Totally Fair Chest showing every prize and its real chance" width="540" height="1200" loading="lazy"><figcaption>Honest chances</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/home.jpg" alt="The start screen with the ImpLegion logo and the weekly events" width="540" height="1200" loading="lazy"><figcaption>Something new every week</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="feature" aria-labelledby="f-legion">
+    <div class="stack">
+      <p class="label">Your legion</p>
+      <h2 id="f-legion">One finger, a hundred imps</h2>
+      <p>Steer your legion left and right. Run through the glowing +1 gates to grow it, shoot the weapon crates open for hellfire, flamethrowers, laser eyes, rockets or lightning, and stack perks like burning, freezing and critical hits. Six legions, each with its own weapon and colour.</p>
+    </div>
+    <img src="/implegion/shots/run-big.jpg" alt="" width="540" height="1200" loading="lazy">
+  </section>
+
+  <section class="feature flip" aria-labelledby="f-ads">
+    <div class="stack">
+      <p class="label">The enemy</p>
+      <h2 id="f-ads">Every soldier is an ad trick</h2>
+      <p>Barry Board hides behind a billboard. Penny Pop-up jumps out of a window when you least expect it. Lexi Likes throws hearts that charm your imps away, and the Tracking Drone follows you wherever you go. New soldiers show up as you get further, and each one has a story in the collection.</p>
+    </div>
+    <img src="/implegion/shots/soldiers.jpg" alt="" width="540" height="1200" loading="lazy">
+  </section>
+
+  <section class="feature" aria-labelledby="f-village">
+    <div class="stack">
+      <p class="label">The village</p>
+      <h2 id="f-village">Win back your home</h2>
+      <p>Every boss you beat frees a part of the imp village from the ads. Rebuild Grandpa's cottage, the bakery, the forge and more: each building has its own job and its own painted inside. Decorate with ad scraps, pick a new look for the Community Hall, and watch the imps come back to life.</p>
+    </div>
+    <img src="/implegion/shots/village-decor.jpg" alt="" width="540" height="1200" loading="lazy">
+  </section>
+
+  <section class="stack" aria-labelledby="f-bosses">
+    <p class="label">Five worlds, fifty levels</p>
+    <h2 id="f-bosses">Meet the bosses</h2>
+    <div class="bosses">
+      <div><span>Sulfur Mines</span><strong>The Pin Puller</strong></div>
+      <div><span>Obsidian Forest</span><strong>Only 1% Can Beat Me</strong></div>
+      <div><span>Ice Hell</span><strong>The Pay-to-Win King</strong></div>
+      <div><span>Lava Plains</span><strong>The Endless Tutorial</strong></div>
+      <div><span>Crane Nest</span><strong>The Algorithm</strong></div>
+    </div>
+  </section>
 
   <section class="stack" aria-labelledby="what">
-    <p class="label" id="what">In the game</p>
+    <p class="label" id="what">More in the game</p>
     <div class="facts">
-      <div><strong>Five worlds, ten levels each</strong><span class="muted">Every tenth level a named boss guards the gate.</span></div>
-      <div><strong>Six legions</strong><span class="muted">Each with its own weapon: hellfire, flamethrower, laser eyes, rockets, lightning.</span></div>
-      <div><strong>Heroes</strong><span class="muted">Grandpa Ember, Pip the Prankster and The Brave One lead the charge.</span></div>
-      <div><strong>Weekly events</strong><span class="muted">Minigames, the King's Pile, the Endless Feast and contracts with very small print.</span></div>
+      <div><strong>Heroes</strong><span class="muted">Grandpa Ember, Pip the Prankster and The Brave One lead the charge, each with a special move.</span></div>
+      <div><strong>Weekly events</strong><span class="muted">Prank Night, Grandpa's Marshmallow, Close the Ad, the Endless Feast and the King's Pile.</span></div>
+      <div><strong>Contracts</strong><span class="muted">Sign a contract for a bigger reward. Read the small print first.</span></div>
+      <div><strong>The collection</strong><span class="muted">Every legion, boss, weapon and soldier, with the stories behind them.</span></div>
     </div>
   </section>
 
   <section class="stack" aria-labelledby="fair">
     <p class="label" id="fair">Fair play</p>
-    <p>No purchases with real money. Chances in chests are shown before you open them. Videos are always your choice, and pay you for watching. Made for players of all ages.</p>
+    <h2>A game that makes fun of ads, played the fair way</h2>
+    <p>No purchases with real money, ever. Every chance in a chest is shown before you open it. An ad only plays when you choose to watch one for a reward, and the game never shows one you did not ask for. Made for players of all ages, with a privacy-friendly setup for children.</p>
   </section>
 </main>
 

@@ -10,12 +10,13 @@
 <style>
   /* The game page: a strip of phone screenshots, feature rows and the line-up of bosses. */
   .shots { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
-  .shots figure { margin: 0; flex: 0 0 auto; width: min(46vw, 210px); scroll-snap-align: start; display: grid; gap: 8px; }
-  .shots img { width: 100%; height: auto; aspect-ratio: 540 / 1200; object-fit: cover; border-radius: 14px; border: 1px solid #2c2634; display: block; }
+  .shots figure { margin: 0; flex: 0 0 auto; width: min(82vw, 480px); scroll-snap-align: start; }
+  .shots img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; border: 1px solid #2c2634; display: block; }
   .shots figcaption { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
   .feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: center; }
   @media (min-width: 720px) { .feature { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); } .feature.flip > img { order: -1; } }
   .feature > img { width: 100%; max-width: 260px; justify-self: center; height: auto; border-radius: 14px; border: 1px solid #2c2634; }
+  .feature > img.wide { max-width: 520px; border-radius: 10px; }
   .feature .stack { gap: 10px; }
   .feature h2 { font-size: clamp(1.7rem, 4vw, 2.2rem); }
   .bosses { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 12px; }
@@ -68,13 +69,14 @@
   <section class="stack" aria-labelledby="shots-title">
     <p class="label" id="shots-title">Screenshots</p>
     <div class="shots" role="list">
-      <figure role="listitem"><img src="/implegion/shots/run-big.jpg" alt="A big legion of imps firing at the ad soldiers on the road" width="540" height="1200" loading="lazy"><figcaption>Hold the line</figcaption></figure>
-      <figure role="listitem"><img src="/implegion/shots/boss-algorithm.jpg" alt="The final boss, The Algorithm, a robot with a screen for a face" width="540" height="1200" loading="lazy"><figcaption>Beat the bosses</figcaption></figure>
-      <figure role="listitem"><img src="/implegion/shots/soldiers.jpg" alt="Special soldiers: a billboard shield, a gold premium soldier and a cookie banner" width="540" height="1200" loading="lazy"><figcaption>Outsmart the ads</figcaption></figure>
-      <figure role="listitem"><img src="/implegion/shots/village-decor.jpg" alt="The imp village with the mushroom tower Community Hall" width="540" height="1200" loading="lazy"><figcaption>Rebuild the village</figcaption></figure>
-      <figure role="listitem"><img src="/implegion/shots/inside-forge.jpg" alt="Inside the Forge, a smith imp forges a weapon shard" width="540" height="1200" loading="lazy"><figcaption>Every building has a job</figcaption></figure>
-      <figure role="listitem"><img src="/implegion/shots/chest.jpg" alt="The Totally Fair Chest showing every prize and its real chance" width="540" height="1200" loading="lazy"><figcaption>Honest chances</figcaption></figure>
-      <figure role="listitem"><img src="/implegion/shots/home.jpg" alt="The start screen with the ImpLegion logo and the weekly events" width="540" height="1200" loading="lazy"><figcaption>Something new every week</figcaption></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-1-land-mines.jpg" alt="Lead a legion of imps: a big legion marches down the road in the Sulfur Mines" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-2-land-forest.jpg" alt="Grow your legion at every gate, in the Obsidian Forest" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-3-land-boss-pin.jpg" alt="Beat the ad bosses: The Pin Puller walks up to the legion" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-4-land-soldiers.jpg" alt="Every soldier is an ad trick: a billboard, a cookie banner and a premium soldier" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-5-land-ice.jpg" alt="Five worlds to win back: the legion in Ice Hell" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-6-village.jpg" alt="Rebuild your village: the village, its Community Hall and the Forge" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-7-events.jpg" alt="Something new every week: the events, the start screen and the heroes" width="960" height="540" loading="lazy"></figure>
+      <figure role="listitem"><img src="/implegion/shots/landscape-8-fair.jpg" alt="Honest chances, no pay-to-win: the Totally Fair Chest shows every chance" width="960" height="540" loading="lazy"></figure>
     </div>
   </section>
 
@@ -84,7 +86,7 @@
       <h2 id="f-legion">One finger, a hundred imps</h2>
       <p>Steer your legion left and right. Run through the glowing +1 gates to grow it, shoot the weapon crates open for hellfire, flamethrowers, laser eyes, rockets or lightning, and stack perks like burning, freezing and critical hits. Six legions, each with its own weapon and colour.</p>
     </div>
-    <img src="/implegion/shots/run-big.jpg" alt="" width="540" height="1200" loading="lazy">
+    <img class="wide" src="/implegion/shots/land-forest.jpg" alt="" width="960" height="540" loading="lazy">
   </section>
 
   <section class="feature flip" aria-labelledby="f-ads">
@@ -93,7 +95,7 @@
       <h2 id="f-ads">Every soldier is an ad trick</h2>
       <p>Barry Board hides behind a billboard. Penny Pop-up jumps out of a window when you least expect it. Lexi Likes throws hearts that charm your imps away, and the Tracking Drone follows you wherever you go. New soldiers show up as you get further, and each one has a story in the collection.</p>
     </div>
-    <img src="/implegion/shots/soldiers.jpg" alt="" width="540" height="1200" loading="lazy">
+    <img class="wide" src="/implegion/shots/land-soldiers.jpg" alt="" width="960" height="540" loading="lazy">
   </section>
 
   <section class="feature" aria-labelledby="f-village">

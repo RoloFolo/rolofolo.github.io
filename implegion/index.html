@@ -25,6 +25,8 @@
   .ratings strong { font-size: 1.15rem; }
   .ratings span, .ratings em { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-style: normal; }
   .ratings em { letter-spacing: 0.06em; text-transform: none; font-family: var(--sans); font-size: 0.85rem; }
+  .trailer { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; border: 1px solid #2c2634; background: #000; }
+  .trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .bosses span { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 </style>
 </head>
@@ -56,7 +58,12 @@
     </div>
   </section>
 
-  <img src="/implegion/feature.png" alt="ImpLegion key art: a legion of imps charges at a horde of blue ad soldiers" width="1024" height="500" style="width:100%;height:auto;border-radius:6px">
+  <section class="stack" aria-labelledby="trailer-title">
+    <p class="label" id="trailer-title">Trailer</p>
+    <div class="trailer">
+      <iframe src="https://www.youtube-nocookie.com/embed/do5ZmC226tQ?rel=0" title="ImpLegion official trailer" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </section>
 
   <section class="stack" aria-labelledby="shots-title">
     <p class="label" id="shots-title">Screenshots</p>

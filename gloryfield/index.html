@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gloryfield</title>
+<meta name="description" content="Gloryfield: lead the last free banners against the Ash Host. Deploy heroes and legions, rebuild your kingdom and win back Ashgard, region by region. A tactical strategy game for Android by Naberius Games.">
+<link rel="icon" href="/assets/naberius-mark-mini-zwavel.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* The game page: a strip of phone screenshots (portrait), feature rows, the heroes and the lands. */
+  .shots { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
+  .shots figure { margin: 0; flex: 0 0 auto; width: min(60vw, 250px); scroll-snap-align: start; display: grid; gap: 8px; }
+  .shots img { width: 100%; height: auto; aspect-ratio: 540 / 1170; object-fit: cover; border-radius: 14px; border: 1px solid #2c2634; display: block; }
+  .shots figcaption { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: center; }
+  @media (min-width: 720px) { .feature { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); } .feature.flip > img { order: -1; } }
+  .feature > img { width: 100%; max-width: 260px; justify-self: center; height: auto; border-radius: 14px; border: 1px solid #2c2634; }
+  .feature .stack { gap: 10px; }
+  .feature h2 { font-size: clamp(1.7rem, 4vw, 2.2rem); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 12px; }
+  .cards div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+  .cards span { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .guide { background: var(--raised); border: 1px solid #241f2b; border-left: 4px solid var(--zwavel); border-radius: 6px; padding: 22px; display: grid; gap: 12px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a href="/" aria-label="Naberius Games home"><img src="/assets/naberius-lockup-bot.svg" alt="Naberius Games"></a>
+    <nav aria-label="Main">
+      <a href="/">Studio</a>
+      <a href="/implegion/">ImpLegion</a>
+      <a href="/gloryfield/" aria-current="page">Gloryfield</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="icon-title">
+      <img src="/gloryfield/icon.png" alt="Gloryfield icon" width="512" height="512">
+      <div>
+        <p class="label">Android · In testing</p>
+        <h1>Gloryfield</h1>
+      </div>
+    </div>
+    <p class="lead">The old kingdom of Ashgard has fallen. The Ash King buried the land in grey ash, and his Ash Host of undead, trolls and dark riders holds every region. You lead the last free banners. Deploy your heroes and legions, rebuild your kingdom, and win Ashgard back, one battle at a time.</p>
+    <div class="row">
+      <span class="button" aria-disabled="true">Google Play: soon</span>
+      <a class="button quiet" href="/gloryfield/guide/">Guide &amp; FAQ</a>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="shots-title">
+    <p class="label" id="shots-title">Screenshots</p>
+    <div class="shots" role="list">
+      <figure role="listitem"><img src="/gloryfield/shots/kingdom.jpg" alt="The painted kingdom on its cliffs: the castle, the forge, the mine and the market wagon" width="540" height="1131" loading="lazy"><figcaption>Your kingdom</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/campaign.jpg" alt="The Mist Marsh on the campaign map, its battles as medallions with stars" width="540" height="1170" loading="lazy"><figcaption>The campaign</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/battle.jpg" alt="A battle in the marsh: your legions march on the Ash Host" width="540" height="1170" loading="lazy"><figcaption>The battle</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/hero.jpg" alt="Aldric in the Hero Hall with his attack, defense, health and power" width="540" height="1131" loading="lazy"><figcaption>Your heroes</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/market.jpg" alt="The travelling market on the town square, with its stalls and townsfolk" width="540" height="1170" loading="lazy"><figcaption>The market</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/world.jpg" alt="The world map: Whisperwood, Frostfang Reach, the Skyreach Isles and the Heart of Ash" width="540" height="1170" loading="lazy"><figcaption>The world</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/training.jpg" alt="The Training tab: hero drills, the rune chest and the smithy" width="540" height="1170" loading="lazy"><figcaption>Training</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="feature" aria-labelledby="f-battle">
+    <div class="stack">
+      <p class="label">The battle</p>
+      <h2 id="f-battle">Deploy, then watch it unfold</h2>
+      <p>You see the enemy before the fight begins. Place your heroes and legions in your zone, pick a stance for each, and mind the ground: water, forest, bridges and Ash all change how a fight goes. Then the battle runs on its own. Your part is the plan, and the moment each hero unleashes a power.</p>
+    </div>
+    <img src="/gloryfield/shots/battle.jpg" alt="" width="540" height="1170" loading="lazy">
+  </section>
+
+  <section class="feature flip" aria-labelledby="f-heroes">
+    <div class="stack">
+      <p class="label">Heroes</p>
+      <h2 id="f-heroes">Five heroes, each their own way</h2>
+      <p>Each hero leads troops into battle and fights in their own way. Level them up, promote them, unlock their six skills, and dress them in gear from grey to gold. Gear grows by levelling it with shards; the best colours are rare and earned.</p>
+    </div>
+    <img src="/gloryfield/shots/hero.jpg" alt="" width="540" height="1131" loading="lazy">
+  </section>
+
+  <section class="feature" aria-labelledby="f-kingdom">
+    <div class="stack">
+      <p class="label">The kingdom</p>
+      <h2 id="f-kingdom">Rebuild what was lost</h2>
+      <p>Thirty buildings on a painted cliff: farms, mills and mines, barracks and stables, a tavern, a forge and a watchtower. Put your people to work, keep them fed and happy, pass decrees in the Main Hall, and train the army that will carry your banners.</p>
+    </div>
+    <img src="/gloryfield/shots/kingdom.jpg" alt="" width="540" height="1131" loading="lazy">
+  </section>
+
+  <section class="feature flip" aria-labelledby="f-ash">
+    <div class="stack">
+      <p class="label">The Ash</p>
+      <h2 id="f-ash">The land does not stay quiet</h2>
+      <p>Ash creeps back into the freed lands. Send your heroes and legions on missions to cleanse it and rescue the people trapped there. Leave it lying and the Darkness grows: raids on the city, ambushes on your troops and bandits on the roads. Post legions and send out patrols from the Watchtower to keep the peace, but every soldier on guard is one less at home.</p>
+    </div>
+    <img src="/gloryfield/shots/campaign.jpg" alt="" width="540" height="1170" loading="lazy">
+  </section>
+
+  <section class="stack" aria-labelledby="f-lands">
+    <p class="label">The campaign</p>
+    <h2 id="f-lands">Win back Ashgard</h2>
+    <div class="cards">
+      <div><span>Part 1</span><strong>Plains of Verlo</strong></div>
+      <div><span>Part 1</span><strong>Mist Marsh</strong></div>
+      <div><span>Part 1</span><strong>Iron Pass</strong></div>
+      <div><span>Part 1</span><strong>Dragon Coast</strong></div>
+      <div><span>Part 1</span><strong>Ash Plains</strong></div>
+      <div><span>Part 2</span><strong>Whisperwood</strong></div>
+    </div>
+    <p class="muted">Beyond them wait Frostfang Reach, the Skyreach Isles, Sunken Maelis, the Sunspire Wastes, the Crystal Deep and, at the end of everything, the Heart of Ash.</p>
+  </section>
+
+  <section class="stack" aria-labelledby="what">
+    <p class="label" id="what">More in the game</p>
+    <div class="facts">
+      <div><strong>The travelling market</strong><span class="muted">Traders come to town with goods, rare wares and gear. The more towns you free, the bigger the market; bandits on the roads make it smaller.</span></div>
+      <div><strong>Training</strong><span class="muted">Archery with Fenna, sword drills, the smithy, the rune chest and more: grow stronger off the battlefield.</span></div>
+      <div><strong>The Monument</strong><span class="muted">Daily goals, growth goals and the great deeds of the campaign, each with its reward.</span></div>
+      <div><strong>Four difficulties</strong><span class="muted">Easy for the story, Medium as it is meant, Hard for commanders, and God to set everything yourself.</span></div>
+    </div>
+  </section>
+
+  <section class="guide" aria-labelledby="guide-title">
+    <p class="label">Guide &amp; FAQ</p>
+    <h2 id="guide-title">How it all works</h2>
+    <p>Gloryfield has a lot going on under the hood: how strong the enemy grows, how gear is found, what makes your people happy, when the Darkness strikes. The guide explains every feature and the numbers behind it.</p>
+    <div class="row"><a class="button" href="/gloryfield/guide/">Open the guide</a></div>
+  </section>
+
+  <section class="stack" aria-labelledby="fair">
+    <p class="label" id="fair">Fair play</p>
+    <h2>Earned, not bought</h2>
+    <p>Gloryfield is free to play. No loot boxes, and every chance in a loot chest is shown before you open it. The best gear comes from playing, not from the shop. New campaigns will come as optional packs.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 Naberius Games</p>
+    <p><a href="/">Naberius Games</a> · <a href="https://www.youtube.com/@NaberiusGames" rel="noopener">YouTube</a> · <a href="/gloryfield/guide/">Guide &amp; FAQ</a></p>
+  </div>
+</footer>
+</body>
+</html>

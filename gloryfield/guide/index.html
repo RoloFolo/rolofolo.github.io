@@ -11,9 +11,11 @@
   /* The guide: contents, a search box, a fold-out entry per question (built by Gloryfield/tools/build-guide.mjs). */
   main > * { min-width: 0; }
   .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 8px; list-style: none; padding: 0; margin: 0; }
-  .toc li { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 10px 14px; display: flex; justify-content: space-between; gap: 8px; }
-  .toc a { text-decoration: none; font-weight: 600; }
-  .toc span { font: 500 0.78rem/1.6 var(--mono); color: var(--muted); }
+  .toc li { display: flex; }
+  .toc a { flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 6px; background: linear-gradient(#c99a1e, #a77c12); color: #fff; text-decoration: none; font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
+  .toc a:hover, .toc a:focus-visible { background: linear-gradient(#d8a927, #b6871a); color: #fff; }
+
+  .toc .n { font: 500 0.8rem/1.6 var(--mono); color: #fff; opacity: 0.85; }
   .search { width: 100%; font: 400 1rem/1.4 var(--sans); color: var(--bot); background: var(--raised); border: 1px solid var(--kraan); border-radius: 4px; padding: 12px 14px; }
   .search:focus { outline: 2px solid var(--zwavel); outline-offset: 2px; }
   .topic { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; scroll-margin-top: 16px; min-width: 0; }
@@ -62,16 +64,16 @@
   <section class="stack" aria-labelledby="contents">
     <p class="label" id="contents">Contents</p>
     <ul class="toc">
-<li><a href="#getting-started">Getting started</a> <span>18</span></li>
-<li><a href="#your-kingdom">Your kingdom</a> <span>28</span></li>
-<li><a href="#your-army">Your army</a> <span>21</span></li>
-<li><a href="#heroes">Heroes</a> <span>24</span></li>
-<li><a href="#gear">Gear</a> <span>22</span></li>
-<li><a href="#battles">Battles</a> <span>25</span></li>
-<li><a href="#missions-and-the-ash">Missions and the Ash</a> <span>25</span></li>
-<li><a href="#raids-and-the-watch">Raids and the Watch</a> <span>23</span></li>
-<li><a href="#the-travelling-market">The travelling market</a> <span>17</span></li>
-<li><a href="#training-games-and-goals">Training, games and goals</a> <span>22</span></li>
+<li><a href="#getting-started"><span>Getting started</span><span class="n">18</span></a></li>
+<li><a href="#your-kingdom"><span>Your kingdom</span><span class="n">28</span></a></li>
+<li><a href="#your-army"><span>Your army</span><span class="n">21</span></a></li>
+<li><a href="#heroes"><span>Heroes</span><span class="n">24</span></a></li>
+<li><a href="#gear"><span>Gear</span><span class="n">22</span></a></li>
+<li><a href="#battles"><span>Battles</span><span class="n">25</span></a></li>
+<li><a href="#missions-and-the-ash"><span>Missions and the Ash</span><span class="n">25</span></a></li>
+<li><a href="#raids-and-the-watch"><span>Raids and the Watch</span><span class="n">23</span></a></li>
+<li><a href="#the-travelling-market"><span>The travelling market</span><span class="n">17</span></a></li>
+<li><a href="#training-games-and-goals"><span>Training, games and goals</span><span class="n">22</span></a></li>
     </ul>
   </section>
 

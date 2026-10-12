@@ -17,6 +17,11 @@
   @media (min-width: 720px) { .feature { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); } .feature.flip > img { order: -1; } }
   .feature > img { width: 100%; max-width: 260px; justify-self: center; height: auto; border-radius: 14px; border: 1px solid #2c2634; }
   .feature .stack { gap: 10px; }
+  /* Two or three pictures side by side in a feature row (owner 2026-10-12: deploy and a power close up, and so on). */
+  .pair { display: flex; gap: 12px; justify-content: center; }
+  .pair img { width: min(40vw, 200px); height: auto; border-radius: 14px; border: 1px solid #2c2634; }
+  .pair.three img { width: min(28vw, 150px); }
+  @media (min-width: 720px) { .feature.flip > .pair { order: -1; } }
   .feature h2 { font-size: clamp(1.7rem, 4vw, 2.2rem); }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 12px; }
   .cards div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
@@ -72,7 +77,10 @@
       <h2 id="f-battle">Deploy, then watch it unfold</h2>
       <p>You see the enemy before the fight begins. Place your heroes and legions in your zone, pick a stance for each, and mind the ground: water, forest, bridges and Ash all change how a fight goes. Then the battle runs on its own. Your part is the plan, and the moment each hero unleashes a power.</p>
     </div>
-    <img src="/gloryfield/shots/battle.jpg" alt="" width="540" height="1170" loading="lazy">
+    <div class="pair">
+      <img src="/gloryfield/shots/deploy.jpg" alt="Deploying at Witch's Pool: heroes and legions in the blue zone, the witch and her Ash legions across the field" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/power.jpg" alt="Close up: Aldric unleashes his Battle Cry among the undead" width="540" height="1170" loading="lazy">
+    </div>
   </section>
 
   <section class="feature flip" aria-labelledby="f-heroes">
@@ -81,16 +89,32 @@
       <h2 id="f-heroes">Five heroes, each their own way</h2>
       <p>Each hero leads troops into battle and fights in their own way. Level them up, promote them, unlock their six skills, and dress them in gear from grey to gold. Gear grows by levelling it with shards; the best colours are rare and earned.</p>
     </div>
-    <img src="/gloryfield/shots/heroes.jpg" alt="" width="540" height="1170" loading="lazy">
+    <div class="pair">
+      <img src="/gloryfield/shots/heroes.jpg" alt="The five heroes in the Hall of Heroes" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/hero-awakened.jpg" alt="Aldric awakened as the Lionheart, in purple and gold gear" width="540" height="1170" loading="lazy">
+    </div>
   </section>
 
   <section class="feature" aria-labelledby="f-kingdom">
     <div class="stack">
       <p class="label">The kingdom</p>
       <h2 id="f-kingdom">Rebuild what was lost</h2>
-      <p>Thirty buildings on a painted cliff: farms, mills and mines, barracks and stables, a tavern, a forge and a watchtower. Put your people to work, keep them fed and happy, pass decrees in the Main Hall, and train the army that will carry your banners.</p>
+      <p>Thirty buildings on a painted cliff, each plot waiting for you: farms, mills and mines, barracks and stables, a tavern, a forge and a watchtower. Put your people to work, keep them fed and happy, pass decrees in the Main Hall, and train the army that will carry your banners.</p>
     </div>
-    <img src="/gloryfield/shots/kingdom.jpg" alt="" width="540" height="1170" loading="lazy">
+    <img src="/gloryfield/shots/kingdom-build.jpg" alt="The kingdom with plots still open to build on, each marked with a hammer" width="540" height="1170" loading="lazy">
+  </section>
+
+  <section class="feature flip" aria-labelledby="f-games">
+    <div class="stack">
+      <p class="label">Training</p>
+      <h2 id="f-games">Grow stronger off the battlefield</h2>
+      <p>Every building has its own game. Shoot at Fenna's archery range with the wind in your face, strike the iron at the smithy at just the right moment, find the rune pairs that open the chest, play Twenty-One at the tavern, race the harvest and work the carpenter's bench. Each hero drills their own way. Good play gives gold, crystals, gear and experience.</p>
+    </div>
+    <div class="pair three">
+      <img src="/gloryfield/shots/archery.jpg" alt="Archery: Fenna draws her bow, the wind blows from the left, a gold dot shows where the arrow will land" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/smithy.jpg" alt="The smithy: strike when the white ring meets the gold ring" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/runes.jpg" alt="The rune chest: find the six rune pairs" width="540" height="1170" loading="lazy">
+    </div>
   </section>
 
   <section class="feature flip" aria-labelledby="f-ash">
@@ -136,7 +160,8 @@
   <section class="stack" aria-labelledby="fair">
     <p class="label" id="fair">Fair play</p>
     <h2>Earned, not bought</h2>
-    <p>Gloryfield is free to play. No loot boxes, and every chance in a loot chest is shown before you open it. The best gear comes from playing, not from the shop. New campaigns will come as optional packs.</p>
+    <p>Gloryfield is free to play: you only pay for additional content, such as new campaigns. No loot boxes, and every chance in a loot chest is shown before you open it. The best gear comes from playing, not from the shop.</p>
+    <p>A single-player game with several saves, so you can play more than one kingdom side by side. Multiplayer will come if players ask for it.</p>
   </section>
 </main>
 

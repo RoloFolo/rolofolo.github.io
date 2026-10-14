@@ -44,6 +44,10 @@
   .logo { margin: 0; line-height: 0; }
   .logo img { width: min(100%, 560px); height: auto; display: block; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5)); }
   .icon-title img { width: 56px; height: 56px; border-radius: 12px; }
+  /* The teaser (portrait), next to the opening words on a wide screen. */
+  .teaser { display: grid; gap: 10px; justify-items: center; }
+  .teaser video { width: min(80vw, 320px); aspect-ratio: 9 / 16; border-radius: 16px; border: 1px solid #2c2634; background: #000; display: block; }
+  .teaser p { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -74,6 +78,11 @@
     </div>
   </section>
 
+  <section class="teaser" aria-label="Teaser">
+    <video controls playsinline preload="metadata" poster="/gloryfield/teaser-poster.jpg" src="/gloryfield/teaser.mp4" width="540" height="960"></video>
+    <p>The teaser · 30 seconds</p>
+  </section>
+
   <section class="stack" aria-labelledby="shots-title">
     <p class="label" id="shots-title">Screenshots</p>
     <div class="shots" role="list">
@@ -84,6 +93,10 @@
       <figure role="listitem"><img src="/gloryfield/shots/market.jpg" alt="The travelling market on the town square, with its stalls and townsfolk" width="540" height="1170" loading="lazy"><figcaption>The market</figcaption></figure>
       <figure role="listitem"><img src="/gloryfield/shots/world.jpg" alt="The world map: Whisperwood, Frostfang Reach, the Skyreach Isles and the Heart of Ash" width="540" height="1170" loading="lazy"><figcaption>The world</figcaption></figure>
       <figure role="listitem"><img src="/gloryfield/shots/training.jpg" alt="The Training tab: hero drills, the rune chest and the smithy" width="540" height="1170" loading="lazy"><figcaption>Training</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/academy.jpg" alt="The Academy: the research tree drawn on a parchment in a candlelit library" width="540" height="1170" loading="lazy"><figcaption>The Academy</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/gloryhall.jpg" alt="The Glory Hall's bestiary: every foe as a painted card, unmet ones as silhouettes" width="540" height="1170" loading="lazy"><figcaption>The bestiary</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/magetower.jpg" alt="The Mage Tower's school: a teacher at the lectern and an apprentice at the desk" width="540" height="1170" loading="lazy"><figcaption>The Mage Tower</figcaption></figure>
+      <figure role="listitem"><img src="/gloryfield/shots/deepshaft.jpg" alt="The Deep Shaft: a dwarf miner on his rope among glowing crystal veins" width="540" height="1170" loading="lazy"><figcaption>The Deep Shaft</figcaption></figure>
     </div>
   </section>
 
@@ -124,12 +137,45 @@
     <div class="stack">
       <p class="label">Training</p>
       <h2 id="f-games">Grow stronger off the battlefield</h2>
-      <p>Every building has its own game. Shoot at Fenna's archery range with the wind in your face, strike the iron at the smithy at just the right moment, find the rune pairs that open the chest, play Twenty-One at the tavern, race the harvest and work the carpenter's bench. Each hero drills their own way. Good play gives gold, crystals, gear and experience.</p>
+      <p>Every building has its own game. Shoot at Fenna's archery range with the wind in your face, strike the iron at the smithy at just the right moment, find the rune pairs that open the chest, play Twenty-One at the tavern, race the harvest and fit the cut pieces into the carpenter's jig. Under the Mine, a dwarf goes down the Deep Shaft on his rope, dodging rocks, lava and spiders for ore, gold, crystals and gear. Each hero drills their own way. Good play gives gold, crystals, gear and experience.</p>
     </div>
     <div class="pair three">
       <img src="/gloryfield/shots/archery.jpg" alt="Archery: Fenna draws her bow, the wind on the banner, a gold dot shows where the arrow will land" width="540" height="1170" loading="lazy">
       <img src="/gloryfield/shots/smithy.jpg" alt="The smithy: the smith raises his hammer over the glowing blade" width="540" height="1170" loading="lazy">
-      <img src="/gloryfield/shots/runes.jpg" alt="The rune chest: find the six rune pairs" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/deepshaft-deep.jpg" alt="The Deep Shaft: past 300 metres only the miner's lamp lights the way" width="540" height="1170" loading="lazy">
+    </div>
+  </section>
+
+  <section class="feature" aria-labelledby="f-academy">
+    <div class="stack">
+      <p class="label">The Academy</p>
+      <h2 id="f-academy">Research what makes you stronger</h2>
+      <p>On a great parchment in the candlelit library your scholars work through three trees: Growth for a bigger, faster, safer kingdom, Economy for more goods for less, and Battle for an army that hits harder in the circle of strong and weak. Twenty rows open as the Academy grows, with strong research coming back as II, III and IV. Research costs goods, gold and books, and it runs on: there is no pausing.</p>
+    </div>
+    <img src="/gloryfield/shots/academy.jpg" alt="The Academy's Growth tree: medallions joined by gold ink, locked rows waiting for a higher Academy" width="540" height="1170" loading="lazy">
+  </section>
+
+  <section class="feature flip" aria-labelledby="f-gloryhall">
+    <div class="stack">
+      <p class="label">The Glory Hall</p>
+      <h2 id="f-gloryhall">Every foe has a story</h2>
+      <p>The Glory Hall remembers. Every enemy of Ashgard hangs there as a painted card: a silhouette until you meet it, its story sealed until you beat it. Unroll the scroll to read who the Witch of the Pool once was, and earn crystals for every story. Slay enough of a kind and its card turns bronze, silver and gold, and your troops strike it a little harder. The Chronicle keeps your records and writes the history of your kingdom.</p>
+    </div>
+    <div class="pair">
+      <img src="/gloryfield/shots/gloryhall.jpg" alt="The bestiary: the foes of the Plains of Verlo and the Mist Marsh" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/gloryhall-card.jpg" alt="The Witch of the Pool's card, her story unrolled on a scroll" width="540" height="1170" loading="lazy">
+    </div>
+  </section>
+
+  <section class="feature" aria-labelledby="f-magetower">
+    <div class="stack">
+      <p class="label">The Mage Tower</p>
+      <h2 id="f-magetower">Find the gifted, teach them magic</h2>
+      <p>Twice a week a rumour reaches the tower: sparks at a smithy, a girl who talks to the wind. Send a mage to see; most rumours are nothing, but now and then the gift is real. Every mage teaches one student in a classroom of their own, through the Foundations to the Mage's Oath and on into the schools of Fire, Frost, Light and Arcane. A mage who teaches stays home, so you choose: fight now, or raise the next mage.</p>
+    </div>
+    <div class="pair">
+      <img src="/gloryfield/shots/mages.jpg" alt="The mages of the tower: Ylva the hero, an adept and two apprentices" width="540" height="1170" loading="lazy">
+      <img src="/gloryfield/shots/magetower.jpg" alt="The school: two classrooms with a teacher at the lectern and a student at the desk" width="540" height="1170" loading="lazy">
     </div>
   </section>
 

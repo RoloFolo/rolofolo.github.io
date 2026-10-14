@@ -44,9 +44,9 @@
   .logo { margin: 0; line-height: 0; }
   .logo img { width: min(100%, 560px); height: auto; display: block; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5)); }
   .icon-title img { width: 56px; height: 56px; border-radius: 12px; }
-  /* The teaser (portrait), next to the opening words on a wide screen. */
+  /* The teaser, on YouTube (owner 2026-10-14: not as a file on the site). */
   .teaser { display: grid; gap: 10px; justify-items: center; }
-  .teaser video { width: min(80vw, 320px); aspect-ratio: 9 / 16; border-radius: 16px; border: 1px solid #2c2634; background: #000; display: block; }
+  .teaser iframe { width: min(100%, 760px); aspect-ratio: 16 / 9; height: auto; border: 1px solid #2c2634; border-radius: 16px; background: #000; display: block; }
   .teaser p { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 </style>
 </head>
@@ -79,8 +79,8 @@
   </section>
 
   <section class="teaser" aria-label="Teaser">
-    <video controls playsinline preload="metadata" poster="/gloryfield/teaser-poster.jpg" src="/gloryfield/teaser.mp4" width="540" height="960"></video>
-    <p>The teaser · 30 seconds</p>
+    <iframe src="https://www.youtube-nocookie.com/embed/wz8qMkd8oYo" title="Gloryfield – Official Teaser" width="760" height="428" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <p>The teaser · <a href="https://youtu.be/wz8qMkd8oYo">watch on YouTube</a></p>
   </section>
 
   <section class="stack" aria-labelledby="shots-title">

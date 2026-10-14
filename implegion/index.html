@@ -29,6 +29,9 @@
   .trailer { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; border: 1px solid #2c2634; background: #000; }
   .trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .bosses span { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .logo { margin: 0; line-height: 0; }
+  .logo img { width: min(100%, 520px); height: auto; display: block; filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5)); }
+  .icon-title img { width: 56px; height: 56px; border-radius: 12px; }
 </style>
 </head>
 <body>
@@ -46,12 +49,10 @@
 
 <main class="wrap">
   <section class="hero">
+    <h1 class="logo"><img src="/implegion/logo.png" alt="ImpLegion" width="1024" height="599"></h1>
     <div class="icon-title">
       <img src="/implegion/icon.png" alt="ImpLegion icon" width="512" height="512">
-      <div>
-        <p class="label">Android · Coming soon</p>
-        <h1>ImpLegion</h1>
-      </div>
+      <p class="label">Android · In testing</p>
     </div>
     <p class="lead">The real game behind the fake ads. The ad soldiers marched into the Underworld and took everything, even the snacks. Your legion of imps holds the line, spits fireballs at their endless march, and takes the land back one boss at a time.</p>
     <div class="row">

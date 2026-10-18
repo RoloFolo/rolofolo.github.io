@@ -22,6 +22,7 @@
     --panel: rgba(255, 255, 255, 0.92);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
   html, body {
     margin: 0; height: 100%; overflow: hidden;
     background: var(--sky-bottom);
@@ -247,6 +248,107 @@
   .balloon::before { border-width: 18px 18px 0 0; border-top-color: var(--ink); margin-top: 2px; left: 11px; }
   .balloon::after { border-width: 12px 12px 0 0; border-top-color: var(--white); margin-top: -1px; left: 15px; }
   .balloon .more { display: block; margin-top: 4px; font-size: 12px; opacity: 0.5; }
+
+  /* Lives, goals, tools */
+  :root { --video: #6c5ce7; --video-dark: #4b3bb5; }
+  .lives-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0 0 10px; font-size: 22px; }
+  .pill {
+    font: inherit; font-size: 13px; font-weight: 900; border: 0; border-radius: 999px; padding: 7px 12px; cursor: pointer;
+    background: var(--video); color: var(--white); box-shadow: 0 3px 0 var(--video-dark);
+  }
+  .btn-video {
+    font-size: 17px; padding: 12px 14px; margin-bottom: 10px;
+    background: var(--video); color: var(--white); box-shadow: 0 6px 0 var(--video-dark);
+  }
+  .btn-video:active { box-shadow: 0 1px 0 var(--video-dark); }
+  .video-row { display: flex; gap: 10px; }
+  .video-row .btn[hidden] { display: none; }
+  .goals-box { margin: 0 0 12px; padding: 10px; border-radius: 18px; background: rgba(255, 255, 255, 0.55); }
+  .box-title { margin: 0 0 6px; font-size: 12px; font-weight: 900; letter-spacing: 0.14em; opacity: 0.6; }
+  .goals { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .goals li {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.8);
+    font-size: 13px; font-weight: 800; text-align: left;
+  }
+  .goals li::before {
+    content: ""; position: absolute; inset: 0 auto 0 0; width: var(--done, 0%);
+    background: rgba(46, 229, 157, 0.4); transition: width 0.3s;
+  }
+  .goals li > * { position: relative; }
+  .g-text { flex: 1; min-width: 0; }
+  .g-have { opacity: 0.6; font-variant-numeric: tabular-nums; }
+  .g-reward { font-size: 16px; }
+  .goals.mini { width: min(300px, 80vw); margin: 10px auto 0; gap: 4px; }
+  .goals.mini li { font-size: 11px; padding: 3px 8px; background: rgba(255, 255, 255, 0.6); }
+  .goals.mini .g-reward { font-size: 13px; }
+  #effects { min-height: 20px; margin-top: 6px; font-size: 16px; font-weight: 900; color: var(--ink); }
+  #tools {
+    position: fixed; z-index: 4;
+    right: calc(env(safe-area-inset-right, 0px) + 12px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
+    display: none; flex-direction: column; gap: 12px;
+  }
+  #tools.show { display: flex; }
+  .tool {
+    position: relative; width: 58px; height: 58px; padding: 0; border-radius: 50%; cursor: pointer;
+    border: 3px solid var(--ink); background: var(--white); box-shadow: 0 4px 0 var(--ink);
+    display: grid; place-items: center; touch-action: manipulation;
+  }
+  .tool:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .tool .icon { font-size: 28px; line-height: 1; }
+  .tool .n {
+    position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 13px; font-weight: 900;
+    background: var(--pink); color: var(--white); border: 2px solid var(--ink);
+  }
+  .tool.passive { opacity: 0.7; }
+  .over-life { margin: 0 0 8px; font-weight: 900; color: var(--pink); }
+  .over-life:empty, .loot:empty { display: none; }
+  .loot { margin: 0 0 10px; font-size: 18px; font-weight: 900; }
+  .over-score { font-size: 72px; }
+
+  /* Toolbox before a game */
+  #loadout, #nolives { align-items: flex-end; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); }
+  .kits {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+    max-height: 42vh; overflow-y: auto; margin: 0 0 14px; padding: 2px;
+  }
+  .kit {
+    font: inherit; text-align: left; cursor: pointer;
+    display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: start;
+    padding: 8px; border-radius: 14px; border: 3px solid transparent;
+    background: rgba(27, 20, 64, 0.06); color: var(--ink);
+  }
+  .kit .icon { grid-row: span 3; font-size: 28px; line-height: 1.1; }
+  .kit-name { font-weight: 900; font-size: 15px; }
+  .kit-info { font-size: 11px; font-weight: 700; opacity: 0.7; line-height: 1.25; }
+  .kit-n { font-size: 11px; font-weight: 900; color: var(--pink-dark); margin-top: 2px; }
+  .kit.picked { border-color: var(--ink); background: var(--yellow); }
+  .kit:disabled { opacity: 0.35; cursor: default; }
+  .lives-hearts.big { font-size: 34px; margin: 6px 0; }
+  #over .lives-row { margin: 16px 0 0; font-size: 18px; }
+
+  /* Video for a reward. A test screen until the app plays real AdMob videos. */
+  #ad {
+    position: fixed; inset: 0; z-index: 30; display: none; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(15, 10, 40, 0.92); color: var(--white);
+  }
+  #ad.show { display: flex; }
+  .ad-box { width: min(100%, 360px); text-align: center; }
+  .ad-tag { display: inline-block; margin: 0 0 12px; padding: 4px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 12px; font-weight: 900; letter-spacing: 0.12em; }
+  .ad-title { margin: 0 0 8px; font-size: 24px; font-weight: 900; }
+  #ad-reason { margin: 0 0 20px; font-weight: 800; opacity: 0.8; }
+  .ad-track { height: 12px; border-radius: 6px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+  #ad-bar { width: 0; height: 100%; background: var(--green); }
+  .ad-count { font-weight: 800; opacity: 0.8; }
+  #ad .btn-small { color: var(--white); }
+  @media (max-height: 720px) {
+    .logo { top: calc(env(safe-area-inset-top, 0px) + 4vh); }
+    .logo h1 { font-size: clamp(40px, 11vw, 60px); }
+    .goals li { padding: 4px 8px; }
+  }
 </style>
 </head>
 <body>
@@ -256,7 +358,10 @@
   <div id="score">1</div>
   <div id="score-label">BLOKKEN</div>
   <div id="mode-chip">MAKKELIJK</div>
+  <ol id="goals-hud" class="goals mini" aria-label="Doelen"></ol>
+  <div id="effects"></div>
 </div>
+<div id="tools" aria-label="Gereedschap"></div>
 <div id="callout"></div>
 
 <button id="mute" type="button" aria-label="Geluid aan of uit">
@@ -275,12 +380,14 @@
     <h1>STAPEL<br>GEK</h1>
   </div>
   <div class="card">
+    <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
+    <div class="goals-box"><p class="box-title">DOELEN</p><ol id="menu-goals" class="goals"></ol></div>
     <p class="best" id="menu-best"></p>
     <div class="modes">
       <button id="start-easy" class="btn btn-start" type="button">MAKKELIJK</button>
       <button id="start-hard" class="btn btn-hard" type="button">MOEILIJK</button>
     </div>
-    <p class="mode-hint"><span>Tempo blijft rustig</span><span>Steeds sneller</span></p>
+    <p class="mode-hint"><span>Tempo blijft gelijk</span><span>Steeds sneller</span></p>
     <div class="links">
       <button id="menu-scores" class="btn btn-small" type="button">Scorebord</button>
       <button id="menu-help" class="btn btn-small" type="button">Uitleg van Joop</button>
@@ -296,7 +403,14 @@
     <p class="over-unit">BLOKKEN HOOG</p>
     <p class="new-best" id="new-best">Nieuw record!</p>
     <p class="best" id="over-best"></p>
+    <p class="over-life" id="over-life"></p>
+    <p class="loot" id="loot"></p>
+    <div class="video-row">
+      <button id="continue" class="btn btn-video" type="button">📺 Ga verder</button>
+      <button id="double" class="btn btn-video" type="button">📺 Buit ×2</button>
+    </div>
     <button id="again" class="btn btn-start" type="button">NOG EEN KEER</button>
+    <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span></div>
     <div class="links">
       <button id="over-scores" class="btn btn-small" type="button">Scorebord</button>
       <button id="to-menu" class="btn btn-small" type="button">Menu</button>
@@ -313,6 +427,40 @@
     <button id="scores-back" class="btn btn-start" type="button">TERUG</button>
   </div>
 </section>
+
+<section id="loadout" class="screen">
+  <div class="card">
+    <p class="board-title">Gereedschapskist</p>
+    <p class="board-best" id="loadout-count"></p>
+    <div class="kits" id="loadout-grid"></div>
+    <button id="loadout-go" class="btn btn-start" type="button">START</button>
+    <div class="links">
+      <button id="loadout-none" class="btn btn-small" type="button">Zonder gereedschap</button>
+      <button id="loadout-back" class="btn btn-small" type="button">Terug</button>
+    </div>
+  </div>
+</section>
+
+<section id="nolives" class="screen">
+  <div class="card">
+    <p class="board-title">Geen levens meer</p>
+    <p class="lives-hearts big"></p>
+    <p class="board-best" id="nolives-wait"></p>
+    <button id="nolives-video" class="btn btn-video life-video" type="button">📺 Filmpje kijken: +1 leven</button>
+    <button id="nolives-back" class="btn btn-small" type="button">Terug</button>
+  </div>
+</section>
+
+<div id="ad" role="dialog" aria-modal="true" aria-label="Filmpje">
+  <div class="ad-box">
+    <p class="ad-tag">TESTFILMPJE</p>
+    <p class="ad-title">Hier komt straks een reclamefilmpje</p>
+    <p id="ad-reason"></p>
+    <div class="ad-track"><div id="ad-bar"></div></div>
+    <p class="ad-count">Nog <span id="ad-count">5</span> seconden</p>
+    <button id="ad-skip" class="btn btn-small" type="button">Sluiten zonder beloning</button>
+  </div>
+</div>
 
 <div id="joop" class="hidden">
   <div class="balloon" id="balloon" role="status"></div>

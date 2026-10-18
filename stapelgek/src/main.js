@@ -1,8 +1,14 @@
 // Stapelgek: stop the floating block above the tower; whatever sticks out is cut off.
 import {
-  AdditiveBlending, BoxGeometry, BufferAttribute, Color, DoubleSide, EdgesGeometry, Group, LineBasicMaterial,
-  LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RingGeometry, Scene, WebGLRenderer,
+  AdditiveBlending, BoxGeometry, BufferAttribute, CanvasTexture, Color, DoubleSide, EdgesGeometry, Group,
+  LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RepeatWrapping,
+  RingGeometry, Scene, SRGBColorSpace, WebGLRenderer,
 } from 'three';
+import { store } from './store.js';
+import {
+  ITEMS, ITEM_IDS, LOADOUT_MAX, MAX_LIVES, addItem, goals, inventory, itemCount, lives, takeItem, untilTomorrow,
+} from './progress.js';
+import { showRewardedAd } from './ads.js';
 
 const BASE = 3;          // footprint of the first block
 const H = 0.7;           // height of one layer
@@ -15,15 +21,6 @@ const ISO_UP = 2 / Math.sqrt(6); // screen height of one world unit straight up
 const CUT_RED = new Color(0xff1744);
 
 const $ = (id) => document.getElementById(id);
-
-const store = {
-  get(key, fallback) {
-    try { const v = localStorage.getItem(key); return v === null ? fallback : v; } catch (e) { return fallback; }
-  },
-  set(key, value) {
-    try { localStorage.setItem(key, value); } catch (e) { /* private mode: nothing to keep */ }
-  },
-};
 
 // ---------- Scene ----------
 
@@ -139,6 +136,14 @@ const sound = {
     tone(f * 2, 0.25, 'sine', 0.08, 0, 0.03);
   },
   over() { tone(320, 0.7, 'sawtooth', 0.12, 60); },
+  tool(id) {
+    if (id === 'bomb' || id === 'dynamite') {
+      tone(140, 0.7, 'sawtooth', 0.25, 30);
+      tone(70, 0.9, 'sine', 0.5, 25);
+      return;
+    }
+    [0, 4, 7, 12].forEach((s, i) => tone(660 * Math.pow(2, s / 12), 0.18, 'sine', 0.18, 0, i * 0.06));
+  },
 };
 
 function buzz(ms) {
@@ -310,19 +315,85 @@ document.addEventListener('visibilitychange', () => {
 });
 if (location.search.includes('debug')) window.stapelgekMusic = { playStep, STEPS, music };
 
+// ---------- Special blocks: diamond and gold ----------
+
+function canvasTexture(draw) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  draw(c.getContext('2d'));
+  const tex = new CanvasTexture(c);
+  tex.colorSpace = SRGBColorSpace;
+  tex.wrapS = tex.wrapT = RepeatWrapping;
+  return tex;
+}
+
+// Facets in icy blues with a few white glints.
+const diamondTexture = canvasTexture((g) => {
+  g.fillStyle = '#c9f6ff';
+  g.fillRect(0, 0, 128, 128);
+  for (let y = 0; y < 4; y++) {
+    for (let x = 0; x < 4; x++) {
+      for (let k = 0; k < 2; k++) {
+        g.fillStyle = `hsl(${188 + Math.random() * 24}, 95%, ${70 + Math.random() * 26}%)`;
+        g.beginPath();
+        const px = x * 32, py = y * 32;
+        if (k === 0) { g.moveTo(px, py); g.lineTo(px + 32, py); g.lineTo(px, py + 32); } else { g.moveTo(px + 32, py); g.lineTo(px + 32, py + 32); g.lineTo(px, py + 32); }
+        g.fill();
+      }
+    }
+  }
+  g.fillStyle = '#ffffff';
+  for (const [x, y, r] of [[24, 30, 7], [92, 20, 5], [70, 84, 8], [18, 100, 4], [110, 104, 5]]) {
+    g.beginPath();
+    g.moveTo(x, y - r * 2); g.lineTo(x + r / 2, y - r / 2); g.lineTo(x + r * 2, y); g.lineTo(x + r / 2, y + r / 2);
+    g.lineTo(x, y + r * 2); g.lineTo(x - r / 2, y + r / 2); g.lineTo(x - r * 2, y); g.lineTo(x - r / 2, y - r / 2);
+    g.fill();
+  }
+});
+
+// Polished gold with diagonal shine.
+const goldTexture = canvasTexture((g) => {
+  const grad = g.createLinearGradient(0, 0, 128, 128);
+  grad.addColorStop(0, '#fff1a8');
+  grad.addColorStop(0.35, '#ffc928');
+  grad.addColorStop(0.7, '#f0a500');
+  grad.addColorStop(1, '#ffe27a');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 128, 128);
+  g.fillStyle = 'rgba(255, 255, 255, 0.45)';
+  for (const off of [-40, 30, 70]) {
+    g.beginPath();
+    g.moveTo(off, 128); g.lineTo(off + 18, 128); g.lineTo(off + 146, 0); g.lineTo(off + 128, 0);
+    g.fill();
+  }
+});
+
+function specialMaterial(kind) {
+  return new MeshBasicMaterial({ map: kind === 'diamond' ? diamondTexture : goldTexture, vertexColors: true });
+}
+
 // ---------- Game state ----------
+
+const START_SPEED = 4.2;
+const SPEED_STEP = 0.12;
+const MAX_SPEED = 10;
+const MAGNET_PULL = 0.45; // with the magnet, misses up to this much still snap into place
+const PUMP_GROW = 0.7;
+const SLOW_BLOCKS = 5;
+const MAGNET_BLOCKS = 3;
+const LIFE_HEIGHT = 40;   // reaching this height in a game earns a life
 
 const game = {
   state: 'menu',      // menu | play | over
-  mode: 'easy',       // easy: the speed only goes up after a perfect block | hard: faster with every block
+  mode: 'easy',       // easy: always the same speed | hard: faster with every block
   speed: 0,
   level: 0,           // layers stacked on the first block
   top: null,          // { x, z, sx, sz } of the highest layer
+  history: [],        // every layer from the first block up: { x, z, sx, sz, mesh }
   moving: null,       // the block floating in
   combo: 0,
   startedAt: 0,
-  blocks: [],
-  pieces: [],         // cut-off parts tumbling down
+  pieces: [],         // cut-off and blown-up parts tumbling down
   effects: [],        // flashes, rings and sparks
 };
 
@@ -331,50 +402,53 @@ const best = {
   easy: parseInt(store.get('stapelgek-best-easy', '0'), 10) || 0,
   hard: parseInt(store.get('stapelgek-best-hard', store.get('stapelgek-best', '0')), 10) || 0,
 };
-let scores = [];
-try { scores = JSON.parse(store.get('stapelgek-scores', '[]')) || []; } catch (e) { scores = []; }
+let scores = store.json('stapelgek-scores', []);
 const MODE_NAME = { easy: 'Makkelijk', hard: 'Moeilijk' };
 const pedestal = makeBlock(0, 0, -PEDESTAL / 2, 0, BASE, PEDESTAL, BASE);
 
+const height = () => game.level + 1;
+
 function reset() {
-  for (const mesh of [...game.blocks, ...game.pieces.map((p) => p.mesh), ...game.effects.map((e) => e.mesh)]) {
-    world.remove(mesh);
-  }
+  for (const layer of game.history.slice(1)) world.remove(layer.mesh);
+  for (const mesh of [...game.pieces.map((p) => p.mesh), ...game.effects.map((e) => e.mesh)]) world.remove(mesh);
   if (game.moving) world.remove(game.moving.mesh);
   hue0 = Math.random() * 360;
   pedestal.material.color.copy(colorAt(0));
   paintSky(0);
-  Object.assign(game, { level: 0, top: { x: 0, z: 0, sx: BASE, sz: BASE }, moving: null, combo: 0, warnedNarrow: false, blocks: [], pieces: [], effects: [] });
+  const top = { x: 0, z: 0, sx: BASE, sz: BASE };
+  Object.assign(game, {
+    level: 0, top, history: [{ ...top, mesh: pedestal }], moving: null, combo: 0, warnedNarrow: false,
+    pieces: [], effects: [],
+    bar: {}, loot: {}, slowLeft: 0, magnetLeft: 0, awarded: new Set(), golden: false,
+    stats: { height: 1, maxCombo: 0, perfects: 0, mode: game.mode },
+    recorded: false, continued: false, doubled: false, lifeForHeight: false, lifeForRecord: false,
+  });
   view.worldY = 0;
   view.zoom = 1;
   setScore();
 }
 
-function spawn(speed) {
+function spawn(speed, kind = 'normal') {
   const axis = Math.random() < 0.5 ? 'x' : 'z';
   const side = Math.random() < 0.5 ? -1 : 1;
   const { x, z, sx, sz } = game.top;
-  const level = game.level + 1;
-  const mesh = makeBlock(level, x, 0, z, sx, H, sz);
-  game.moving = { mesh, axis, offset: side * TRAVEL, dir: -side, speed, age: 0 };
+  const mesh = makeBlock(game.level + 1, x, 0, z, sx, H, sz);
+  if (kind === 'golden') mesh.material = specialMaterial('golden');
+  game.moving = { mesh, kind, axis, offset: kind === 'golden' ? 0 : side * TRAVEL, dir: -side, speed, age: 0, sx, sz };
   placeMoving();
 }
 
-const START_SPEED = 4.2;
-const SPEED_STEP = 0.12;
-const MAX_SPEED = 10;
-
 function placeMoving() {
   const m = game.moving;
-  const lift = 1.6 * Math.pow(1 - Math.min(m.age / 0.4, 1), 3);
+  // A golden block drops straight down; the others float in from the side.
+  const lift = m.kind === 'golden' ? 9 * Math.pow(1 - Math.min(m.age / 0.5, 1), 2) : 1.6 * Math.pow(1 - Math.min(m.age / 0.4, 1), 3);
   m.mesh.position.y = (game.level + 1) * H - H / 2 + lift;
-  if (m.axis === 'x') m.mesh.position.x = game.top.x + m.offset;
-  else m.mesh.position.z = game.top.z + m.offset;
+  if (m.axis === 'x') { m.mesh.position.x = game.top.x + m.offset; m.mesh.position.z = game.top.z; } else { m.mesh.position.z = game.top.z + m.offset; m.mesh.position.x = game.top.x; }
 }
 
 function setScore(bump) {
   const el = $('score');
-  el.textContent = game.level + 1;
+  el.textContent = height();
   if (bump) {
     el.classList.remove('bump');
     void el.offsetWidth;
@@ -393,27 +467,46 @@ function callout(text, kind = '') {
 // ---------- Placing a block ----------
 
 function drop() {
-  if (game.state !== 'play' || !game.moving || performance.now() - game.startedAt < 150) return;
+  if (game.state !== 'play' || !game.moving || game.moving.kind === 'golden' || performance.now() - game.startedAt < 150) return;
   const m = game.moving;
-  game.moving = null;
   const top = game.top;
   const onX = m.axis === 'x';
   const centre = onX ? top.x : top.z;
   const size = onX ? top.sx : top.sz;
+  const ownSize = onX ? m.sx : m.sz;
   const delta = m.offset;
   const y = (game.level + 1) * H - H / 2;
+  game.moving = null;
   m.mesh.position.y = y;
 
-  if (Math.abs(delta) >= size) {
-    // Missed completely: the whole block falls.
+  if (Math.abs(delta) >= (size + ownSize) / 2) {
+    // Missed completely: the whole block falls, unless a lifebuoy saves the game.
     addPiece(m.mesh, m.axis, Math.sign(delta) || 1);
+    if (useFromBar('buoy')) {
+      callout('GERED!');
+      sound.tool();
+      joop.chat('Gered door de reddingsboei! Nog een kans.', { cheer: true, force: true });
+      spawn(game.speed);
+      return;
+    }
     gameOver();
+    return;
+  }
+
+  if (m.kind === 'diamond') {
+    // A diamond is never cut: it lands centred on the tower at its own size.
+    game.combo += 1;
+    sound.perfect(game.combo);
+    callout('DIAMANT!');
+    buzz(30);
+    settle(m, { x: top.x, z: top.z, sx: m.sx, sz: m.sz }, true);
     return;
   }
 
   let newCentre = centre;
   let newSize = size;
-  if (Math.abs(delta) <= PERFECT) {
+  const pull = game.magnetLeft > 0 ? MAGNET_PULL : PERFECT;
+  if (Math.abs(delta) <= pull) {
     game.combo += 1;
     if (game.combo >= 3) newSize = Math.min(BASE, size + GROW);
     sound.perfect(game.combo);
@@ -448,30 +541,89 @@ function drop() {
   const placed = onX
     ? { x: newCentre, z: top.z, sx: newSize, sz: top.sz }
     : { x: top.x, z: newCentre, sx: top.sx, sz: newSize };
+  settle(m, placed, game.combo > 0);
+}
+
+// The golden block lands by itself: perfect, never cut.
+function landGolden() {
+  const m = game.moving;
+  game.moving = null;
+  game.combo += 1;
+  sound.perfect(game.combo);
+  callout('GOUD!');
+  buzz(30);
+  settle(m, { ...game.top }, true);
+}
+
+function settle(m, placed, perfect) {
+  const y = (game.level + 1) * H - H / 2;
   m.mesh.position.set(placed.x, y, placed.z);
   m.mesh.scale.set(placed.sx, H, placed.sz);
-  if (game.combo > 0) addRing(placed, y + H / 2);
+  if (perfect) addRing(placed, y + H / 2);
   else sound.place();
+  if (game.magnetLeft > 0) game.magnetLeft -= 1;
+  if (game.slowLeft > 0) game.slowLeft -= 1;
 
-  game.blocks.push(m.mesh);
-  game.top = placed;
   game.level += 1;
+  game.top = { x: placed.x, z: placed.z, sx: placed.sx, sz: placed.sz };
+  game.history[game.level] = { ...game.top, mesh: m.mesh };
+  game.stats.height = Math.max(game.stats.height, height());
+  game.stats.maxCombo = Math.max(game.stats.maxCombo, game.combo);
+  if (perfect) game.stats.perfects += 1;
+  goals.count('blocks');
   view.worldY = -game.level * H;
   setScore(true);
   paintSky(game.level);
-  // Hard gets faster with every block; easy only after a perfect one, so a miss never speeds things up.
-  if (game.mode === 'hard' || game.combo > 0) game.speed = Math.min(MAX_SPEED, game.speed + SPEED_STEP);
-  spawn(game.speed);
+  // Hard gets faster with every block; easy keeps the same speed all game.
+  if (game.mode === 'hard') game.speed = Math.min(MAX_SPEED, game.speed + SPEED_STEP);
   music.bpm = bpmFor(game.speed);
-  const height = game.level + 1;
-  if (height % 10 === 0 || height === 25 || height === 75) joop.chat(LINES.milestone[height] || `${height} hoog! Ga zo door!`, { cheer: true, force: true });
+
+  const golden = rewardsFor(height());
+  spawn(game.speed, golden ? 'golden' : 'normal');
+  checkGoals();
+  paintEffects();
 }
 
-function addPiece(mesh, axis, side) {
+// Milestones, each once per game: a diamond at 50, 100, 150 ..., a golden block at 75, 125, 175 ...
+function rewardsFor(h) {
+  if (game.awarded.has(h)) return false;
+  game.awarded.add(h);
+  let golden = false;
+  let said = false;
+  if (h >= 50 && h % 50 === 0) {
+    grant('diamond', 1);
+    joop.chat(h === 50 ? '50 hoog! Hier, een diamanten blok. Tik op 💎 als je hem nodig hebt.' : `${h} hoog! Nog een diamant voor jou!`, { cheer: true, force: true });
+    said = true;
+  } else if (h >= 75 && (h - 75) % 50 === 0) {
+    golden = true;
+    joop.chat('Een gouden blok! Die valt vanzelf perfect op zijn plek.', { cheer: true, force: true });
+    said = true;
+  }
+  if (h === LIFE_HEIGHT && !game.lifeForHeight) {
+    game.lifeForHeight = true;
+    lives.add(1);
+    callout('+1 LEVEN ❤️');
+    if (!said) joop.chat(`${LIFE_HEIGHT} hoog! Daar krijg je een extra leven voor.`, { cheer: true, force: true });
+    said = true;
+  }
+  if (!said && (h % 10 === 0 || h === 25)) joop.chat(LINES.milestone[h] || `${h} hoog! Ga zo door!`, { cheer: true, force: true });
+  return golden;
+}
+
+function addPiece(mesh, axis, side, blast = false) {
   const flash = new LineSegments(unitEdges, new LineBasicMaterial({ color: 0xffffff, transparent: true }));
   mesh.add(flash);
   mesh.material.transparent = true;
-  game.pieces.push({ mesh, flash, axis, side, age: 0, vy: 0, base: mesh.material.color.clone() });
+  const piece = { mesh, flash, axis, side, age: 0, vy: 0, base: mesh.material.color.clone() };
+  if (blast) {
+    // Blown up: flies off in a random direction, spinning.
+    const a = Math.random() * Math.PI * 2;
+    const speed = 4 + Math.random() * 6;
+    piece.v = [Math.cos(a) * speed, 6 + Math.random() * 8, Math.sin(a) * speed];
+    piece.spin = [(Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10];
+    piece.age = 0.18;
+  }
+  game.pieces.push(piece);
 }
 
 function addSlice(axis, at, y, other, otherSize) {
@@ -482,12 +634,14 @@ function addSlice(axis, at, y, other, otherSize) {
   mesh.scale.set(otherSize + 0.6, H + 0.6, 1);
   world.add(mesh);
   game.effects.push({ mesh, age: 0, life: 0.35, kind: 'slice', sx: otherSize + 0.6 });
+  sparks(axis === 'x' ? at : other, y, axis === 'x' ? other : at, axis, otherSize, [0xffffff, 0xff3d6e], 12);
+}
 
-  for (let i = 0; i < 12; i++) {
-    const spark = new Mesh(unitBox, new MeshBasicMaterial({ color: i % 2 ? 0xffffff : 0xff3d6e, transparent: true }));
-    const along = (Math.random() - 0.5) * otherSize;
-    if (axis === 'x') spark.position.set(at, y + (Math.random() - 0.5) * H, other + along);
-    else spark.position.set(other + along, y + (Math.random() - 0.5) * H, at);
+function sparks(x, y, z, axis, spread, colors, count) {
+  for (let i = 0; i < count; i++) {
+    const spark = new Mesh(unitBox, new MeshBasicMaterial({ color: colors[i % colors.length], transparent: true }));
+    const along = (Math.random() - 0.5) * spread;
+    spark.position.set(x + (axis === 'z' ? along : 0), y + (Math.random() - 0.5) * H, z + (axis === 'x' ? along : 0));
     spark.scale.setScalar(0.08 + Math.random() * 0.08);
     world.add(spark);
     game.effects.push({
@@ -497,12 +651,154 @@ function addSlice(axis, at, y, other, otherSize) {
   }
 }
 
-function addRing(placed, y) {
-  const mesh = new Mesh(squareRing, new MeshBasicMaterial({ color: 0xffffff, transparent: true, depthWrite: false }));
+function addRing(placed, y, color = 0xffffff) {
+  const mesh = new Mesh(squareRing, new MeshBasicMaterial({ color, transparent: true, depthWrite: false }));
   mesh.position.set(placed.x, y + 0.01, placed.z);
   mesh.scale.set(placed.sx, 1, placed.sz);
   world.add(mesh);
   game.effects.push({ mesh, age: 0, life: 0.6, kind: 'ring', sx: placed.sx, sz: placed.sz });
+}
+
+// ---------- Tools ----------
+
+// Items the player can use this game: the ones packed before the start plus the ones won while playing.
+function grant(id, n, why) {
+  addItem(id, n);
+  game.bar[id] = (game.bar[id] || 0) + n;
+  game.loot[id] = (game.loot[id] || 0) + n;
+  if (why) callout(`${ITEMS[id].icon} ${why}`);
+  paintTools();
+}
+
+function useFromBar(id) {
+  if (!(game.bar[id] > 0) || !takeItem(id)) return false;
+  game.bar[id] -= 1;
+  goals.count('tools');
+  paintTools();
+  return true;
+}
+
+function useTool(id) {
+  if (game.state !== 'play' || !game.moving || game.moving.kind === 'golden' || !(game.bar[id] > 0)) return;
+  const m = game.moving;
+  if (id === 'diamond') {
+    if (m.kind === 'diamond') return;
+    // As big as the tower was before its last cut.
+    const area = (l) => l.sx * l.sz;
+    let size = null;
+    for (let i = game.level - 1; i >= 0; i--) {
+      if (area(game.history[i]) > area(game.top) + 0.01) { size = game.history[i]; break; }
+    }
+    m.sx = size ? size.sx : Math.min(BASE, game.top.sx + 0.5);
+    m.sz = size ? size.sz : Math.min(BASE, game.top.sz + 0.5);
+    m.kind = 'diamond';
+    m.mesh.material = specialMaterial('diamond');
+    m.grow = 0;
+    sparks(m.mesh.position.x, m.mesh.position.y, m.mesh.position.z, 'x', 1.5, [0xffffff, 0x7fe7ff], 14);
+    joop.chat('Een diamant! Die snijd ik echt niet door.', { force: true });
+  } else if (id === 'pump') {
+    if (game.level === 0 || (game.top.sx >= BASE && game.top.sz >= BASE)) { joop.chat('Je toren is al op zijn breedst!', { force: true }); return; }
+    const layer = game.history[game.level];
+    layer.sx = game.top.sx = Math.min(BASE, game.top.sx + PUMP_GROW);
+    layer.sz = game.top.sz = Math.min(BASE, game.top.sz + PUMP_GROW);
+    layer.mesh.scale.set(layer.sx, H, layer.sz);
+    if (m.kind === 'normal') { m.sx = layer.sx; m.sz = layer.sz; m.mesh.scale.set(m.sx, H, m.sz); }
+    addRing(game.top, game.level * H, 0xffe14d);
+    joop.chat('Pffff... opgeblazen! Weer lekker breed.', { force: true });
+  } else if (id === 'slow') {
+    game.slowLeft += SLOW_BLOCKS;
+    joop.chat('Slakkengang! Rustig aan nu.', { force: true });
+  } else if (id === 'magnet') {
+    game.magnetLeft += MAGNET_BLOCKS;
+    joop.chat('Magneet aan! Dichtbij is goed genoeg.', { force: true });
+  } else if (id === 'bomb' || id === 'dynamite') {
+    if (game.level === 0) { joop.chat('Er valt nog niks op te blazen!', { force: true }); return; }
+    blast(id === 'bomb' ? 5 : 10);
+  } else {
+    return;
+  }
+  useFromBar(id);
+  sound.tool(id);
+  checkGoals();
+  paintEffects();
+}
+
+// Blow up the top layers: the tower gets lower, but the block that is left on top is wider again.
+function blast(layers) {
+  const n = Math.min(layers, game.level);
+  const m = game.moving;
+  game.moving = null;
+  addPiece(m.mesh, m.axis, 1, true);
+  for (let i = game.level; i > game.level - n; i--) addPiece(game.history[i].mesh, 'x', 1, true);
+  game.level -= n;
+  game.history.length = game.level + 1;
+  const { x, z, sx, sz } = game.history[game.level];
+  game.top = { x, z, sx, sz };
+  game.combo = 0;
+  view.worldY = -game.level * H;
+  setScore(true);
+  paintSky(game.level);
+  callout(n >= 10 ? 'KABOEM!' : 'BOEM!', 'cut');
+  buzz([80, 30, 160]);
+  joop.chat(n >= 10 ? 'KABOEM! Tien lagen de lucht in!' : 'Boem! Weer lekker veel ruimte.', { force: true });
+  spawn(game.speed);
+}
+
+function paintTools() {
+  const bar = $('tools');
+  bar.innerHTML = '';
+  for (const id of ITEM_IDS) {
+    const n = game.bar[id] || 0;
+    if (!n) continue;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = `tool${id === 'buoy' ? ' passive' : ''}`;
+    b.setAttribute('aria-label', `${ITEMS[id].name} (${n})`);
+    b.innerHTML = `<span class="icon">${ITEMS[id].icon}</span><span class="n">${n}</span>`;
+    b.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (id === 'buoy') joop.chat('De reddingsboei werkt vanzelf als je helemaal mist.', { force: true });
+      else useTool(id);
+    });
+    bar.append(b);
+  }
+}
+
+function paintEffects() {
+  const parts = [];
+  if (game.slowLeft > 0) parts.push(`🐌 ${game.slowLeft}`);
+  if (game.magnetLeft > 0) parts.push(`🧲 ${game.magnetLeft}`);
+  $('effects').textContent = parts.join('   ');
+}
+
+// ---------- Goals ----------
+
+function checkGoals() {
+  const done = goals.collect(game.state === 'play' ? game.stats : null);
+  for (const g of done) {
+    const item = ITEMS[g.reward];
+    if (game.state === 'play') grant(g.reward, g.amount, 'DOEL GEHAALD!');
+    else addItem(g.reward, g.amount);
+    joop.chat(`Doel gehaald! Je krijgt ${g.amount > 1 ? `${g.amount}× ` : 'een '}${item.name.toLowerCase()} ${item.icon}`, { cheer: true, force: true });
+  }
+  paintGoals();
+}
+
+function paintGoals() {
+  const stats = game.state === 'play' || game.state === 'over' ? game.stats : null;
+  for (const el of [$('goals-hud'), $('menu-goals')]) {
+    el.innerHTML = '';
+    for (const g of goals.list) {
+      const li = document.createElement('li');
+      const have = goals.progress(g, stats);
+      const reward = ITEMS[g.reward].icon + (g.amount > 1 ? `×${g.amount}` : '');
+      li.innerHTML = `<span class="g-text"></span><span class="g-have">${have}/${g.n}</span><span class="g-reward">${reward}</span>`;
+      li.querySelector('.g-text').textContent = goals.text(g);
+      li.style.setProperty('--done', `${(have / g.n) * 100}%`);
+      el.append(li);
+    }
+  }
 }
 
 // ---------- Joop ----------
@@ -515,7 +811,14 @@ const LINES = {
     'Zo komt er een blok aangezweefd. Druk op STOP als hij precies boven je toren hangt.',
     'Steekt er een stukje uit? Snip snap, dat snij ik er gewoon af!',
     'Precies goed is PERFECT. Drie keer op rij? Dan groeit je blok weer een beetje.',
+    'Haal je doelen en verdien gereedschap: een bom, een pomp, een slakje en nog veel meer.',
+    'Je hebt 5 levens per dag. Een nieuw record of 40 hoog levert een extra leven op.',
     'Kies Makkelijk of Moeilijk. Bij Moeilijk gaat het steeds sneller. Succes!',
+  ],
+  news: [
+    'Nieuw! Bovenin zie je nu drie doelen. Haal ze en je krijgt gereedschap.',
+    'Bij 50 hoog krijg je een diamant, en bij 75 valt er een gouden blok.',
+    'Let op: je hebt 5 levens per dag. Morgen krijg je er weer 5.',
   ],
   hello: [
     'Zin in een potje stapelen?',
@@ -523,6 +826,7 @@ const LINES = {
     'Ik heb mijn stropdas al rechtgetrokken. Kom maar op!',
     'Tik op mij als je de uitleg nog een keer wilt horen.',
     'Vijftig jaar getrouwd, maar stapelen blijft spannend!',
+    'Kijk eens naar je doelen. Daar valt gereedschap te verdienen!',
   ],
   start: {
     easy: ['Rustig aan, we hebben alle tijd!', 'Makkelijk is ook heel knap hoor!', 'Lekker in je eigen tempo.'],
@@ -535,8 +839,6 @@ const LINES = {
   milestone: {
     10: 'Tien hoog! Mooi begin!',
     25: '25 hoog! Een zilveren toren!',
-    50: '50 hoog! Een gouden toren, net als ons huwelijk!',
-    75: '75! Ik krijg er hoogtevrees van!',
     100: '100! Ik ben sprakeloos. Bijna.',
   },
 };
@@ -556,16 +858,18 @@ const joop = {
   timer: 0,
   quietUntil: 0,
 
-  // Show Joop next to the open card (menu, game over) or above the STOP button while playing.
+  // Show Joop next to the open card or above the STOP button while playing.
   place() {
-    const anchor = game.state === 'play' ? $('stop') : document.querySelector('.screen.show .card');
-    const size = game.state === 'play' ? 86 : game.state === 'over' ? 104 : 124;
+    const playing = game.state === 'play' && !document.querySelector('.screen.show');
+    const anchor = playing ? $('stop') : document.querySelector('.screen.show .card');
+    const small = window.innerHeight < 720;
+    const size = playing ? 86 : game.state === 'over' ? 104 : small ? 100 : 124;
     this.el.style.setProperty('--joop-size', `${size}px`);
     if (anchor) {
       const top = anchor.getBoundingClientRect().top;
       this.el.style.bottom = `${window.innerHeight - top + (game.state === 'over' ? -10 : 8)}px`;
     }
-    this.el.classList.toggle('no-tap', game.state === 'play');
+    this.el.classList.toggle('no-tap', playing);
   },
 
   show(visible) {
@@ -618,7 +922,7 @@ const joop = {
     if (!force && (now < this.quietUntil || Math.random() > chance)) return;
     this.quietUntil = now + 4500;
     this.el.classList.remove('hidden');
-    this.say([text], { cheer, hold: 1900 });
+    this.say([text], { cheer, hold: 2200 });
   },
 };
 
@@ -634,9 +938,10 @@ function showScreen(id) {
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id);
   $('hud').classList.toggle('show', id === null);
   $('stop').classList.toggle('show', id === null);
+  $('tools').classList.toggle('show', id === null);
   joop.place();
   setTimeout(() => joop.place(), 400); // again once the card has popped in
-  joop.show(id === 'menu' || id === 'over');
+  joop.show(id === 'menu' || id === 'over' || id === 'loadout' || id === 'nolives');
 }
 
 function bestLine() {
@@ -644,26 +949,77 @@ function bestLine() {
   return `Record: Makkelijk ${best.easy} · Moeilijk ${best.hard}`;
 }
 
+function paintLives() {
+  const n = lives.count;
+  const hearts = n <= MAX_LIVES ? '❤️'.repeat(n) + '🤍'.repeat(MAX_LIVES - n) : `❤️ × ${n}`;
+  for (const el of document.querySelectorAll('.lives-hearts')) el.textContent = hearts;
+  for (const el of document.querySelectorAll('.life-video')) el.hidden = n >= MAX_LIVES || lives.videosLeft <= 0;
+}
+
 function menu() {
   reset();
   game.state = 'menu';
   $('menu-best').textContent = bestLine();
+  paintLives();
+  paintGoals();
   spawn(1.6);
   showScreen('menu');
   music.start(108);
   if (store.get('stapelgek-intro', '0') !== '1') {
     store.set('stapelgek-intro', '1');
+    store.set('stapelgek-news-2', '1');
     joop.say(LINES.intro);
+  } else if (store.get('stapelgek-news-2', '0') !== '1') {
+    store.set('stapelgek-news-2', '1');
+    joop.say(LINES.news);
   } else {
     joop.say([pick(LINES.hello)]);
   }
 }
 
-function start(mode = game.mode) {
-  audio();
+// Choose a mode: check the lives, then pack tools if there are any.
+let chosen = {};
+function prepare(mode) {
   game.mode = mode;
   store.set('stapelgek-mode', mode);
+  if (lives.count <= 0) { showNoLives(); return; }
+  if (!itemCount()) { begin({}); return; }
+  chosen = {};
+  paintLoadout();
+  showScreen('loadout');
+  joop.say([`Kies maximaal ${LOADOUT_MAX} stuks gereedschap voor dit potje. Wat je niet gebruikt, houd je.`]);
+}
+
+function paintLoadout() {
+  const grid = $('loadout-grid');
+  grid.innerHTML = '';
+  const total = Object.values(chosen).reduce((a, b) => a + b, 0);
+  for (const id of ITEM_IDS) {
+    const have = inventory[id];
+    const sel = chosen[id] || 0;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = `kit${sel ? ' picked' : ''}`;
+    b.disabled = !have;
+    b.innerHTML = `<span class="icon">${ITEMS[id].icon}</span><span class="kit-name"></span><span class="kit-info"></span><span class="kit-n">${sel ? `${sel} mee · ` : ''}${have} in je kist</span>`;
+    b.querySelector('.kit-name').textContent = ITEMS[id].name;
+    b.querySelector('.kit-info').textContent = ITEMS[id].info;
+    b.addEventListener('click', () => {
+      if (sel < have && total < LOADOUT_MAX) chosen[id] = sel + 1;
+      else if (sel) chosen[id] = 0; // tapping a full pick empties it again
+      paintLoadout();
+    });
+    grid.append(b);
+  }
+  $('loadout-count').textContent = `${total} van ${LOADOUT_MAX} gekozen`;
+}
+
+function begin(pack) {
+  if (!lives.use()) { showNoLives(); return; }
+  audio();
   if (game.state === 'over') reset();
+  game.stats.mode = game.mode;
+  game.bar = { ...pack };
   game.speed = START_SPEED;
   music.start(bpmFor(game.speed));
   if (!game.moving) spawn(game.speed);
@@ -671,11 +1027,32 @@ function start(mode = game.mode) {
   game.state = 'play';
   game.startedAt = performance.now();
   const chip = $('mode-chip');
-  chip.textContent = MODE_NAME[mode].toUpperCase();
-  chip.classList.toggle('hard', mode === 'hard');
+  chip.textContent = MODE_NAME[game.mode].toUpperCase();
+  chip.classList.toggle('hard', game.mode === 'hard');
+  goals.count('games');
   showScreen(null);
+  paintTools();
+  paintEffects();
+  checkGoals();
   joop.quietUntil = 0;
-  joop.chat(pick(LINES.start[mode]));
+  joop.chat(pick(LINES.start[game.mode]));
+}
+
+function showNoLives() {
+  paintLives();
+  $('nolives-wait').textContent = `Over ${untilTomorrow()} krijg je weer ${MAX_LIVES} levens.`;
+  showScreen('nolives');
+  joop.say([lives.videosLeft > 0 ? 'Op is op! Kijk een filmpje voor een extra leven, of kom morgen terug.' : 'Op is op! Morgen mag je weer.']);
+}
+
+async function videoForLife(after) {
+  if (lives.videosLeft <= 0) return;
+  const ok = await showRewardedAd('Na dit filmpje krijg je 1 leven extra.');
+  if (!ok) return;
+  lives.add(1, true);
+  paintLives();
+  joop.say(['Een extra leven! Veel plezier.'], { cheer: true });
+  if (after) after();
 }
 
 function gameOver() {
@@ -684,18 +1061,32 @@ function gameOver() {
   music.stop(0.3);
   buzz([60, 40, 120]);
   joop.hush();
-  const score = game.level + 1;
+  const score = game.stats.height;
   const isBest = score > best[game.mode];
   if (isBest) {
     best[game.mode] = score;
     store.set(`stapelgek-best-${game.mode}`, String(score));
   }
+  // A game that went on after a video keeps one line on the scoreboard.
+  if (game.recorded) scores.shift();
   scores.unshift({ s: score, m: game.mode, t: Date.now() });
   scores = scores.slice(0, 10);
-  store.set('stapelgek-scores', JSON.stringify(scores));
+  store.setJson('stapelgek-scores', scores);
+  game.recorded = true;
+  let lifeLine = '';
+  if (isBest && score > 2 && !game.lifeForRecord) {
+    game.lifeForRecord = true;
+    lives.add(1);
+    lifeLine = 'Nieuw record: +1 leven ❤️';
+  }
+  checkGoals();
   $('over-score').textContent = score;
   $('new-best').classList.toggle('show', isBest && score > 1);
   $('over-best').textContent = `Record ${MODE_NAME[game.mode]}: ${best[game.mode]}`;
+  $('over-life').textContent = lifeLine;
+  paintLoot();
+  paintLives();
+  $('continue').hidden = game.continued;
   showWholeTower();
   setTimeout(() => {
     if (game.state !== 'over') return;
@@ -704,6 +1095,38 @@ function gameOver() {
     const line = overLine(score, isBest);
     joop.say([line.text], { cheer: line.cheer });
   }, 700);
+}
+
+function paintLoot() {
+  const ids = ITEM_IDS.filter((id) => game.loot[id]);
+  $('loot').textContent = ids.length ? `Buit: ${ids.map((id) => `${ITEMS[id].icon}×${game.loot[id]}`).join('  ')}` : '';
+  $('double').hidden = !ids.length || game.doubled;
+}
+
+// Watch a video to double what this game earned.
+async function doubleLoot() {
+  const ok = await showRewardedAd('Na dit filmpje krijg je je buit dubbel.');
+  if (!ok) return;
+  game.doubled = true;
+  for (const id of ITEM_IDS) if (game.loot[id]) { addItem(id, game.loot[id]); game.loot[id] *= 2; }
+  paintLoot();
+  joop.say(['Dubbel zoveel! Je gereedschapskist puilt uit.'], { cheer: true });
+}
+
+// Watch a video to carry on with the same tower, once per game.
+async function continueGame() {
+  const ok = await showRewardedAd('Na dit filmpje mag je verder met je toren.');
+  if (!ok) return;
+  game.continued = true;
+  game.state = 'play';
+  game.startedAt = performance.now();
+  view.zoom = 1;
+  view.worldY = -game.level * H;
+  showScreen(null);
+  music.start(bpmFor(game.speed));
+  spawn(game.speed);
+  paintTools();
+  joop.chat('Daar gaan we weer! Nu goed opletten.', { force: true });
 }
 
 let scoresFrom = 'menu';
@@ -734,14 +1157,22 @@ function showScores(from) {
 game.mode = store.get('stapelgek-mode', 'easy') === 'hard' ? 'hard' : 'easy';
 // The download link is for the website; inside the app (loaded from file://) it has no use.
 if (location.protocol === 'file:') $('get-app').remove();
-$('start-easy').addEventListener('click', () => start('easy'));
-$('start-hard').addEventListener('click', () => start('hard'));
-$('again').addEventListener('click', () => start());
+$('start-easy').addEventListener('click', () => prepare('easy'));
+$('start-hard').addEventListener('click', () => prepare('hard'));
+$('again').addEventListener('click', () => prepare(game.mode));
 $('to-menu').addEventListener('click', menu);
 $('menu-help').addEventListener('click', () => joop.say(LINES.intro));
 $('menu-scores').addEventListener('click', () => showScores('menu'));
 $('over-scores').addEventListener('click', () => showScores('over'));
 $('scores-back').addEventListener('click', () => showScreen(scoresFrom));
+$('loadout-go').addEventListener('click', () => begin(chosen));
+$('loadout-none').addEventListener('click', () => begin({}));
+$('loadout-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
+$('nolives-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
+$('nolives-video').addEventListener('click', () => videoForLife(() => prepare(game.mode)));
+$('menu-video').addEventListener('click', () => videoForLife());
+$('double').addEventListener('click', doubleLoot);
+$('continue').addEventListener('click', continueGame);
 
 const stopButton = $('stop');
 stopButton.addEventListener('pointerdown', (e) => {
@@ -756,8 +1187,10 @@ window.addEventListener('keydown', (e) => {
   if (e.repeat) return;
   if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowDown') {
     e.preventDefault();
-    if (game.state === 'play') drop();
-    else if (game.state === 'menu' || $('over').classList.contains('show')) start();
+    const open = document.querySelector('.screen.show');
+    if (game.state === 'play' && !open) drop();
+    else if (open && open.id === 'loadout') begin(chosen);
+    else if (open && (open.id === 'menu' || open.id === 'over')) prepare(game.mode);
   }
 });
 
@@ -771,13 +1204,27 @@ function frame(now) {
   const m = game.moving;
   if (m && game.state !== 'over') {
     m.age += dt;
-    m.offset += m.dir * m.speed * dt;
-    if (Math.abs(m.offset) > TRAVEL) {
-      m.offset = Math.sign(m.offset) * TRAVEL;
-      m.dir = -m.dir;
+    if (m.kind === 'golden') {
+      if (m.age >= 0.5 && game.state === 'play') { placeMoving(); landGolden(); }
+    } else {
+      const speed = m.speed * (game.slowLeft > 0 ? 0.5 : 1);
+      m.offset += m.dir * speed * dt;
+      if (Math.abs(m.offset) > TRAVEL) {
+        m.offset = Math.sign(m.offset) * TRAVEL;
+        m.dir = -m.dir;
+      }
     }
-    placeMoving();
+    if (game.moving === m) {
+      // A block turned to diamond grows to its new size.
+      if (m.grow !== undefined && m.grow < 1) {
+        m.grow = Math.min(1, m.grow + dt * 4);
+        const pop = 1 + Math.sin(m.grow * Math.PI) * 0.15;
+        m.mesh.scale.set(m.mesh.scale.x + (m.sx - m.mesh.scale.x) * m.grow, H * pop, m.mesh.scale.z + (m.sz - m.mesh.scale.z) * m.grow);
+      }
+      placeMoving();
+    }
   }
+  diamondTexture.offset.x = (diamondTexture.offset.x + dt * 0.05) % 1; // a slow shimmer on every diamond
 
   for (let i = game.pieces.length - 1; i >= 0; i--) {
     const p = game.pieces[i];
@@ -787,11 +1234,18 @@ function frame(now) {
     if (p.age < 0.08) mat.color.setRGB(1, 1, 1);
     else mat.color.copy(p.base).lerp(CUT_RED, Math.max(0, 1 - (p.age - 0.08) / 1.2));
     p.flash.material.color.setHex(p.age < 0.08 ? 0xffffff : 0xff2a55);
-    if (p.age > 0.18) {
-      const t = dt;
-      p.vy -= 26 * t;
-      p.mesh.position.y += p.vy * t;
-      if (p.axis === 'x') { p.mesh.position.x += p.side * 1.6 * t; p.mesh.rotation.z -= p.side * 2.4 * t; } else { p.mesh.position.z += p.side * 1.6 * t; p.mesh.rotation.x += p.side * 2.4 * t; }
+    if (p.v) {
+      p.v[1] -= 26 * dt;
+      p.mesh.position.x += p.v[0] * dt;
+      p.mesh.position.y += p.v[1] * dt;
+      p.mesh.position.z += p.v[2] * dt;
+      p.mesh.rotation.x += p.spin[0] * dt;
+      p.mesh.rotation.y += p.spin[1] * dt;
+      p.mesh.rotation.z += p.spin[2] * dt;
+    } else if (p.age > 0.18) {
+      p.vy -= 26 * dt;
+      p.mesh.position.y += p.vy * dt;
+      if (p.axis === 'x') { p.mesh.position.x += p.side * 1.6 * dt; p.mesh.rotation.z -= p.side * 2.4 * dt; } else { p.mesh.position.z += p.side * 1.6 * dt; p.mesh.rotation.x += p.side * 2.4 * dt; }
     }
     const fade = Math.max(0, Math.min(1, 1 - (p.age - 1.1) / 0.6));
     mat.opacity = fade;
@@ -838,6 +1292,6 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-if (location.search.includes('debug')) window.stapelgek = game;
+if (location.search.includes('debug')) window.stapelgek = { game, grant, useTool, lives, goals, inventory };
 menu();
 requestAnimationFrame(frame);

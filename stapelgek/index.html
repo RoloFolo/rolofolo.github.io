@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ff5ea8">
+<title>Stapelgek</title>
+<meta name="description" content="Stapelgek: stop het zwevende blok precies boven je toren. Wat uitsteekt wordt eraf gesneden. Hoe hoog kom jij?">
+<link rel="icon" href="icon.png" type="image/png">
+<style>
+  :root {
+    --sky-top: #ffd1e8;
+    --sky-bottom: #8fd3ff;
+    --ink: #1b1440;
+    --white: #ffffff;
+    --yellow: #ffd23f;
+    --yellow-dark: #e0a800;
+    --pink: #ff3d8b;
+    --pink-dark: #c2185b;
+    --green: #2ee59d;
+    --green-dark: #10a86b;
+    --panel: rgba(255, 255, 255, 0.92);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--sky-bottom);
+    font-family: "Arial Rounded MT Bold", "Nunito", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    user-select: none; -webkit-user-select: none; touch-action: none;
+  }
+  #sky {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+    transition: background 0.6s;
+  }
+  canvas { position: fixed; inset: 0; display: block; }
+
+  /* Score */
+  #hud {
+    position: fixed; left: 0; right: 0;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    text-align: center; pointer-events: none;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  #hud.show { opacity: 1; }
+  #score {
+    font-size: 84px; font-weight: 900; line-height: 1;
+    color: var(--white);
+    text-shadow: 0 4px 0 rgba(27, 20, 64, 0.35), 0 0 24px rgba(27, 20, 64, 0.15);
+    display: inline-block;
+  }
+  #score.bump { animation: bump 0.25s ease-out; }
+  @keyframes bump { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  #score-label {
+    font-size: 15px; font-weight: 800; letter-spacing: 0.2em;
+    color: var(--ink); opacity: 0.55;
+  }
+  #callout {
+    position: fixed; left: 0; right: 0; top: 34%;
+    text-align: center; pointer-events: none;
+    font-size: 38px; font-weight: 900; color: var(--white);
+    text-shadow: 0 4px 0 var(--pink-dark);
+    opacity: 0;
+  }
+  #callout.go { animation: callout 0.9s ease-out; }
+  #callout.cut { text-shadow: 0 4px 0 #7a0020; color: #ffe1e1; }
+  @keyframes callout {
+    0% { opacity: 0; transform: scale(0.6); }
+    15% { opacity: 1; transform: scale(1.15); }
+    30% { transform: scale(1); }
+    75% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-30px); }
+  }
+
+  /* Buttons */
+  .btn {
+    display: block; width: 100%;
+    border: 0; border-radius: 999px;
+    font: inherit; font-weight: 900; letter-spacing: 0.08em;
+    cursor: pointer; touch-action: manipulation;
+    transition: transform 0.06s, box-shadow 0.06s;
+  }
+  .btn:active, .btn.down { transform: translateY(6px); }
+  .btn-start {
+    font-size: 34px; padding: 20px 24px;
+    background: var(--green); color: var(--white);
+    box-shadow: 0 8px 0 var(--green-dark), 0 12px 24px rgba(0, 0, 0, 0.18);
+    text-shadow: 0 2px 0 var(--green-dark);
+  }
+  .btn-start:active { box-shadow: 0 2px 0 var(--green-dark); }
+  #stop {
+    position: fixed; left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    width: min(78vw, 360px); transform: translateX(-50%);
+    font-size: 40px; padding: 22px 24px;
+    background: var(--yellow); color: var(--ink);
+    box-shadow: 0 9px 0 var(--yellow-dark), 0 14px 28px rgba(0, 0, 0, 0.22);
+    display: none;
+  }
+  #stop.show { display: block; }
+  @media (max-height: 520px) {
+    #stop { font-size: 28px; padding: 14px 20px; bottom: 16px; width: min(50vw, 300px); }
+    #score { font-size: 56px; }
+  }
+  #stop:active, #stop.down { transform: translate(-50%, 7px); box-shadow: 0 2px 0 var(--yellow-dark); }
+  .btn-small {
+    font-size: 16px; padding: 12px 18px; margin-top: 14px;
+    background: transparent; color: var(--ink); opacity: 0.7;
+  }
+  #mute {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 14px); right: 14px;
+    width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: rgba(255, 255, 255, 0.55); color: var(--ink);
+    display: grid; place-items: center; cursor: pointer;
+  }
+  #mute svg { width: 24px; height: 24px; }
+
+  /* Screens */
+  .screen {
+    position: fixed; inset: 0;
+    display: none; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .screen.show { display: flex; }
+  .card {
+    width: min(100%, 380px);
+    background: var(--panel); border-radius: 28px;
+    padding: 28px 24px 18px; text-align: center;
+    box-shadow: 0 18px 40px rgba(27, 20, 64, 0.22);
+    animation: pop 0.35s cubic-bezier(.2, 1.4, .4, 1);
+  }
+  @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
+  #menu, #over { align-items: flex-end; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 40px); }
+  #menu .card { background: transparent; box-shadow: none; padding: 0; }
+  .logo {
+    position: fixed; left: 0; right: 0;
+    top: calc(env(safe-area-inset-top, 0px) + 9vh);
+    text-align: center; pointer-events: none;
+  }
+  .logo h1 {
+    margin: 0; font-size: clamp(48px, 15vw, 80px); font-weight: 900; line-height: 0.9;
+    color: var(--white); letter-spacing: 0.02em;
+    text-shadow: 0 5px 0 var(--pink), 0 10px 0 var(--pink-dark), 0 18px 30px rgba(27, 20, 64, 0.25);
+    transform: rotate(-4deg);
+  }
+  .logo p {
+    margin: 26px auto 0; max-width: 300px;
+    font-size: 17px; font-weight: 800; color: var(--ink); opacity: 0.75;
+  }
+  .best { margin: 0 0 16px; font-size: 18px; font-weight: 800; color: var(--ink); opacity: 0.75; }
+  .over-title { margin: 0; font-size: 30px; font-weight: 900; color: var(--pink); }
+  .over-score { margin: 6px 0 0; font-size: 90px; font-weight: 900; line-height: 1; }
+  .over-unit { margin: 0 0 14px; font-size: 16px; font-weight: 800; letter-spacing: 0.15em; opacity: 0.6; }
+  .new-best {
+    display: none; margin: 0 auto 14px; padding: 6px 14px; width: max-content;
+    border-radius: 999px; background: var(--yellow); font-weight: 900;
+  }
+  .new-best.show { display: block; animation: pop 0.5s cubic-bezier(.2, 1.6, .4, 1); }
+</style>
+</head>
+<body>
+<div id="sky"></div>
+
+<div id="hud" aria-live="polite">
+  <div id="score">1</div>
+  <div id="score-label">BLOKKEN</div>
+</div>
+<div id="callout"></div>
+
+<button id="mute" type="button" aria-label="Geluid aan of uit">
+  <svg id="icon-on" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+  <svg id="icon-off" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+
+<button id="stop" class="btn" type="button">STOP!</button>
+
+<section id="menu" class="screen show">
+  <div class="logo">
+    <h1>STAPEL<br>GEK</h1>
+    <p>Stop het zwevende blok precies boven je toren. Wat uitsteekt, gaat eraf!</p>
+  </div>
+  <div class="card">
+    <p class="best" id="menu-best"></p>
+    <button id="start" class="btn btn-start" type="button">START</button>
+  </div>
+</section>
+
+<section id="over" class="screen">
+  <div class="card">
+    <p class="over-title">Mis!</p>
+    <p class="over-score" id="over-score">0</p>
+    <p class="over-unit">BLOKKEN HOOG</p>
+    <p class="new-best" id="new-best">Nieuw record!</p>
+    <p class="best" id="over-best"></p>
+    <button id="again" class="btn btn-start" type="button">NOG EEN KEER</button>
+    <button id="to-menu" class="btn btn-small" type="button">Menu</button>
+  </div>
+</section>
+
+<script src="game.js"></script>
+</body>
+</html>

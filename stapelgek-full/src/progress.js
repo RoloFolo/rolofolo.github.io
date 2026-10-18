@@ -15,9 +15,9 @@ export const LOADOUT_MAX = 3;
 
 // ---------- Toolbox ----------
 
-export const inventory = store.json('joopstoren-items', {});
+export const inventory = store.json('stapelgekfull-items', {});
 for (const id of ITEM_IDS) inventory[id] = Math.max(0, inventory[id] | 0);
-const saveInventory = () => store.setJson('joopstoren-items', inventory);
+const saveInventory = () => store.setJson('stapelgekfull-items', inventory);
 
 export function addItem(id, n = 1) {
   inventory[id] += n;
@@ -40,7 +40,7 @@ const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 };
-const livesData = store.json('joopstoren-lives', { day: '', n: MAX_LIVES, videos: 0 });
+const livesData = store.json('stapelgekfull-lives', { day: '', n: MAX_LIVES, videos: 0 });
 
 export const lives = {
   refresh() {
@@ -48,7 +48,7 @@ export const lives = {
     livesData.day = today();
     livesData.n = Math.max(livesData.n, MAX_LIVES);
     livesData.videos = 0;
-    store.setJson('joopstoren-lives', livesData);
+    store.setJson('stapelgekfull-lives', livesData);
   },
   get count() { this.refresh(); return livesData.n; },
   get videosLeft() { this.refresh(); return VIDEOS_PER_DAY - livesData.videos; },
@@ -56,14 +56,14 @@ export const lives = {
     this.refresh();
     if (livesData.n <= 0) return false;
     livesData.n -= 1;
-    store.setJson('joopstoren-lives', livesData);
+    store.setJson('stapelgekfull-lives', livesData);
     return true;
   },
   add(n = 1, fromVideo = false) {
     this.refresh();
     livesData.n = Math.min(LIVES_CAP, livesData.n + n);
     if (fromVideo) livesData.videos += 1;
-    store.setJson('joopstoren-lives', livesData);
+    store.setJson('stapelgekfull-lives', livesData);
   },
 };
 
@@ -91,8 +91,8 @@ const GOAL_KINDS = {
 };
 const REWARD_WEIGHTS = { pump: 4, slow: 4, magnet: 4, buoy: 3, bomb: 3, dynamite: 1, diamond: 1 };
 
-const goalData = store.json('joopstoren-goals', { tier: 0, list: [] });
-const saveGoals = () => store.setJson('joopstoren-goals', goalData);
+const goalData = store.json('stapelgekfull-goals', { tier: 0, list: [] });
+const saveGoals = () => store.setJson('stapelgekfull-goals', goalData);
 
 function rollReward() {
   const total = Object.values(REWARD_WEIGHTS).reduce((a, b) => a + b, 0);

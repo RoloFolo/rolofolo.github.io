@@ -1,5 +1,5 @@
 {
-  "name": "joopstoren",
+  "name": "stapelgek-full",
   "private": true,
   "scripts": {
     "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=game.js"

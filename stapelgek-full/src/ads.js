@@ -1,12 +1,12 @@
 // Rewarded video ads, always the player's own choice.
-// The Android app can supply a bridge (window.JoopstorenAds.show(id)) that plays a real AdMob video and answers
-// with window.joopstorenAdDone(id, rewarded). Until that exists, a test screen stands in for the video.
+// The Android app can supply a bridge (window.StapelgekFullAds.show(id)) that plays a real AdMob video and answers
+// with window.stapelgekfullAdDone(id, rewarded). Until that exists, a test screen stands in for the video.
 
 const TEST_SECONDS = 5;
 let pending = null;
 let nextId = 1;
 
-window.joopstorenAdDone = (id, rewarded) => {
+window.stapelgekfullAdDone = (id, rewarded) => {
   if (pending && pending.id === id) {
     const { resolve } = pending;
     pending = null;
@@ -19,7 +19,7 @@ export function showRewardedAd(reason) {
   return new Promise((resolve) => {
     const id = nextId++;
     pending = { id, resolve };
-    const bridge = window.JoopstorenAds;
+    const bridge = window.StapelgekFullAds;
     if (bridge && typeof bridge.show === 'function') bridge.show(id);
     else testVideo(id, reason);
   });
@@ -45,7 +45,7 @@ function testVideo(id, reason) {
     closed = true;
     el.classList.remove('show');
     document.getElementById('ad-skip').onclick = null;
-    window.joopstorenAdDone(id, rewarded);
+    window.stapelgekfullAdDone(id, rewarded);
   };
   document.getElementById('ad-skip').onclick = () => finish(false);
   requestAnimationFrame(tick);

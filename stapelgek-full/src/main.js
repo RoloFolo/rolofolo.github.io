@@ -1,5 +1,5 @@
-// Joop's Toren: stop the floating block above the tower; whatever sticks out is cut off.
-// Stapelgek with tools, goals, lives and special blocks.
+// Stapelgek Full Game: stop the floating block above the tower; whatever sticks out is cut off.
+// The classic Stapelgek plus tools, goals, lives and special blocks.
 import {
   AdditiveBlending, BoxGeometry, BufferAttribute, CanvasTexture, Color, DoubleSide, EdgesGeometry, Group,
   LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RepeatWrapping,
@@ -100,7 +100,7 @@ function showWholeTower() {
 // ---------- Sound and touch ----------
 
 let audioCtx = null;
-let muted = store.get('joopstoren-muted', '0') === '1';
+let muted = store.get('stapelgekfull-muted', '0') === '1';
 
 function audio() {
   if (muted) return null;
@@ -240,7 +240,7 @@ function playStep(ctx, out, step, t, sixteenth) {
 
 const MUSIC_VOLUME = 0.3;
 const music = {
-  on: store.get('joopstoren-music', '1') === '1',
+  on: store.get('stapelgekfull-music', '1') === '1',
   playing: false,
   bpm: 108,
   step: 0,
@@ -297,14 +297,14 @@ function paintSound() {
 paintSound();
 $('mute').addEventListener('click', () => {
   muted = !muted;
-  store.set('joopstoren-muted', muted ? '1' : '0');
+  store.set('stapelgekfull-muted', muted ? '1' : '0');
   if (muted) music.stop(0.1); else music.start();
   paintSound();
 });
 $('music').addEventListener('click', () => {
-  if (muted) { muted = false; store.set('joopstoren-muted', '0'); music.on = false; }
+  if (muted) { muted = false; store.set('stapelgekfull-muted', '0'); music.on = false; }
   music.on = !music.on;
-  store.set('joopstoren-music', music.on ? '1' : '0');
+  store.set('stapelgekfull-music', music.on ? '1' : '0');
   if (music.on) music.start(); else music.stop(0.2);
   paintSound();
 });
@@ -314,7 +314,7 @@ document.addEventListener('visibilitychange', () => {
   if (!audioCtx) return;
   if (document.hidden) audioCtx.suspend(); else if (!muted) audioCtx.resume();
 });
-if (location.search.includes('debug')) window.joopstorenMusic = { playStep, STEPS, music };
+if (location.search.includes('debug')) window.stapelgekfullMusic = { playStep, STEPS, music };
 
 // ---------- Special blocks: diamond and gold ----------
 
@@ -400,10 +400,10 @@ const game = {
 
 // Records per mode and the last 10 scores. The record from before the modes existed was a hard game.
 const best = {
-  easy: parseInt(store.get('joopstoren-best-easy', '0'), 10) || 0,
-  hard: parseInt(store.get('joopstoren-best-hard', store.get('joopstoren-best', '0')), 10) || 0,
+  easy: parseInt(store.get('stapelgekfull-best-easy', '0'), 10) || 0,
+  hard: parseInt(store.get('stapelgekfull-best-hard', store.get('stapelgekfull-best', '0')), 10) || 0,
 };
-let scores = store.json('joopstoren-scores', []);
+let scores = store.json('stapelgekfull-scores', []);
 const MODE_NAME = { easy: 'Makkelijk', hard: 'Moeilijk' };
 const pedestal = makeBlock(0, 0, -PEDESTAL / 2, 0, BASE, PEDESTAL, BASE);
 
@@ -966,12 +966,12 @@ function menu() {
   spawn(1.6);
   showScreen('menu');
   music.start(108);
-  if (store.get('joopstoren-intro', '0') !== '1') {
-    store.set('joopstoren-intro', '1');
-    store.set('joopstoren-news-2', '1');
+  if (store.get('stapelgekfull-intro', '0') !== '1') {
+    store.set('stapelgekfull-intro', '1');
+    store.set('stapelgekfull-news-2', '1');
     joop.say(LINES.intro);
-  } else if (store.get('joopstoren-news-2', '0') !== '1') {
-    store.set('joopstoren-news-2', '1');
+  } else if (store.get('stapelgekfull-news-2', '0') !== '1') {
+    store.set('stapelgekfull-news-2', '1');
     joop.say(LINES.news);
   } else {
     joop.say([pick(LINES.hello)]);
@@ -982,7 +982,7 @@ function menu() {
 let chosen = {};
 function prepare(mode) {
   game.mode = mode;
-  store.set('joopstoren-mode', mode);
+  store.set('stapelgekfull-mode', mode);
   if (lives.count <= 0) { showNoLives(); return; }
   if (!itemCount()) { begin({}); return; }
   chosen = {};
@@ -1066,13 +1066,13 @@ function gameOver() {
   const isBest = score > best[game.mode];
   if (isBest) {
     best[game.mode] = score;
-    store.set(`joopstoren-best-${game.mode}`, String(score));
+    store.set(`stapelgekfull-best-${game.mode}`, String(score));
   }
   // A game that went on after a video keeps one line on the scoreboard.
   if (game.recorded) scores.shift();
   scores.unshift({ s: score, m: game.mode, t: Date.now() });
   scores = scores.slice(0, 10);
-  store.setJson('joopstoren-scores', scores);
+  store.setJson('stapelgekfull-scores', scores);
   game.recorded = true;
   let lifeLine = '';
   if (isBest && score > 2 && !game.lifeForRecord) {
@@ -1155,7 +1155,7 @@ function showScores(from) {
   showScreen('scores');
 }
 
-game.mode = store.get('joopstoren-mode', 'easy') === 'hard' ? 'hard' : 'easy';
+game.mode = store.get('stapelgekfull-mode', 'easy') === 'hard' ? 'hard' : 'easy';
 // The download link is for the website; inside the app (loaded from file://) it has no use.
 if (location.protocol === 'file:') $('get-app').remove();
 $('start-easy').addEventListener('click', () => prepare('easy'));
@@ -1293,6 +1293,6 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-if (location.search.includes('debug')) window.joopstoren = { game, grant, useTool, lives, goals, inventory };
+if (location.search.includes('debug')) window.stapelgekfull = { game, grant, useTool, lives, goals, inventory };
 menu();
 requestAnimationFrame(frame);

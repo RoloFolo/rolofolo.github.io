@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ff5ea8">
-<title>Joop's Toren</title>
-<meta name="description" content="Joop's Toren: stapel de blokken zo hoog als je kan, met diamanten, bommen, doelen en Joop die je aanmoedigt.">
+<title>Stapelgek Full Game</title>
+<meta name="description" content="Stapelgek Full Game: stapel de blokken zo hoog als je kan, met diamanten, bommen, doelen en Joop die je aanmoedigt.">
 <link rel="icon" href="icon.png" type="image/png">
 <style>
   :root {
@@ -155,6 +155,11 @@
     color: var(--white); letter-spacing: 0.02em;
     text-shadow: 0 5px 0 var(--pink), 0 10px 0 var(--pink-dark), 0 18px 30px rgba(27, 20, 64, 0.25);
     transform: rotate(-4deg);
+  }
+  .full-badge {
+    display: inline-block; margin: 14px 0 0; padding: 5px 14px; border-radius: 999px;
+    background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
+    font-size: 18px; font-weight: 900; letter-spacing: 0.12em; transform: rotate(3deg);
   }
   .logo p {
     margin: 26px auto 0; max-width: 300px;
@@ -377,7 +382,8 @@
 
 <section id="menu" class="screen show">
   <div class="logo">
-    <h1>JOOP'S<br>TOREN</h1>
+    <h1>STAPEL<br>GEK</h1>
+    <p class="full-badge">FULL GAME</p>
   </div>
   <div class="card">
     <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
@@ -391,7 +397,7 @@
     <div class="links">
       <button id="menu-scores" class="btn btn-small" type="button">Scorebord</button>
       <button id="menu-help" class="btn btn-small" type="button">Uitleg van Joop</button>
-      <a id="get-app" class="btn btn-small" href="joopstoren.apk" download>Android-app</a>
+      <a id="get-app" class="btn btn-small" href="stapelgek-full.apk" download>Android-app</a>
     </div>
   </div>
 </section>

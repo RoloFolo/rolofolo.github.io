@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds ../joopstoren.apk without the Android SDK: every tool comes from Maven Central.
+# Builds ../stapelgek-full.apk without the Android SDK: every tool comes from Maven Central.
 #   aapt2 + framework resources: apktool-lib    classes: android stubs (API 16)
 #   dex: dalvik-dx                              signing: apksig
 # Needs Java 17+, Python 3, curl, zip and (for the web game) node: cd .. && npm install && npm run build
@@ -52,6 +52,6 @@ java -cp "$TOOLS/dx.jar" com.android.dx.command.Main --dex --min-sdk-version=$MI
 python3 -I tools/align.py "$BUILD/out/unsigned.apk" "$BUILD/out/aligned.apk"
 
 # Sign. This apksig still touches a JDK internal on start-up.
-java --add-exports java.base/sun.security.x509=ALL-UNNAMED -cp "$TOOLS/apksig.jar" tools/Sign.java "$BUILD/out/aligned.apk" ../joopstoren.apk \
-  joopstoren.keystore joopstoren joopstoren
-ls -l ../joopstoren.apk
+java --add-exports java.base/sun.security.x509=ALL-UNNAMED -cp "$TOOLS/apksig.jar" tools/Sign.java "$BUILD/out/aligned.apk" ../stapelgek-full.apk \
+  stapelgek-full.keystore stapelgekfull stapelgekfull
+ls -l ../stapelgek-full.apk

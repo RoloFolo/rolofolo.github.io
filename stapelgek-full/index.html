@@ -156,10 +156,13 @@
     text-shadow: 0 5px 0 var(--pink), 0 10px 0 var(--pink-dark), 0 18px 30px rgba(27, 20, 64, 0.25);
     transform: rotate(-4deg);
   }
+  /* The full game has more in its menu card, so the logo sits higher and a little smaller. */
+  #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 3vh); }
+  #menu .logo h1 { font-size: clamp(42px, 12.5vw, 66px); }
   .full-badge {
-    display: inline-block; margin: 14px 0 0; padding: 5px 14px; border-radius: 999px;
+    display: inline-block; margin: 0 0 10px; padding: 4px 12px; border-radius: 999px;
     background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
-    font-size: 18px; font-weight: 900; letter-spacing: 0.12em; transform: rotate(3deg);
+    font-size: 15px; font-weight: 900; letter-spacing: 0.12em; transform: rotate(3deg);
   }
   .logo p {
     margin: 26px auto 0; max-width: 300px;
@@ -382,8 +385,8 @@
 
 <section id="menu" class="screen show">
   <div class="logo">
-    <h1>STAPEL<br>GEK</h1>
     <p class="full-badge">FULL GAME</p>
+    <h1>STAPEL<br>GEK</h1>
   </div>
   <div class="card">
     <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>

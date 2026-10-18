@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ff5ea8">
+<title>Joop's Toren</title>
+<meta name="description" content="Joop's Toren: stapel de blokken zo hoog als je kan, met diamanten, bommen, doelen en Joop die je aanmoedigt.">
+<link rel="icon" href="icon.png" type="image/png">
+<style>
+  :root {
+    --sky-top: #ffd1e8;
+    --sky-bottom: #8fd3ff;
+    --ink: #1b1440;
+    --white: #ffffff;
+    --yellow: #ffd23f;
+    --yellow-dark: #e0a800;
+    --pink: #ff3d8b;
+    --pink-dark: #c2185b;
+    --green: #2ee59d;
+    --green-dark: #10a86b;
+    --panel: rgba(255, 255, 255, 0.92);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--sky-bottom);
+    font-family: "Arial Rounded MT Bold", "Nunito", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    user-select: none; -webkit-user-select: none; touch-action: none;
+  }
+  #sky {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+    transition: background 0.6s;
+  }
+  canvas { position: fixed; inset: 0; display: block; }
+
+  /* Score */
+  #hud {
+    position: fixed; left: 0; right: 0;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    text-align: center; pointer-events: none;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  #hud.show { opacity: 1; }
+  #score {
+    font-size: 84px; font-weight: 900; line-height: 1;
+    color: var(--white);
+    text-shadow: 0 4px 0 rgba(27, 20, 64, 0.35), 0 0 24px rgba(27, 20, 64, 0.15);
+    display: inline-block;
+  }
+  #score.bump { animation: bump 0.25s ease-out; }
+  @keyframes bump { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  #score-label {
+    font-size: 15px; font-weight: 800; letter-spacing: 0.2em;
+    color: var(--ink); opacity: 0.55;
+  }
+  #callout {
+    position: fixed; left: 0; right: 0; top: 34%;
+    text-align: center; pointer-events: none;
+    font-size: 38px; font-weight: 900; color: var(--white);
+    text-shadow: 0 4px 0 var(--pink-dark);
+    opacity: 0;
+  }
+  #callout.go { animation: callout 0.9s ease-out; }
+  #callout.cut { text-shadow: 0 4px 0 #7a0020; color: #ffe1e1; }
+  @keyframes callout {
+    0% { opacity: 0; transform: scale(0.6); }
+    15% { opacity: 1; transform: scale(1.15); }
+    30% { transform: scale(1); }
+    75% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-30px); }
+  }
+
+  /* Buttons */
+  .btn {
+    display: block; width: 100%;
+    border: 0; border-radius: 999px;
+    font: inherit; font-weight: 900; letter-spacing: 0.08em;
+    cursor: pointer; touch-action: manipulation;
+    transition: transform 0.06s, box-shadow 0.06s;
+  }
+  .btn:active, .btn.down { transform: translateY(6px); }
+  .btn-start {
+    font-size: 30px; padding: 20px 24px;
+    background: var(--green); color: var(--white);
+    box-shadow: 0 8px 0 var(--green-dark), 0 12px 24px rgba(0, 0, 0, 0.18);
+    text-shadow: 0 2px 0 var(--green-dark);
+  }
+  .btn-start:active { box-shadow: 0 2px 0 var(--green-dark); }
+  #stop {
+    position: fixed; left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    width: min(78vw, 360px); transform: translateX(-50%);
+    font-size: 40px; padding: 22px 24px;
+    background: var(--yellow); color: var(--ink);
+    box-shadow: 0 9px 0 var(--yellow-dark), 0 14px 28px rgba(0, 0, 0, 0.22);
+    display: none;
+  }
+  #stop.show { display: block; }
+  @media (max-height: 520px) {
+    #stop { font-size: 28px; padding: 14px 20px; bottom: 16px; width: min(50vw, 300px); }
+    #score { font-size: 56px; }
+  }
+  #stop:active, #stop.down { transform: translate(-50%, 7px); box-shadow: 0 2px 0 var(--yellow-dark); }
+  .btn-small {
+    font-size: 16px; padding: 12px 18px; margin-top: 14px;
+    background: transparent; color: var(--ink); opacity: 0.7;
+  }
+  #mute {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 14px); right: 14px;
+    width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: rgba(255, 255, 255, 0.55); color: var(--ink);
+    display: grid; place-items: center; cursor: pointer;
+  }
+  #mute svg, #music svg { width: 24px; height: 24px; }
+  #music {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 70px); right: 14px;
+    width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: rgba(255, 255, 255, 0.55); color: var(--ink);
+    display: grid; place-items: center; cursor: pointer;
+  }
+  #music .cross { display: none; }
+  #music.off .cross { display: inline; }
+  #music.off .notes { opacity: 0.45; }
+
+  /* Screens */
+  .screen {
+    position: fixed; inset: 0;
+    display: none; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .screen.show { display: flex; }
+  .card {
+    width: min(100%, 380px);
+    background: var(--panel); border-radius: 28px;
+    padding: 28px 24px 18px; text-align: center;
+    box-shadow: 0 18px 40px rgba(27, 20, 64, 0.22);
+    animation: pop 0.35s cubic-bezier(.2, 1.4, .4, 1);
+  }
+  @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
+  #menu, #over { align-items: flex-end; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 40px); }
+  #menu .card { background: transparent; box-shadow: none; padding: 0; }
+  .logo {
+    position: fixed; left: 0; right: 0;
+    top: calc(env(safe-area-inset-top, 0px) + 9vh);
+    text-align: center; pointer-events: none;
+  }
+  .logo h1 {
+    margin: 0; font-size: clamp(48px, 15vw, 80px); font-weight: 900; line-height: 0.9;
+    color: var(--white); letter-spacing: 0.02em;
+    text-shadow: 0 5px 0 var(--pink), 0 10px 0 var(--pink-dark), 0 18px 30px rgba(27, 20, 64, 0.25);
+    transform: rotate(-4deg);
+  }
+  .logo p {
+    margin: 26px auto 0; max-width: 300px;
+    font-size: 17px; font-weight: 800; color: var(--ink); opacity: 0.75;
+  }
+  .best { margin: 0 0 16px; font-size: 18px; font-weight: 800; color: var(--ink); opacity: 0.75; }
+  .over-title { margin: 0; font-size: 30px; font-weight: 900; color: var(--pink); }
+  .over-score { margin: 6px 0 0; font-size: 90px; font-weight: 900; line-height: 1; }
+  .over-unit { margin: 0 0 14px; font-size: 16px; font-weight: 800; letter-spacing: 0.15em; opacity: 0.6; }
+  .new-best {
+    display: none; margin: 0 auto 14px; padding: 6px 14px; width: max-content;
+    border-radius: 999px; background: var(--yellow); font-weight: 900;
+  }
+  .new-best.show { display: block; animation: pop 0.5s cubic-bezier(.2, 1.6, .4, 1); }
+  .modes { display: flex; gap: 12px; }
+  .modes .btn { font-size: 22px; padding: 18px 8px; letter-spacing: 0.04em; }
+  .btn-hard {
+    background: var(--pink); color: var(--white);
+    box-shadow: 0 8px 0 var(--pink-dark), 0 12px 24px rgba(0, 0, 0, 0.18);
+    text-shadow: 0 2px 0 var(--pink-dark);
+  }
+  .btn-hard:active { box-shadow: 0 2px 0 var(--pink-dark); }
+  .mode-hint { display: flex; gap: 12px; margin: 10px 0 0; font-size: 13px; font-weight: 800; opacity: 0.65; }
+  .mode-hint span { flex: 1; }
+  .links { display: flex; justify-content: center; gap: 4px; }
+  .links { flex-wrap: wrap; }
+  .links .btn { width: auto; text-decoration: none; }
+  #mode-chip {
+    display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 900; letter-spacing: 0.12em; color: var(--white);
+    background: var(--green-dark);
+  }
+  #mode-chip.hard { background: var(--pink-dark); }
+
+  /* Scoreboard */
+  .board-title { margin: 0 0 4px; font-size: 28px; font-weight: 900; color: var(--pink); }
+  .board-best { margin: 0 0 14px; font-size: 15px; font-weight: 800; opacity: 0.7; }
+  .board { list-style: none; margin: 0 0 16px; padding: 0; text-align: left; }
+  .board li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 12px; border-radius: 14px; font-weight: 800;
+  }
+  .board li:nth-child(odd) { background: rgba(27, 20, 64, 0.05); }
+  .board li.latest { background: var(--yellow); }
+  .board .pts { width: 44px; font-size: 24px; font-weight: 900; text-align: right; }
+  .board .unit { font-size: 13px; opacity: 0.6; }
+  .board .when { margin-left: auto; font-size: 13px; opacity: 0.6; }
+  .chip {
+    padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+    color: var(--white); background: var(--green-dark);
+  }
+  .chip.hard { background: var(--pink-dark); }
+  .board-empty { margin: 8px 0 18px; font-weight: 800; opacity: 0.6; }
+
+  /* Joop and his speech balloon */
+  #joop {
+    position: fixed; left: 8px; bottom: 200px; z-index: 5;
+    width: var(--joop-size, 120px);
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(.2, 1.3, .4, 1), opacity 0.3s;
+  }
+  #joop.hidden { transform: translateX(-130%); opacity: 0; }
+  #joop .figure { pointer-events: auto; cursor: pointer; animation: bob 2.4s ease-in-out infinite; }
+  #joop.no-tap .figure, #joop.no-tap .balloon { pointer-events: none; }
+  #joop svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 6px 0 rgba(27, 20, 64, 0.18)); }
+  @keyframes bob { 50% { transform: translateY(-4px) rotate(-1.5deg); } }
+  .mouth-talk, .eyes-happy, .thumb { display: none; }
+  #joop.talking .mouth-talk { display: inline; animation: talk 0.26s steps(1) infinite; }
+  #joop.talking .mouth-smile { animation: talk 0.26s steps(1) infinite reverse; }
+  @keyframes talk { 0% { opacity: 1; } 50% { opacity: 0; } }
+  #joop.cheer .eyes-happy, #joop.cheer .thumb { display: inline; }
+  #joop.cheer .eyes-open { display: none; }
+  #joop.cheer .figure { animation: hop 0.5s ease-in-out 3; }
+  @keyframes hop { 50% { transform: translateY(-12px) rotate(3deg); } }
+  .balloon {
+    position: absolute; left: 82%; bottom: 72%;
+    width: max-content; max-width: min(250px, calc(100vw - var(--joop-size, 120px) - 16px));
+    padding: 12px 16px; border-radius: 22px;
+    background: var(--white); border: 3px solid var(--ink);
+    box-shadow: 0 5px 0 var(--ink);
+    font-size: 17px; font-weight: 800; line-height: 1.25; color: var(--ink);
+    pointer-events: auto; cursor: pointer;
+    opacity: 0; transform: scale(0.4); transform-origin: 0% 100%;
+    transition: opacity 0.15s, transform 0.25s cubic-bezier(.2, 1.6, .4, 1);
+  }
+  .balloon.show { opacity: 1; transform: none; }
+  .balloon::before, .balloon::after {
+    content: ""; position: absolute; left: 14px; top: 100%;
+    border-style: solid; border-color: transparent;
+  }
+  .balloon::before { border-width: 18px 18px 0 0; border-top-color: var(--ink); margin-top: 2px; left: 11px; }
+  .balloon::after { border-width: 12px 12px 0 0; border-top-color: var(--white); margin-top: -1px; left: 15px; }
+  .balloon .more { display: block; margin-top: 4px; font-size: 12px; opacity: 0.5; }
+
+  /* Lives, goals, tools */
+  :root { --video: #6c5ce7; --video-dark: #4b3bb5; }
+  .lives-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 0 0 10px; font-size: 22px; }
+  .pill {
+    font: inherit; font-size: 13px; font-weight: 900; border: 0; border-radius: 999px; padding: 7px 12px; cursor: pointer;
+    background: var(--video); color: var(--white); box-shadow: 0 3px 0 var(--video-dark);
+  }
+  .btn-video {
+    font-size: 17px; padding: 12px 14px; margin-bottom: 10px;
+    background: var(--video); color: var(--white); box-shadow: 0 6px 0 var(--video-dark);
+  }
+  .btn-video:active { box-shadow: 0 1px 0 var(--video-dark); }
+  .video-row { display: flex; gap: 10px; }
+  .video-row .btn[hidden] { display: none; }
+  .goals-box { margin: 0 0 12px; padding: 10px; border-radius: 18px; background: rgba(255, 255, 255, 0.55); }
+  .box-title { margin: 0 0 6px; font-size: 12px; font-weight: 900; letter-spacing: 0.14em; opacity: 0.6; }
+  .goals { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .goals li {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.8);
+    font-size: 13px; font-weight: 800; text-align: left;
+  }
+  .goals li::before {
+    content: ""; position: absolute; inset: 0 auto 0 0; width: var(--done, 0%);
+    background: rgba(46, 229, 157, 0.4); transition: width 0.3s;
+  }
+  .goals li > * { position: relative; }
+  .g-text { flex: 1; min-width: 0; }
+  .g-have { opacity: 0.6; font-variant-numeric: tabular-nums; }
+  .g-reward { font-size: 16px; }
+  .goals.mini { width: min(300px, 80vw); margin: 10px auto 0; gap: 4px; }
+  .goals.mini li { font-size: 11px; padding: 3px 8px; background: rgba(255, 255, 255, 0.6); }
+  .goals.mini .g-reward { font-size: 13px; }
+  #effects { min-height: 20px; margin-top: 6px; font-size: 16px; font-weight: 900; color: var(--ink); }
+  #tools {
+    position: fixed; z-index: 4;
+    right: calc(env(safe-area-inset-right, 0px) + 12px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
+    display: none; flex-direction: column; gap: 12px;
+  }
+  #tools.show { display: flex; }
+  .tool {
+    position: relative; width: 58px; height: 58px; padding: 0; border-radius: 50%; cursor: pointer;
+    border: 3px solid var(--ink); background: var(--white); box-shadow: 0 4px 0 var(--ink);
+    display: grid; place-items: center; touch-action: manipulation;
+  }
+  .tool:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .tool .icon { font-size: 28px; line-height: 1; }
+  .tool .n {
+    position: absolute; top: -7px; right: -7px; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 13px; font-weight: 900;
+    background: var(--pink); color: var(--white); border: 2px solid var(--ink);
+  }
+  .tool.passive { opacity: 0.7; }
+  .over-life { margin: 0 0 8px; font-weight: 900; color: var(--pink); }
+  .over-life:empty, .loot:empty { display: none; }
+  .loot { margin: 0 0 10px; font-size: 18px; font-weight: 900; }
+  .over-score { font-size: 72px; }
+
+  /* Toolbox before a game */
+  #loadout, #nolives { align-items: flex-end; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); }
+  .kits {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+    max-height: 42vh; overflow-y: auto; margin: 0 0 14px; padding: 2px;
+  }
+  .kit {
+    font: inherit; text-align: left; cursor: pointer;
+    display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: start;
+    padding: 8px; border-radius: 14px; border: 3px solid transparent;
+    background: rgba(27, 20, 64, 0.06); color: var(--ink);
+  }
+  .kit .icon { grid-row: span 3; font-size: 28px; line-height: 1.1; }
+  .kit-name { font-weight: 900; font-size: 15px; }
+  .kit-info { font-size: 11px; font-weight: 700; opacity: 0.7; line-height: 1.25; }
+  .kit-n { font-size: 11px; font-weight: 900; color: var(--pink-dark); margin-top: 2px; }
+  .kit.picked { border-color: var(--ink); background: var(--yellow); }
+  .kit:disabled { opacity: 0.35; cursor: default; }
+  .lives-hearts.big { font-size: 34px; margin: 6px 0; }
+  #over .lives-row { margin: 16px 0 0; font-size: 18px; }
+
+  /* Video for a reward. A test screen until the app plays real AdMob videos. */
+  #ad {
+    position: fixed; inset: 0; z-index: 30; display: none; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(15, 10, 40, 0.92); color: var(--white);
+  }
+  #ad.show { display: flex; }
+  .ad-box { width: min(100%, 360px); text-align: center; }
+  .ad-tag { display: inline-block; margin: 0 0 12px; padding: 4px 10px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 12px; font-weight: 900; letter-spacing: 0.12em; }
+  .ad-title { margin: 0 0 8px; font-size: 24px; font-weight: 900; }
+  #ad-reason { margin: 0 0 20px; font-weight: 800; opacity: 0.8; }
+  .ad-track { height: 12px; border-radius: 6px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+  #ad-bar { width: 0; height: 100%; background: var(--green); }
+  .ad-count { font-weight: 800; opacity: 0.8; }
+  #ad .btn-small { color: var(--white); }
+  @media (max-height: 720px) {
+    .logo { top: calc(env(safe-area-inset-top, 0px) + 4vh); }
+    .logo h1 { font-size: clamp(40px, 11vw, 60px); }
+    .goals li { padding: 4px 8px; }
+  }
+</style>
+</head>
+<body>
+<div id="sky"></div>
+
+<div id="hud" aria-live="polite">
+  <div id="score">1</div>
+  <div id="score-label">BLOKKEN</div>
+  <div id="mode-chip">MAKKELIJK</div>
+  <ol id="goals-hud" class="goals mini" aria-label="Doelen"></ol>
+  <div id="effects"></div>
+</div>
+<div id="tools" aria-label="Gereedschap"></div>
+<div id="callout"></div>
+
+<button id="mute" type="button" aria-label="Geluid aan of uit">
+  <svg id="icon-on" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+  <svg id="icon-off" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+
+<button id="music" type="button" aria-label="Muziek aan of uit">
+  <svg viewBox="0 0 24 24"><g class="notes" fill="currentColor"><path d="M9 17.5V6l11-2.5v11" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><ellipse cx="6.5" cy="17.5" rx="3" ry="2.4"/><ellipse cx="17.5" cy="14.5" rx="3" ry="2.4"/></g><path class="cross" d="M3 3l18 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+</button>
+
+<button id="stop" class="btn" type="button">STOP!</button>
+
+<section id="menu" class="screen show">
+  <div class="logo">
+    <h1>JOOP'S<br>TOREN</h1>
+  </div>
+  <div class="card">
+    <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
+    <div class="goals-box"><p class="box-title">DOELEN</p><ol id="menu-goals" class="goals"></ol></div>
+    <p class="best" id="menu-best"></p>
+    <div class="modes">
+      <button id="start-easy" class="btn btn-start" type="button">MAKKELIJK</button>
+      <button id="start-hard" class="btn btn-hard" type="button">MOEILIJK</button>
+    </div>
+    <p class="mode-hint"><span>Tempo blijft gelijk</span><span>Steeds sneller</span></p>
+    <div class="links">
+      <button id="menu-scores" class="btn btn-small" type="button">Scorebord</button>
+      <button id="menu-help" class="btn btn-small" type="button">Uitleg van Joop</button>
+      <a id="get-app" class="btn btn-small" href="joopstoren.apk" download>Android-app</a>
+    </div>
+  </div>
+</section>
+
+<section id="over" class="screen">
+  <div class="card">
+    <p class="over-title">Mis!</p>
+    <p class="over-score" id="over-score">0</p>
+    <p class="over-unit">BLOKKEN HOOG</p>
+    <p class="new-best" id="new-best">Nieuw record!</p>
+    <p class="best" id="over-best"></p>
+    <p class="over-life" id="over-life"></p>
+    <p class="loot" id="loot"></p>
+    <div class="video-row">
+      <button id="continue" class="btn btn-video" type="button">📺 Ga verder</button>
+      <button id="double" class="btn btn-video" type="button">📺 Buit ×2</button>
+    </div>
+    <button id="again" class="btn btn-start" type="button">NOG EEN KEER</button>
+    <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span></div>
+    <div class="links">
+      <button id="over-scores" class="btn btn-small" type="button">Scorebord</button>
+      <button id="to-menu" class="btn btn-small" type="button">Menu</button>
+    </div>
+  </div>
+</section>
+
+<section id="scores" class="screen">
+  <div class="card">
+    <p class="board-title">Scorebord</p>
+    <p class="board-best" id="board-best"></p>
+    <ol class="board" id="board"></ol>
+    <p class="board-empty" id="board-empty">Nog geen scores. Ga snel stapelen!</p>
+    <button id="scores-back" class="btn btn-start" type="button">TERUG</button>
+  </div>
+</section>
+
+<section id="loadout" class="screen">
+  <div class="card">
+    <p class="board-title">Gereedschapskist</p>
+    <p class="board-best" id="loadout-count"></p>
+    <div class="kits" id="loadout-grid"></div>
+    <button id="loadout-go" class="btn btn-start" type="button">START</button>
+    <div class="links">
+      <button id="loadout-none" class="btn btn-small" type="button">Zonder gereedschap</button>
+      <button id="loadout-back" class="btn btn-small" type="button">Terug</button>
+    </div>
+  </div>
+</section>
+
+<section id="nolives" class="screen">
+  <div class="card">
+    <p class="board-title">Geen levens meer</p>
+    <p class="lives-hearts big"></p>
+    <p class="board-best" id="nolives-wait"></p>
+    <button id="nolives-video" class="btn btn-video life-video" type="button">📺 Filmpje kijken: +1 leven</button>
+    <button id="nolives-back" class="btn btn-small" type="button">Terug</button>
+  </div>
+</section>
+
+<div id="ad" role="dialog" aria-modal="true" aria-label="Filmpje">
+  <div class="ad-box">
+    <p class="ad-tag">TESTFILMPJE</p>
+    <p class="ad-title">Hier komt straks een reclamefilmpje</p>
+    <p id="ad-reason"></p>
+    <div class="ad-track"><div id="ad-bar"></div></div>
+    <p class="ad-count">Nog <span id="ad-count">5</span> seconden</p>
+    <button id="ad-skip" class="btn btn-small" type="button">Sluiten zonder beloning</button>
+  </div>
+</div>
+
+<div id="joop" class="hidden">
+  <div class="balloon" id="balloon" role="status"></div>
+  <div class="figure" id="joop-figure" title="Joop">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" class="joop-svg" aria-hidden="true">
+      <g stroke="#1b1440" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+        <!-- suit -->
+        <path d="M28 250 C30 205 52 184 100 182 C148 184 170 205 172 250 Z" fill="#7b8396"/>
+        <!-- shirt -->
+        <path d="M76 186 L100 232 L124 186 C116 182 84 182 76 186 Z" fill="#bcd9ff"/>
+        <!-- tie -->
+        <path d="M92 190 L108 190 L104 200 L111 236 L100 248 L89 236 L96 200 Z" fill="#a9adb8"/>
+        <!-- lapels -->
+        <path d="M76 186 L100 232 L84 214 L70 194 Z" fill="#69708a"/>
+        <path d="M124 186 L100 232 L116 214 L130 194 Z" fill="#69708a"/>
+        <!-- neck -->
+        <path d="M86 168 L86 186 C94 192 106 192 114 186 L114 168 Z" fill="#f5c3a0"/>
+        <!-- ears -->
+        <ellipse cx="38" cy="112" rx="13" ry="18" fill="#f5c3a0"/>
+        <ellipse cx="162" cy="112" rx="13" ry="18" fill="#f5c3a0"/>
+        <!-- head -->
+        <path d="M100 18 C146 18 160 52 160 98 C160 146 134 176 100 176 C66 176 40 146 40 98 C40 52 54 18 100 18 Z" fill="#f8cfae"/>
+        <!-- fluffy white hair at the sides -->
+        <path d="M44 104 C32 100 30 88 38 82 C30 74 36 62 46 64 C46 56 56 52 62 58 C58 66 58 74 56 80 C54 88 52 96 50 104 Z" fill="#ffffff"/>
+        <path d="M156 104 C168 100 170 88 162 82 C170 74 164 62 154 64 C154 56 144 52 138 58 C142 66 142 74 144 80 C146 88 148 96 150 104 Z" fill="#ffffff"/>
+      </g>
+      <g fill="#ffffff" opacity="0.8"><circle cx="97" cy="206" r="1.6"/><circle cx="103" cy="214" r="1.6"/><circle cx="97" cy="222" r="1.6"/><circle cx="103" cy="230" r="1.6"/><circle cx="99" cy="238" r="1.6"/></g>
+      <!-- shine on the bald head -->
+      <ellipse cx="80" cy="40" rx="18" ry="9" fill="#ffffff" opacity="0.7" transform="rotate(-18 80 40)"/>
+      <!-- cheeks -->
+      <ellipse cx="62" cy="128" rx="11" ry="7" fill="#ff8fa8" opacity="0.6"/>
+      <ellipse cx="138" cy="128" rx="11" ry="7" fill="#ff8fa8" opacity="0.6"/>
+      <g stroke="#1b1440" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <!-- eyebrows, white with an outline -->
+        <path d="M60 82 C68 76 80 76 88 81" stroke-width="7"/>
+        <path d="M60 82 C68 76 80 76 88 81" stroke="#ffffff" stroke-width="3"/>
+        <path d="M112 81 C120 76 132 76 140 82" stroke-width="7"/>
+        <path d="M112 81 C120 76 132 76 140 82" stroke="#ffffff" stroke-width="3"/>
+        <!-- rimless glasses: thin frames -->
+        <rect x="54" y="88" width="40" height="27" rx="9" stroke="#59607a" stroke-width="3" fill="#ffffff" fill-opacity="0.35"/>
+        <rect x="106" y="88" width="40" height="27" rx="9" stroke="#59607a" stroke-width="3" fill="#ffffff" fill-opacity="0.35"/>
+        <path d="M94 98 C98 95 102 95 106 98" stroke="#59607a" stroke-width="3"/>
+        <path d="M54 96 L42 94 M146 96 L158 94" stroke="#59607a" stroke-width="3"/>
+      </g>
+      <!-- eyes: friendly squints -->
+      <g class="eyes-open" fill="#1b1440">
+        <ellipse cx="74" cy="102" rx="5" ry="6"/>
+        <ellipse cx="126" cy="102" rx="5" ry="6"/>
+        <circle cx="76" cy="100" r="1.8" fill="#fff"/>
+        <circle cx="128" cy="100" r="1.8" fill="#fff"/>
+      </g>
+      <g class="eyes-happy" fill="none" stroke="#1b1440" stroke-width="4" stroke-linecap="round">
+        <path d="M66 104 C70 96 78 96 82 104"/>
+        <path d="M118 104 C122 96 130 96 134 104"/>
+      </g>
+      <!-- nose -->
+      <ellipse cx="100" cy="124" rx="11" ry="9" fill="#f2a98a" stroke="#1b1440" stroke-width="4"/>
+      <ellipse cx="96" cy="121" rx="3.5" ry="2.5" fill="#ffffff" opacity="0.7"/>
+      <!-- mouth: smile and a talking one -->
+      <g class="mouth-smile">
+        <path d="M70 142 C82 160 118 160 130 142 C116 150 84 150 70 142 Z" fill="#ffffff" stroke="#1b1440" stroke-width="4" stroke-linejoin="round"/>
+      </g>
+      <g class="mouth-talk">
+        <path d="M74 140 C80 168 120 168 126 140 C112 146 88 146 74 140 Z" fill="#7a1f2f" stroke="#1b1440" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M78 141 C90 146 110 146 122 141 L121 146 C108 150 92 150 79 146 Z" fill="#ffffff"/>
+        <path d="M88 158 C96 152 106 152 112 158 C104 162 96 162 88 158 Z" fill="#ff7a93"/>
+      </g>
+      <!-- thumbs up, for congratulations -->
+      <g class="thumb" stroke="#1b1440" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M150 250 C150 228 156 214 170 206 L186 224 C178 232 176 240 176 250 Z" fill="#7b8396"/>
+        <path d="M160 196 C156 190 160 182 168 184 L180 186 L182 172 C182 162 194 162 194 172 L194 188 C198 190 198 198 194 200 C198 202 197 210 192 212 C194 216 190 222 184 222 L170 222 C162 222 158 214 160 206 Z" fill="#f8cfae"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

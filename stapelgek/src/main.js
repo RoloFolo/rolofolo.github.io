@@ -145,16 +145,170 @@ function buzz(ms) {
   try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* no vibration motor */ }
 }
 
-function paintMute() {
+// ---------- Music ----------
+// A cheerful chiptune loop, played live by the synthesizer: 8 bars of C - Am - F - G,
+// melody, oom-pah bass, offbeat chords and a little drum kit. It speeds up with the game.
+
+const midi = (n) => 440 * Math.pow(2, (n - 69) / 12);
+const _ = null;
+const SONG = {
+  chords: [
+    { root: 48, triad: [60, 64, 67] }, // C
+    { root: 45, triad: [57, 60, 64] }, // Am
+    { root: 41, triad: [57, 60, 65] }, // F
+    { root: 43, triad: [55, 59, 62] }, // G
+  ],
+  // Eighth notes, two times four bars: a calm A part and a higher B part that runs back into the start.
+  melody: [
+    [72, _, 76, 79, 76, _, 72, 74], [76, _, 72, 69, 72, _, 76, 77],
+    [77, 76, 74, _, 72, 74, 77, _], [79, _, 77, 74, 71, _, 74, _],
+    [84, _, 79, 76, 79, _, 84, 83], [81, _, 76, 72, 76, 81, 79, _],
+    [77, 79, 81, _, 79, 77, 76, 74], [74, 76, 77, 79, 83, _, 84, _],
+  ],
+};
+const STEPS = SONG.melody.length * 16; // sixteenth notes per loop
+
+let noiseBuffer = null;
+function noise(ctx) {
+  if (!noiseBuffer || noiseBuffer.sampleRate !== ctx.sampleRate) {
+    noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  }
+  return noiseBuffer;
+}
+
+function voice(ctx, out, freq, t, length, type, volume, attack = 0.005) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(volume, t + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+  osc.connect(gain).connect(out);
+  osc.start(t);
+  osc.stop(t + length + 0.02);
+  return osc;
+}
+
+function drum(ctx, out, kind, t) {
+  if (kind === 'kick') {
+    const osc = voice(ctx, out, 150, t, 0.22, 'sine', 0.9, 0.002);
+    osc.frequency.exponentialRampToValueAtTime(45, t + 0.18);
+    return;
+  }
+  const src = ctx.createBufferSource();
+  src.buffer = noise(ctx);
+  const filter = ctx.createBiquadFilter();
+  filter.type = kind === 'hat' ? 'highpass' : 'bandpass';
+  filter.frequency.value = kind === 'hat' ? 7000 : 1800;
+  const gain = ctx.createGain();
+  const length = kind === 'hat' ? 0.04 : 0.14;
+  gain.gain.setValueAtTime(kind === 'hat' ? 0.18 : 0.45, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+  src.connect(filter).connect(gain).connect(out);
+  src.start(t);
+  src.stop(t + length + 0.02);
+}
+
+// Everything that sounds on one sixteenth note of the loop.
+function playStep(ctx, out, step, t, sixteenth) {
+  const bar = Math.floor(step / 16) % SONG.melody.length;
+  const pos = step % 16;
+  const chord = SONG.chords[bar % 4];
+  if (pos % 2 === 0) {
+    const eighth = pos / 2;
+    const note = SONG.melody[bar][eighth];
+    if (note) voice(ctx, out, midi(note), t, sixteenth * 1.8, 'square', 0.16);
+    // Oom-pah: root, octave, fifth, octave.
+    const bass = [chord.root, _, chord.root + 12, _, chord.root + 7, _, chord.root + 12, _][eighth];
+    if (bass) voice(ctx, out, midi(bass), t, sixteenth * 1.6, 'triangle', 0.5);
+    if (eighth % 2 === 1) for (const n of chord.triad) voice(ctx, out, midi(n), t, sixteenth * 0.9, 'square', 0.035);
+    if (eighth === 0 || eighth === 4) drum(ctx, out, 'kick', t);
+    if (eighth === 2 || eighth === 6) drum(ctx, out, 'snare', t);
+  } else {
+    drum(ctx, out, 'hat', t);
+  }
+}
+
+const MUSIC_VOLUME = 0.3;
+const music = {
+  on: store.get('stapelgek-music', '1') === '1',
+  playing: false,
+  bpm: 108,
+  step: 0,
+  nextTime: 0,
+  out: null,
+  timer: 0,
+
+  // Starts the loop, or only changes the tempo when it is already playing.
+  start(bpm = this.bpm) {
+    this.bpm = bpm;
+    const ctx = audio();
+    if (!ctx || !this.on || this.playing) return;
+    this.playing = true;
+    this.out = ctx.createGain();
+    this.out.gain.setValueAtTime(0.0001, ctx.currentTime);
+    this.out.gain.exponentialRampToValueAtTime(MUSIC_VOLUME, ctx.currentTime + 0.8);
+    this.out.connect(ctx.destination);
+    this.step = 0;
+    this.nextTime = ctx.currentTime + 0.05;
+    this.timer = setInterval(() => this.schedule(), 25);
+    this.schedule();
+  },
+
+  stop(fade = 0.5) {
+    if (!this.playing) return;
+    this.playing = false;
+    clearInterval(this.timer);
+    const out = this.out;
+    const now = audioCtx.currentTime;
+    out.gain.cancelScheduledValues(now);
+    out.gain.setValueAtTime(out.gain.value, now);
+    out.gain.exponentialRampToValueAtTime(0.0001, now + fade);
+    setTimeout(() => out.disconnect(), fade * 1000 + 200);
+  },
+
+  // Schedule a little ahead of time, so the beat stays steady.
+  schedule() {
+    const ctx = audioCtx;
+    while (this.nextTime < ctx.currentTime + 0.12) {
+      const sixteenth = 60 / this.bpm / 4;
+      playStep(ctx, this.out, this.step, this.nextTime, sixteenth);
+      this.nextTime += sixteenth;
+      this.step = (this.step + 1) % STEPS;
+    }
+  },
+};
+const bpmFor = (speed) => Math.round(116 + (speed - START_SPEED) * 8);
+
+function paintSound() {
   $('icon-on').style.display = muted ? 'none' : '';
   $('icon-off').style.display = muted ? '' : 'none';
+  $('music').classList.toggle('off', !music.on || muted);
 }
-paintMute();
+paintSound();
 $('mute').addEventListener('click', () => {
   muted = !muted;
   store.set('stapelgek-muted', muted ? '1' : '0');
-  paintMute();
+  if (muted) music.stop(0.1); else music.start();
+  paintSound();
 });
+$('music').addEventListener('click', () => {
+  if (muted) { muted = false; store.set('stapelgek-muted', '0'); music.on = false; }
+  music.on = !music.on;
+  store.set('stapelgek-music', music.on ? '1' : '0');
+  if (music.on) music.start(); else music.stop(0.2);
+  paintSound();
+});
+// Browsers only allow sound after a tap, so the menu music starts on the first one.
+window.addEventListener('pointerdown', () => { if (game.state !== 'over') music.start(); }, { once: true });
+document.addEventListener('visibilitychange', () => {
+  if (!audioCtx) return;
+  if (document.hidden) audioCtx.suspend(); else if (!muted) audioCtx.resume();
+});
+if (location.search.includes('debug')) window.stapelgekMusic = { playStep, STEPS, music };
 
 // ---------- Game state ----------
 
@@ -308,6 +462,7 @@ function drop() {
   // Hard gets faster with every block; easy only after a perfect one, so a miss never speeds things up.
   if (game.mode === 'hard' || game.combo > 0) game.speed = Math.min(MAX_SPEED, game.speed + SPEED_STEP);
   spawn(game.speed);
+  music.bpm = bpmFor(game.speed);
   const height = game.level + 1;
   if (height % 10 === 0 || height === 25 || height === 75) joop.chat(LINES.milestone[height] || `${height} hoog! Ga zo door!`, { cheer: true, force: true });
 }
@@ -495,6 +650,7 @@ function menu() {
   $('menu-best').textContent = bestLine();
   spawn(1.6);
   showScreen('menu');
+  music.start(108);
   if (store.get('stapelgek-intro', '0') !== '1') {
     store.set('stapelgek-intro', '1');
     joop.say(LINES.intro);
@@ -509,6 +665,7 @@ function start(mode = game.mode) {
   store.set('stapelgek-mode', mode);
   if (game.state === 'over') reset();
   game.speed = START_SPEED;
+  music.start(bpmFor(game.speed));
   if (!game.moving) spawn(game.speed);
   game.moving.speed = game.speed;
   game.state = 'play';
@@ -524,6 +681,7 @@ function start(mode = game.mode) {
 function gameOver() {
   game.state = 'over';
   sound.over();
+  music.stop(0.3);
   buzz([60, 40, 120]);
   joop.hush();
   const score = game.level + 1;
@@ -542,6 +700,7 @@ function gameOver() {
   setTimeout(() => {
     if (game.state !== 'over') return;
     showScreen('over');
+    music.start(100);
     const line = overLine(score, isBest);
     joop.say([line.text], { cheer: line.cheer });
   }, 700);

@@ -115,7 +115,17 @@
     background: rgba(255, 255, 255, 0.55); color: var(--ink);
     display: grid; place-items: center; cursor: pointer;
   }
-  #mute svg { width: 24px; height: 24px; }
+  #mute svg, #music svg { width: 24px; height: 24px; }
+  #music {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 70px); right: 14px;
+    width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: rgba(255, 255, 255, 0.55); color: var(--ink);
+    display: grid; place-items: center; cursor: pointer;
+  }
+  #music .cross { display: none; }
+  #music.off .cross { display: inline; }
+  #music.off .notes { opacity: 0.45; }
 
   /* Screens */
   .screen {
@@ -251,6 +261,10 @@
 <button id="mute" type="button" aria-label="Geluid aan of uit">
   <svg id="icon-on" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
   <svg id="icon-off" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+
+<button id="music" type="button" aria-label="Muziek aan of uit">
+  <svg viewBox="0 0 24 24"><g class="notes" fill="currentColor"><path d="M9 17.5V6l11-2.5v11" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><ellipse cx="6.5" cy="17.5" rx="3" ry="2.4"/><ellipse cx="17.5" cy="14.5" rx="3" ry="2.4"/></g><path class="cross" d="M3 3l18 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
 </button>
 
 <button id="stop" class="btn" type="button">STOP!</button>

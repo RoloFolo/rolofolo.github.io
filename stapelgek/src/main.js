@@ -314,7 +314,7 @@ if (location.search.includes('debug')) window.stapelgekMusic = { playStep, STEPS
 
 const game = {
   state: 'menu',      // menu | play | over
-  mode: 'easy',       // easy: the speed only goes up after a perfect block | hard: faster with every block
+  mode: 'easy',       // easy: always the same speed | hard: faster with every block
   speed: 0,
   level: 0,           // layers stacked on the first block
   top: null,          // { x, z, sx, sz } of the highest layer
@@ -459,8 +459,8 @@ function drop() {
   view.worldY = -game.level * H;
   setScore(true);
   paintSky(game.level);
-  // Hard gets faster with every block; easy only after a perfect one, so a miss never speeds things up.
-  if (game.mode === 'hard' || game.combo > 0) game.speed = Math.min(MAX_SPEED, game.speed + SPEED_STEP);
+  // Hard gets faster with every block; easy keeps the same speed all game.
+  if (game.mode === 'hard') game.speed = Math.min(MAX_SPEED, game.speed + SPEED_STEP);
   spawn(game.speed);
   music.bpm = bpmFor(game.speed);
   const height = game.level + 1;

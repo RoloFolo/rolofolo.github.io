@@ -160,6 +160,8 @@ $('mute').addEventListener('click', () => {
 
 const game = {
   state: 'menu',      // menu | play | over
+  mode: 'easy',       // easy: the speed only goes up after a perfect block | hard: faster with every block
+  speed: 0,
   level: 0,           // layers stacked on the first block
   top: null,          // { x, z, sx, sz } of the highest layer
   moving: null,       // the block floating in
@@ -170,7 +172,14 @@ const game = {
   effects: [],        // flashes, rings and sparks
 };
 
-let best = parseInt(store.get('stapelgek-best', '0'), 10) || 0;
+// Records per mode and the last 10 scores. The record from before the modes existed was a hard game.
+const best = {
+  easy: parseInt(store.get('stapelgek-best-easy', '0'), 10) || 0,
+  hard: parseInt(store.get('stapelgek-best-hard', store.get('stapelgek-best', '0')), 10) || 0,
+};
+let scores = [];
+try { scores = JSON.parse(store.get('stapelgek-scores', '[]')) || []; } catch (e) { scores = []; }
+const MODE_NAME = { easy: 'Makkelijk', hard: 'Moeilijk' };
 const pedestal = makeBlock(0, 0, -PEDESTAL / 2, 0, BASE, PEDESTAL, BASE);
 
 function reset() {
@@ -181,7 +190,7 @@ function reset() {
   hue0 = Math.random() * 360;
   pedestal.material.color.copy(colorAt(0));
   paintSky(0);
-  Object.assign(game, { level: 0, top: { x: 0, z: 0, sx: BASE, sz: BASE }, moving: null, combo: 0, blocks: [], pieces: [], effects: [] });
+  Object.assign(game, { level: 0, top: { x: 0, z: 0, sx: BASE, sz: BASE }, moving: null, combo: 0, warnedNarrow: false, blocks: [], pieces: [], effects: [] });
   view.worldY = 0;
   view.zoom = 1;
   setScore();
@@ -197,7 +206,9 @@ function spawn(speed) {
   placeMoving();
 }
 
-const speedAt = (level) => Math.min(10, 4.2 + level * 0.12);
+const START_SPEED = 4.2;
+const SPEED_STEP = 0.12;
+const MAX_SPEED = 10;
 
 function placeMoving() {
   const m = game.moving;
@@ -254,6 +265,8 @@ function drop() {
     sound.perfect(game.combo);
     callout(game.combo > 1 ? `PERFECT ×${game.combo}` : 'PERFECT!');
     buzz(25);
+    if (game.combo === 3) joop.chat(pick(LINES.streak), { cheer: true });
+    else joop.chat(pick(LINES.perfect), { chance: 0.3 });
   } else {
     game.combo = 0;
     const side = Math.sign(delta);
@@ -270,6 +283,12 @@ function drop() {
     addSlice(m.axis, newCentre + side * overlap / 2, y, onX ? top.z : top.x, onX ? top.sz : top.sx);
     sound.cut();
     buzz(40);
+    if (overlap < 0.8 && !game.warnedNarrow) {
+      game.warnedNarrow = true;
+      joop.chat(pick(LINES.narrow));
+    } else if (cutSize > size * 0.4) {
+      joop.chat(pick(LINES.bigCut), { chance: 0.6 });
+    }
   }
 
   const placed = onX
@@ -286,7 +305,11 @@ function drop() {
   view.worldY = -game.level * H;
   setScore(true);
   paintSky(game.level);
-  spawn(speedAt(game.level));
+  // Hard gets faster with every block; easy only after a perfect one, so a miss never speeds things up.
+  if (game.mode === 'hard' || game.combo > 0) game.speed = Math.min(MAX_SPEED, game.speed + SPEED_STEP);
+  spawn(game.speed);
+  const height = game.level + 1;
+  if (height % 10 === 0 || height === 25 || height === 75) joop.chat(LINES.milestone[height] || `${height} hoog! Ga zo door!`, { cheer: true, force: true });
 }
 
 function addPiece(mesh, axis, side) {
@@ -327,49 +350,237 @@ function addRing(placed, y) {
   game.effects.push({ mesh, age: 0, life: 0.6, kind: 'ring', sx: placed.sx, sz: placed.sz });
 }
 
+// ---------- Joop ----------
+
+const pick = (list) => list[Math.floor(Math.random() * list.length)];
+
+const LINES = {
+  intro: [
+    'Hoi! Ik ben Joop, stapelkampioen van de familie.',
+    'Zo komt er een blok aangezweefd. Druk op STOP als hij precies boven je toren hangt.',
+    'Steekt er een stukje uit? Snip snap, dat snij ik er gewoon af!',
+    'Precies goed is PERFECT. Drie keer op rij? Dan groeit je blok weer een beetje.',
+    'Kies Makkelijk of Moeilijk. Bij Moeilijk gaat het steeds sneller. Succes!',
+  ],
+  hello: [
+    'Zin in een potje stapelen?',
+    'Hoe hoog kom jij vandaag?',
+    'Ik heb mijn stropdas al rechtgetrokken. Kom maar op!',
+    'Tik op mij als je de uitleg nog een keer wilt horen.',
+    'Vijftig jaar getrouwd, maar stapelen blijft spannend!',
+  ],
+  start: {
+    easy: ['Rustig aan, we hebben alle tijd!', 'Makkelijk is ook heel knap hoor!', 'Lekker in je eigen tempo.'],
+    hard: ['Moeilijk? Petje af! Het gaat steeds sneller.', 'Hou je vast, dit wordt snel!', 'Echte bikkels kiezen Moeilijk!'],
+  },
+  perfect: ['Prachtig!', 'Keurig netjes!', 'Zo recht als mijn stropdas!', 'Dat had ik zelf niet beter gekund!', 'Precies goed!', 'Vakwerk!'],
+  streak: ['Drie op rij! Je blok groeit weer!', 'Je bent op dreef!', 'Wat een stapelaar ben jij!'],
+  bigCut: ['Oei, dat was een flink stuk!', 'Snip snap! De volgende beter.', 'Niet getreurd, gewoon doorstapelen!', 'Au, daar gaat een stuk!'],
+  narrow: ['Hij wordt wel smal, hè? Concentratie!', 'Voorzichtig nu, het is nog maar een smal blokje!'],
+  milestone: {
+    10: 'Tien hoog! Mooi begin!',
+    25: '25 hoog! Een zilveren toren!',
+    50: '50 hoog! Een gouden toren, net als ons huwelijk!',
+    75: '75! Ik krijg er hoogtevrees van!',
+    100: '100! Ik ben sprakeloos. Bijna.',
+  },
+};
+
+function overLine(score, isBest) {
+  if (isBest && score > 2) return { text: `Gefeliciteerd! Een nieuw record: ${score} blokken!`, cheer: true };
+  if (score < 5) return { text: pick(['Ach, iedereen begint klein. Nog een keer!', 'Oefening baart kunst. Probeer het nog eens!']) };
+  if (score < 15) return { text: pick(['Goed bezig! Volgende keer nog hoger?', 'Netjes! Ik zie talent.']) };
+  if (score < 30) return { text: pick(['Knap gedaan! Ik ben trots op je.', 'Wat een toren! Gefeliciteerd!']), cheer: true };
+  return { text: pick(['Ongelooflijk! Gefeliciteerd, kampioen!', 'Daar kan ik nog wat van leren. Bravo!']), cheer: true };
+}
+
+const joop = {
+  el: $('joop'),
+  balloon: $('balloon'),
+  queue: [],
+  timer: 0,
+  quietUntil: 0,
+
+  // Show Joop next to the open card (menu, game over) or above the STOP button while playing.
+  place() {
+    const anchor = game.state === 'play' ? $('stop') : document.querySelector('.screen.show .card');
+    const size = game.state === 'play' ? 86 : game.state === 'over' ? 104 : 124;
+    this.el.style.setProperty('--joop-size', `${size}px`);
+    if (anchor) {
+      const top = anchor.getBoundingClientRect().top;
+      this.el.style.bottom = `${window.innerHeight - top + (game.state === 'over' ? -10 : 8)}px`;
+    }
+    this.el.classList.toggle('no-tap', game.state === 'play');
+  },
+
+  show(visible) {
+    this.el.classList.toggle('hidden', !visible);
+    if (!visible) this.hush();
+  },
+
+  // Say a list of lines one after another; tapping the balloon skips to the next.
+  say(lines, { cheer = false, hold = 0 } = {}) {
+    this.queue = [...lines];
+    this.cheer = cheer;
+    this.hold = hold;
+    this.next();
+  },
+
+  next() {
+    clearTimeout(this.timer);
+    const text = this.queue.shift();
+    if (!text) { this.hush(); return; }
+    this.el.classList.toggle('cheer', this.cheer);
+    this.balloon.innerHTML = '';
+    this.balloon.append(text);
+    if (this.queue.length) {
+      const more = document.createElement('span');
+      more.className = 'more';
+      more.textContent = 'tik voor meer ›';
+      this.balloon.append(more);
+    }
+    this.balloon.classList.remove('show');
+    void this.balloon.offsetWidth;
+    this.balloon.classList.add('show');
+    this.el.classList.add('talking');
+    const talkFor = Math.min(2200, 300 + text.length * 45);
+    setTimeout(() => this.el.classList.remove('talking'), talkFor);
+    const readFor = this.hold || 1800 + text.length * 55;
+    this.timer = setTimeout(() => this.next(), this.queue.length ? readFor + 1200 : readFor);
+  },
+
+  hush() {
+    clearTimeout(this.timer);
+    this.queue = [];
+    this.balloon.classList.remove('show');
+    this.el.classList.remove('talking', 'cheer');
+    if (game.state === 'play') this.el.classList.add('hidden');
+  },
+
+  // During play Joop pops in now and then, never twice within a few seconds.
+  chat(text, { cheer = false, chance = 1, force = false } = {}) {
+    const now = performance.now();
+    if (!force && (now < this.quietUntil || Math.random() > chance)) return;
+    this.quietUntil = now + 4500;
+    this.el.classList.remove('hidden');
+    this.say([text], { cheer, hold: 1900 });
+  },
+};
+
+$('joop-figure').addEventListener('click', () => {
+  if (game.state === 'menu') joop.say(LINES.intro);
+});
+joop.balloon.addEventListener('click', () => joop.next());
+window.addEventListener('resize', () => joop.place());
+
 // ---------- Screens ----------
 
 function showScreen(id) {
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id);
   $('hud').classList.toggle('show', id === null);
   $('stop').classList.toggle('show', id === null);
+  joop.place();
+  setTimeout(() => joop.place(), 400); // again once the card has popped in
+  joop.show(id === 'menu' || id === 'over');
+}
+
+function bestLine() {
+  if (!best.easy && !best.hard) return 'Hoe hoog kom jij?';
+  return `Record: Makkelijk ${best.easy} · Moeilijk ${best.hard}`;
 }
 
 function menu() {
   reset();
   game.state = 'menu';
-  $('menu-best').textContent = best ? `Record: ${best} blokken` : 'Hoe hoog kom jij?';
+  $('menu-best').textContent = bestLine();
   spawn(1.6);
   showScreen('menu');
+  if (store.get('stapelgek-intro', '0') !== '1') {
+    store.set('stapelgek-intro', '1');
+    joop.say(LINES.intro);
+  } else {
+    joop.say([pick(LINES.hello)]);
+  }
 }
 
-function start() {
+function start(mode = game.mode) {
   audio();
+  game.mode = mode;
+  store.set('stapelgek-mode', mode);
   if (game.state === 'over') reset();
-  if (!game.moving) spawn(speedAt(0));
-  game.moving.speed = speedAt(0);
+  game.speed = START_SPEED;
+  if (!game.moving) spawn(game.speed);
+  game.moving.speed = game.speed;
   game.state = 'play';
   game.startedAt = performance.now();
+  const chip = $('mode-chip');
+  chip.textContent = MODE_NAME[mode].toUpperCase();
+  chip.classList.toggle('hard', mode === 'hard');
   showScreen(null);
+  joop.quietUntil = 0;
+  joop.chat(pick(LINES.start[mode]));
 }
 
 function gameOver() {
   game.state = 'over';
   sound.over();
   buzz([60, 40, 120]);
+  joop.hush();
   const score = game.level + 1;
-  const isBest = score > best;
-  if (isBest) { best = score; store.set('stapelgek-best', String(best)); }
+  const isBest = score > best[game.mode];
+  if (isBest) {
+    best[game.mode] = score;
+    store.set(`stapelgek-best-${game.mode}`, String(score));
+  }
+  scores.unshift({ s: score, m: game.mode, t: Date.now() });
+  scores = scores.slice(0, 10);
+  store.set('stapelgek-scores', JSON.stringify(scores));
   $('over-score').textContent = score;
   $('new-best').classList.toggle('show', isBest && score > 1);
-  $('over-best').textContent = `Record: ${best}`;
+  $('over-best').textContent = `Record ${MODE_NAME[game.mode]}: ${best[game.mode]}`;
   showWholeTower();
-  setTimeout(() => { if (game.state === 'over') showScreen('over'); }, 700);
+  setTimeout(() => {
+    if (game.state !== 'over') return;
+    showScreen('over');
+    const line = overLine(score, isBest);
+    joop.say([line.text], { cheer: line.cheer });
+  }, 700);
 }
 
-$('start').addEventListener('click', start);
-$('again').addEventListener('click', start);
+let scoresFrom = 'menu';
+function showScores(from) {
+  scoresFrom = from;
+  const list = $('board');
+  list.innerHTML = '';
+  const fmt = (t) => {
+    try {
+      return new Date(t).toLocaleString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return ''; }
+  };
+  scores.forEach((row, i) => {
+    const li = document.createElement('li');
+    if (i === 0 && from === 'over') li.className = 'latest';
+    const pts = document.createElement('span'); pts.className = 'pts'; pts.textContent = row.s;
+    const unit = document.createElement('span'); unit.className = 'unit'; unit.textContent = 'blokken';
+    const chip = document.createElement('span'); chip.className = `chip ${row.m}`; chip.textContent = MODE_NAME[row.m] || '';
+    const when = document.createElement('span'); when.className = 'when'; when.textContent = fmt(row.t);
+    li.append(pts, unit, chip, when);
+    list.append(li);
+  });
+  $('board-empty').style.display = scores.length ? 'none' : '';
+  $('board-best').textContent = bestLine();
+  showScreen('scores');
+}
+
+game.mode = store.get('stapelgek-mode', 'easy') === 'hard' ? 'hard' : 'easy';
+$('start-easy').addEventListener('click', () => start('easy'));
+$('start-hard').addEventListener('click', () => start('hard'));
+$('again').addEventListener('click', () => start());
 $('to-menu').addEventListener('click', menu);
+$('menu-help').addEventListener('click', () => joop.say(LINES.intro));
+$('menu-scores').addEventListener('click', () => showScores('menu'));
+$('over-scores').addEventListener('click', () => showScores('over'));
+$('scores-back').addEventListener('click', () => showScreen(scoresFrom));
 
 const stopButton = $('stop');
 stopButton.addEventListener('pointerdown', (e) => {
@@ -385,7 +596,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowDown') {
     e.preventDefault();
     if (game.state === 'play') drop();
-    else start();
+    else if (game.state === 'menu' || $('over').classList.contains('show')) start();
   }
 });
 

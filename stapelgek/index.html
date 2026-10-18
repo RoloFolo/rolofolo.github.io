@@ -83,7 +83,7 @@
   }
   .btn:active, .btn.down { transform: translateY(6px); }
   .btn-start {
-    font-size: 34px; padding: 20px 24px;
+    font-size: 30px; padding: 20px 24px;
     background: var(--green); color: var(--white);
     box-shadow: 0 8px 0 var(--green-dark), 0 12px 24px rgba(0, 0, 0, 0.18);
     text-shadow: 0 2px 0 var(--green-dark);
@@ -158,6 +158,84 @@
     border-radius: 999px; background: var(--yellow); font-weight: 900;
   }
   .new-best.show { display: block; animation: pop 0.5s cubic-bezier(.2, 1.6, .4, 1); }
+  .modes { display: flex; gap: 12px; }
+  .modes .btn { font-size: 22px; padding: 18px 8px; letter-spacing: 0.04em; }
+  .btn-hard {
+    background: var(--pink); color: var(--white);
+    box-shadow: 0 8px 0 var(--pink-dark), 0 12px 24px rgba(0, 0, 0, 0.18);
+    text-shadow: 0 2px 0 var(--pink-dark);
+  }
+  .btn-hard:active { box-shadow: 0 2px 0 var(--pink-dark); }
+  .mode-hint { display: flex; gap: 12px; margin: 10px 0 0; font-size: 13px; font-weight: 800; opacity: 0.65; }
+  .mode-hint span { flex: 1; }
+  .links { display: flex; justify-content: center; gap: 4px; }
+  .links .btn { width: auto; }
+  #mode-chip {
+    display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 900; letter-spacing: 0.12em; color: var(--white);
+    background: var(--green-dark);
+  }
+  #mode-chip.hard { background: var(--pink-dark); }
+
+  /* Scoreboard */
+  .board-title { margin: 0 0 4px; font-size: 28px; font-weight: 900; color: var(--pink); }
+  .board-best { margin: 0 0 14px; font-size: 15px; font-weight: 800; opacity: 0.7; }
+  .board { list-style: none; margin: 0 0 16px; padding: 0; text-align: left; }
+  .board li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 12px; border-radius: 14px; font-weight: 800;
+  }
+  .board li:nth-child(odd) { background: rgba(27, 20, 64, 0.05); }
+  .board li.latest { background: var(--yellow); }
+  .board .pts { width: 44px; font-size: 24px; font-weight: 900; text-align: right; }
+  .board .unit { font-size: 13px; opacity: 0.6; }
+  .board .when { margin-left: auto; font-size: 13px; opacity: 0.6; }
+  .chip {
+    padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+    color: var(--white); background: var(--green-dark);
+  }
+  .chip.hard { background: var(--pink-dark); }
+  .board-empty { margin: 8px 0 18px; font-weight: 800; opacity: 0.6; }
+
+  /* Joop and his speech balloon */
+  #joop {
+    position: fixed; left: 8px; bottom: 200px; z-index: 5;
+    width: var(--joop-size, 120px);
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(.2, 1.3, .4, 1), opacity 0.3s;
+  }
+  #joop.hidden { transform: translateX(-130%); opacity: 0; }
+  #joop .figure { pointer-events: auto; cursor: pointer; animation: bob 2.4s ease-in-out infinite; }
+  #joop.no-tap .figure, #joop.no-tap .balloon { pointer-events: none; }
+  #joop svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 6px 0 rgba(27, 20, 64, 0.18)); }
+  @keyframes bob { 50% { transform: translateY(-4px) rotate(-1.5deg); } }
+  .mouth-talk, .eyes-happy, .thumb { display: none; }
+  #joop.talking .mouth-talk { display: inline; animation: talk 0.26s steps(1) infinite; }
+  #joop.talking .mouth-smile { animation: talk 0.26s steps(1) infinite reverse; }
+  @keyframes talk { 0% { opacity: 1; } 50% { opacity: 0; } }
+  #joop.cheer .eyes-happy, #joop.cheer .thumb { display: inline; }
+  #joop.cheer .eyes-open { display: none; }
+  #joop.cheer .figure { animation: hop 0.5s ease-in-out 3; }
+  @keyframes hop { 50% { transform: translateY(-12px) rotate(3deg); } }
+  .balloon {
+    position: absolute; left: 82%; bottom: 72%;
+    width: max-content; max-width: min(250px, calc(100vw - var(--joop-size, 120px) - 16px));
+    padding: 12px 16px; border-radius: 22px;
+    background: var(--white); border: 3px solid var(--ink);
+    box-shadow: 0 5px 0 var(--ink);
+    font-size: 17px; font-weight: 800; line-height: 1.25; color: var(--ink);
+    pointer-events: auto; cursor: pointer;
+    opacity: 0; transform: scale(0.4); transform-origin: 0% 100%;
+    transition: opacity 0.15s, transform 0.25s cubic-bezier(.2, 1.6, .4, 1);
+  }
+  .balloon.show { opacity: 1; transform: none; }
+  .balloon::before, .balloon::after {
+    content: ""; position: absolute; left: 14px; top: 100%;
+    border-style: solid; border-color: transparent;
+  }
+  .balloon::before { border-width: 18px 18px 0 0; border-top-color: var(--ink); margin-top: 2px; left: 11px; }
+  .balloon::after { border-width: 12px 12px 0 0; border-top-color: var(--white); margin-top: -1px; left: 15px; }
+  .balloon .more { display: block; margin-top: 4px; font-size: 12px; opacity: 0.5; }
 </style>
 </head>
 <body>
@@ -166,6 +244,7 @@
 <div id="hud" aria-live="polite">
   <div id="score">1</div>
   <div id="score-label">BLOKKEN</div>
+  <div id="mode-chip">MAKKELIJK</div>
 </div>
 <div id="callout"></div>
 
@@ -179,11 +258,18 @@
 <section id="menu" class="screen show">
   <div class="logo">
     <h1>STAPEL<br>GEK</h1>
-    <p>Stop het zwevende blok precies boven je toren. Wat uitsteekt, gaat eraf!</p>
   </div>
   <div class="card">
     <p class="best" id="menu-best"></p>
-    <button id="start" class="btn btn-start" type="button">START</button>
+    <div class="modes">
+      <button id="start-easy" class="btn btn-start" type="button">MAKKELIJK</button>
+      <button id="start-hard" class="btn btn-hard" type="button">MOEILIJK</button>
+    </div>
+    <p class="mode-hint"><span>Tempo blijft rustig</span><span>Steeds sneller</span></p>
+    <div class="links">
+      <button id="menu-scores" class="btn btn-small" type="button">Scorebord</button>
+      <button id="menu-help" class="btn btn-small" type="button">Uitleg van Joop</button>
+    </div>
   </div>
 </section>
 
@@ -195,9 +281,97 @@
     <p class="new-best" id="new-best">Nieuw record!</p>
     <p class="best" id="over-best"></p>
     <button id="again" class="btn btn-start" type="button">NOG EEN KEER</button>
-    <button id="to-menu" class="btn btn-small" type="button">Menu</button>
+    <div class="links">
+      <button id="over-scores" class="btn btn-small" type="button">Scorebord</button>
+      <button id="to-menu" class="btn btn-small" type="button">Menu</button>
+    </div>
   </div>
 </section>
+
+<section id="scores" class="screen">
+  <div class="card">
+    <p class="board-title">Scorebord</p>
+    <p class="board-best" id="board-best"></p>
+    <ol class="board" id="board"></ol>
+    <p class="board-empty" id="board-empty">Nog geen scores. Ga snel stapelen!</p>
+    <button id="scores-back" class="btn btn-start" type="button">TERUG</button>
+  </div>
+</section>
+
+<div id="joop" class="hidden">
+  <div class="balloon" id="balloon" role="status"></div>
+  <div class="figure" id="joop-figure" title="Joop">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" class="joop-svg" aria-hidden="true">
+      <g stroke="#1b1440" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+        <!-- suit -->
+        <path d="M28 250 C30 205 52 184 100 182 C148 184 170 205 172 250 Z" fill="#7b8396"/>
+        <!-- shirt -->
+        <path d="M76 186 L100 232 L124 186 C116 182 84 182 76 186 Z" fill="#bcd9ff"/>
+        <!-- tie -->
+        <path d="M92 190 L108 190 L104 200 L111 236 L100 248 L89 236 L96 200 Z" fill="#a9adb8"/>
+        <!-- lapels -->
+        <path d="M76 186 L100 232 L84 214 L70 194 Z" fill="#69708a"/>
+        <path d="M124 186 L100 232 L116 214 L130 194 Z" fill="#69708a"/>
+        <!-- neck -->
+        <path d="M86 168 L86 186 C94 192 106 192 114 186 L114 168 Z" fill="#f5c3a0"/>
+        <!-- ears -->
+        <ellipse cx="38" cy="112" rx="13" ry="18" fill="#f5c3a0"/>
+        <ellipse cx="162" cy="112" rx="13" ry="18" fill="#f5c3a0"/>
+        <!-- head -->
+        <path d="M100 18 C146 18 160 52 160 98 C160 146 134 176 100 176 C66 176 40 146 40 98 C40 52 54 18 100 18 Z" fill="#f8cfae"/>
+        <!-- fluffy white hair at the sides -->
+        <path d="M44 104 C32 100 30 88 38 82 C30 74 36 62 46 64 C46 56 56 52 62 58 C58 66 58 74 56 80 C54 88 52 96 50 104 Z" fill="#ffffff"/>
+        <path d="M156 104 C168 100 170 88 162 82 C170 74 164 62 154 64 C154 56 144 52 138 58 C142 66 142 74 144 80 C146 88 148 96 150 104 Z" fill="#ffffff"/>
+      </g>
+      <g fill="#ffffff" opacity="0.8"><circle cx="97" cy="206" r="1.6"/><circle cx="103" cy="214" r="1.6"/><circle cx="97" cy="222" r="1.6"/><circle cx="103" cy="230" r="1.6"/><circle cx="99" cy="238" r="1.6"/></g>
+      <!-- shine on the bald head -->
+      <ellipse cx="80" cy="40" rx="18" ry="9" fill="#ffffff" opacity="0.7" transform="rotate(-18 80 40)"/>
+      <!-- cheeks -->
+      <ellipse cx="62" cy="128" rx="11" ry="7" fill="#ff8fa8" opacity="0.6"/>
+      <ellipse cx="138" cy="128" rx="11" ry="7" fill="#ff8fa8" opacity="0.6"/>
+      <g stroke="#1b1440" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <!-- eyebrows, white with an outline -->
+        <path d="M60 82 C68 76 80 76 88 81" stroke-width="7"/>
+        <path d="M60 82 C68 76 80 76 88 81" stroke="#ffffff" stroke-width="3"/>
+        <path d="M112 81 C120 76 132 76 140 82" stroke-width="7"/>
+        <path d="M112 81 C120 76 132 76 140 82" stroke="#ffffff" stroke-width="3"/>
+        <!-- rimless glasses: thin frames -->
+        <rect x="54" y="88" width="40" height="27" rx="9" stroke="#59607a" stroke-width="3" fill="#ffffff" fill-opacity="0.35"/>
+        <rect x="106" y="88" width="40" height="27" rx="9" stroke="#59607a" stroke-width="3" fill="#ffffff" fill-opacity="0.35"/>
+        <path d="M94 98 C98 95 102 95 106 98" stroke="#59607a" stroke-width="3"/>
+        <path d="M54 96 L42 94 M146 96 L158 94" stroke="#59607a" stroke-width="3"/>
+      </g>
+      <!-- eyes: friendly squints -->
+      <g class="eyes-open" fill="#1b1440">
+        <ellipse cx="74" cy="102" rx="5" ry="6"/>
+        <ellipse cx="126" cy="102" rx="5" ry="6"/>
+        <circle cx="76" cy="100" r="1.8" fill="#fff"/>
+        <circle cx="128" cy="100" r="1.8" fill="#fff"/>
+      </g>
+      <g class="eyes-happy" fill="none" stroke="#1b1440" stroke-width="4" stroke-linecap="round">
+        <path d="M66 104 C70 96 78 96 82 104"/>
+        <path d="M118 104 C122 96 130 96 134 104"/>
+      </g>
+      <!-- nose -->
+      <ellipse cx="100" cy="124" rx="11" ry="9" fill="#f2a98a" stroke="#1b1440" stroke-width="4"/>
+      <ellipse cx="96" cy="121" rx="3.5" ry="2.5" fill="#ffffff" opacity="0.7"/>
+      <!-- mouth: smile and a talking one -->
+      <g class="mouth-smile">
+        <path d="M70 142 C82 160 118 160 130 142 C116 150 84 150 70 142 Z" fill="#ffffff" stroke="#1b1440" stroke-width="4" stroke-linejoin="round"/>
+      </g>
+      <g class="mouth-talk">
+        <path d="M74 140 C80 168 120 168 126 140 C112 146 88 146 74 140 Z" fill="#7a1f2f" stroke="#1b1440" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M78 141 C90 146 110 146 122 141 L121 146 C108 150 92 150 79 146 Z" fill="#ffffff"/>
+        <path d="M88 158 C96 152 106 152 112 158 C104 162 96 162 88 158 Z" fill="#ff7a93"/>
+      </g>
+      <!-- thumbs up, for congratulations -->
+      <g class="thumb" stroke="#1b1440" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M150 250 C150 228 156 214 170 206 L186 224 C178 232 176 240 176 250 Z" fill="#7b8396"/>
+        <path d="M160 196 C156 190 160 182 168 184 L180 186 L182 172 C182 162 194 162 194 172 L194 188 C198 190 198 198 194 200 C198 202 197 210 192 212 C194 216 190 222 184 222 L170 222 C162 222 158 214 160 206 Z" fill="#f8cfae"/>
+      </g>
+    </svg>
+  </div>
+</div>
 
 <script src="game.js"></script>
 </body>

@@ -179,7 +179,8 @@
   .mode-hint { display: flex; gap: 12px; margin: 10px 0 0; font-size: 13px; font-weight: 800; opacity: 0.65; }
   .mode-hint span { flex: 1; }
   .links { display: flex; justify-content: center; gap: 4px; }
-  .links .btn { width: auto; }
+  .links { flex-wrap: wrap; }
+  .links .btn { width: auto; text-decoration: none; }
   #mode-chip {
     display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px;
     font-size: 12px; font-weight: 900; letter-spacing: 0.12em; color: var(--white);
@@ -283,6 +284,7 @@
     <div class="links">
       <button id="menu-scores" class="btn btn-small" type="button">Scorebord</button>
       <button id="menu-help" class="btn btn-small" type="button">Uitleg van Joop</button>
+      <a id="get-app" class="btn btn-small" href="stapelgek.apk" download>Android-app</a>
     </div>
   </div>
 </section>

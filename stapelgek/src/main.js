@@ -732,6 +732,8 @@ function showScores(from) {
 }
 
 game.mode = store.get('stapelgek-mode', 'easy') === 'hard' ? 'hard' : 'easy';
+// The download link is for the website; inside the app (loaded from file://) it has no use.
+if (location.protocol === 'file:') $('get-app').remove();
 $('start-easy').addEventListener('click', () => start('easy'));
 $('start-hard').addEventListener('click', () => start('hard'));
 $('again').addEventListener('click', () => start());

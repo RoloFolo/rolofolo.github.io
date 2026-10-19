@@ -289,19 +289,41 @@ const music = {
 };
 const bpmFor = (speed) => Math.round(116 + (speed - START_SPEED) * 8);
 
+// ---------- Settings ----------
+// One gear button opens a small panel with sound, music and the version; the game waits while it is open.
+
+let paused = false;
 function paintSound() {
-  $('icon-on').style.display = muted ? 'none' : '';
-  $('icon-off').style.display = muted ? '' : 'none';
-  $('music').classList.toggle('off', !music.on || muted);
+  for (const [id, on] of [['set-sound', !muted], ['set-music', music.on && !muted]]) {
+    $(id).classList.toggle('on', on);
+    $(id).setAttribute('aria-pressed', String(on));
+  }
 }
 paintSound();
-$('mute').addEventListener('click', () => {
+$('set-version').textContent = `Stapelgek versie ${__VERSION__}`;
+
+function openSettings(open) {
+  $('settings').hidden = !open;
+  $('settings-btn').setAttribute('aria-expanded', String(open));
+  paused = open && game.state === 'play';
+  $('set-paused').hidden = !paused;
+}
+$('settings-btn').addEventListener('click', () => openSettings($('settings').hidden));
+// A tap outside the panel only closes it, so it never drops a block by accident.
+window.addEventListener('pointerdown', (e) => {
+  if ($('settings').hidden || e.target.closest('#settings, #settings-btn')) return;
+  e.stopPropagation();
+  e.preventDefault();
+  openSettings(false);
+}, true);
+
+$('set-sound').addEventListener('click', () => {
   muted = !muted;
   store.set('stapelgekfull-muted', muted ? '1' : '0');
   if (muted) music.stop(0.1); else music.start();
   paintSound();
 });
-$('music').addEventListener('click', () => {
+$('set-music').addEventListener('click', () => {
   if (muted) { muted = false; store.set('stapelgekfull-muted', '0'); music.on = false; }
   music.on = !music.on;
   store.set('stapelgekfull-music', music.on ? '1' : '0');
@@ -480,7 +502,7 @@ function callout(text, kind = '') {
 // ---------- Placing a block ----------
 
 function drop() {
-  if (game.state !== 'play' || !game.moving || game.moving.kind === 'golden' || game.moving.entering) return;
+  if (paused || game.state !== 'play' || !game.moving || game.moving.kind === 'golden' || game.moving.entering) return;
   if (performance.now() - game.startedAt < 150) return;
   const m = game.moving;
   const top = game.top;
@@ -1336,7 +1358,7 @@ function frame(now) {
   last = now;
 
   const m = game.moving;
-  if (m && game.state !== 'over') {
+  if (m && game.state !== 'over' && !paused) {
     m.age += dt;
     if (m.kind === 'golden') {
       if (m.age >= 0.5 && game.state === 'play') { placeMoving(); landGolden(); }

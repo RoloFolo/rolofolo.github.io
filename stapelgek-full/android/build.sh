@@ -6,8 +6,9 @@
 set -euo pipefail
 
 cd "$(dirname "$0")"
-VERSION_CODE=${VERSION_CODE:-7}
-VERSION_NAME=${VERSION_NAME:-1.1.1}
+VERSION_CODE=${VERSION_CODE:-8}
+# The version name comes from package.json, the same number the game shows in its settings.
+VERSION_NAME=${VERSION_NAME:-$(node -p "require('../package.json').version")}
 MIN_SDK=24
 TARGET_SDK=34
 

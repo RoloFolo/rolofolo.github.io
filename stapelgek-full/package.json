@@ -2,10 +2,11 @@
   "name": "stapelgek-full",
   "private": true,
   "scripts": {
-    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=game.js"
+    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=game.js --define:__VERSION__=\\\"$npm_package_version\\\""
   },
   "devDependencies": {
     "esbuild": "0.25.10",
     "three": "0.170.0"
-  }
+  },
+  "version": "1.1.2"
 }

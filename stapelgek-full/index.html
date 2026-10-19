@@ -115,24 +115,39 @@
     font-size: 16px; padding: 12px 18px; margin-top: 14px;
     background: transparent; color: var(--ink); opacity: 0.7;
   }
-  #mute {
-    position: fixed;
+  #settings-btn {
+    position: fixed; z-index: 21;
     top: calc(env(safe-area-inset-top, 0px) + 14px); right: 14px;
-    width: 48px; height: 48px; border-radius: 50%; border: 0;
-    background: rgba(255, 255, 255, 0.55); color: var(--ink);
+    width: 48px; height: 48px; border-radius: 50%; border: 0; padding: 0;
+    background: rgba(255, 255, 255, 0.55); font-size: 24px;
     display: grid; place-items: center; cursor: pointer;
   }
-  #mute svg, #music svg { width: 24px; height: 24px; }
-  #music {
-    position: fixed;
+  /* Settings: a small panel under the gear; while it is open the game waits. */
+  #settings {
+    position: fixed; z-index: 20;
     top: calc(env(safe-area-inset-top, 0px) + 70px); right: 14px;
-    width: 48px; height: 48px; border-radius: 50%; border: 0;
-    background: rgba(255, 255, 255, 0.55); color: var(--ink);
-    display: grid; place-items: center; cursor: pointer;
+    width: min(250px, calc(100vw - 28px)); padding: 12px 12px 10px;
+    background: var(--white); color: var(--ink);
+    border: 3px solid var(--ink); border-radius: 20px; box-shadow: 0 6px 0 var(--ink), 0 14px 30px rgba(27, 20, 64, 0.25);
   }
-  #music .cross { display: none; }
-  #music.off .cross { display: inline; }
-  #music.off .notes { opacity: 0.45; }
+  .set-title { margin: 0 0 6px; font-size: 18px; font-weight: 900; color: var(--pink); }
+  .set-row {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 4px; border: 0; border-top: 2px solid rgba(27, 20, 64, 0.08); background: none;
+    font: inherit; font-size: 16px; font-weight: 900; color: var(--ink); cursor: pointer;
+  }
+  .switch {
+    position: relative; width: 48px; height: 28px; border-radius: 14px; flex: none;
+    background: rgba(27, 20, 64, 0.2); transition: background 0.15s;
+  }
+  .switch::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--white); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); transition: transform 0.15s;
+  }
+  .set-row.on .switch { background: var(--green); }
+  .set-row.on .switch::after { transform: translateX(20px); }
+  .set-paused { margin: 6px 0 0; font-size: 12px; font-weight: 800; color: var(--pink-dark); }
+  .set-version { margin: 8px 0 0; padding-top: 8px; border-top: 2px solid rgba(27, 20, 64, 0.08); font-size: 12px; font-weight: 800; opacity: 0.55; }
 
   /* Screens */
   .screen {
@@ -352,11 +367,11 @@
   /* The toolbox button sits under the sound buttons; the number shows how many tools you have. */
   .corner-btn {
     position: fixed; z-index: 3;
-    top: calc(env(safe-area-inset-top, 0px) + 126px); right: 14px;
+    top: calc(env(safe-area-inset-top, 0px) + 70px); right: 14px;
     width: 48px; height: 48px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
     background: rgba(255, 255, 255, 0.55); font-size: 24px; display: grid; place-items: center;
   }
-  #menu-goals-btn { top: calc(env(safe-area-inset-top, 0px) + 182px); }
+  #menu-goals-btn { top: calc(env(safe-area-inset-top, 0px) + 126px); }
   .corner-btn .n {
     position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px;
     display: grid; place-items: center; font-size: 12px; font-weight: 900;
@@ -451,14 +466,14 @@
 <div id="tools" aria-label="Gereedschap"></div>
 <div id="callout"></div>
 
-<button id="mute" type="button" aria-label="Geluid aan of uit">
-  <svg id="icon-on" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-  <svg id="icon-off" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-</button>
-
-<button id="music" type="button" aria-label="Muziek aan of uit">
-  <svg viewBox="0 0 24 24"><g class="notes" fill="currentColor"><path d="M9 17.5V6l11-2.5v11" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><ellipse cx="6.5" cy="17.5" rx="3" ry="2.4"/><ellipse cx="17.5" cy="14.5" rx="3" ry="2.4"/></g><path class="cross" d="M3 3l18 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-</button>
+<button id="settings-btn" type="button" aria-label="Instellingen" aria-expanded="false" aria-controls="settings">⚙️</button>
+<div id="settings" role="dialog" aria-label="Instellingen" hidden>
+  <p class="set-title">Instellingen</p>
+  <button id="set-sound" class="set-row" type="button" aria-pressed="true"><span>🔊 Geluid</span><span class="switch"></span></button>
+  <button id="set-music" class="set-row" type="button" aria-pressed="true"><span>🎵 Muziek</span><span class="switch"></span></button>
+  <p class="set-paused" id="set-paused">Het spel staat even op pauze.</p>
+  <p class="set-version" id="set-version"></p>
+</div>
 
 <button id="stop" class="btn" type="button">STOP!</button>
 

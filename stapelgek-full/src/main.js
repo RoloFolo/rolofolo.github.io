@@ -904,12 +904,12 @@ const LINES = {
     'Zo komt er een blok aangezweefd. Druk op STOP als hij precies boven je toren hangt.',
     'Steekt er een stukje uit? Snip snap, dat snij ik er gewoon af!',
     'Precies goed is PERFECT. Drie keer op rij? Dan groeit je blok weer een beetje.',
-    'Haal je doelen en verdien gereedschap: een bom, een pomp, een slakje en nog veel meer.',
+    'Haal je doelen en verdien gereedschap: een bom, een pomp, een slakje en nog veel meer. Je doelen staan onder de 🎯 rechtsboven.',
     'Je hebt 5 levens per dag. Een nieuw record of 40 hoog levert een extra leven op.',
     'Kies Makkelijk of Moeilijk. Bij Moeilijk gaat het steeds sneller. Succes!',
   ],
   news: [
-    'Nieuw! Bovenin zie je nu drie doelen. Haal ze en je krijgt gereedschap.',
+    'Nieuw! Onder de 🎯 rechtsboven staan drie doelen. Haal ze en je krijgt gereedschap.',
     'Bij 50 hoog krijg je een diamant, en bij 75 valt er een gouden blok.',
     'Let op: je hebt 5 levens per dag. Morgen krijg je er weer 5.',
   ],
@@ -919,7 +919,7 @@ const LINES = {
     'Ik heb mijn stropdas al rechtgetrokken. Kom maar op!',
     'Tik op mij als je de uitleg nog een keer wilt horen.',
     'Vijftig jaar getrouwd, maar stapelen blijft spannend!',
-    'Kijk eens naar je doelen. Daar valt gereedschap te verdienen!',
+    'Tik eens op de 🎯 rechtsboven. Daar staan je doelen, en die leveren gereedschap op!',
   ],
   start: {
     easy: ['Rustig aan, we hebben alle tijd!', 'Makkelijk is ook heel knap hoor!', 'Lekker in je eigen tempo.'],
@@ -1054,6 +1054,7 @@ function menu() {
   game.state = 'menu';
   $('menu-best').textContent = bestLine();
   $('menu-kit-n').textContent = itemCount() || '';
+  $('menu-goals-n').textContent = goals.list.length;
   paintLives();
   paintGoals();
   paintChallenge();
@@ -1299,6 +1300,8 @@ $('challenge-btn').addEventListener('click', () => {
   else prepare(c.mode, true);
 });
 $('toolbox-back').addEventListener('click', () => showScreen('menu'));
+$('menu-goals-btn').addEventListener('click', () => { paintGoals(); showScreen('goals'); });
+$('goals-back').addEventListener('click', () => showScreen('menu'));
 $('nolives-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
 $('nolives-video').addEventListener('click', () => videoForLife(() => prepare(game.mode)));
 $('menu-video').addEventListener('click', () => videoForLife());

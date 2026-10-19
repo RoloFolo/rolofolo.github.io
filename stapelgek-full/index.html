@@ -350,18 +350,22 @@
   }
   #menu-lives .pill { font-size: 12px; padding: 5px 10px; }
   /* The toolbox button sits under the sound buttons; the number shows how many tools you have. */
-  #menu-kit {
+  .corner-btn {
     position: fixed; z-index: 3;
     top: calc(env(safe-area-inset-top, 0px) + 126px); right: 14px;
     width: 48px; height: 48px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
     background: rgba(255, 255, 255, 0.55); font-size: 24px; display: grid; place-items: center;
   }
-  #menu-kit .n {
+  #menu-goals-btn { top: calc(env(safe-area-inset-top, 0px) + 182px); }
+  .corner-btn .n {
     position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px;
     display: grid; place-items: center; font-size: 12px; font-weight: 900;
     background: var(--pink); color: var(--white); border: 2px solid var(--ink);
   }
-  #menu-kit .n:empty { display: none; }
+  .corner-btn .n:empty { display: none; }
+  #menu-goals-n { background: var(--green-dark); }
+  .goals-note { margin: 0 0 14px; font-size: 13px; font-weight: 700; opacity: 0.75; }
+  #goals .goals { margin: 0 0 12px; }
   /* Opa Joop's daily challenge */
   .challenge {
     width: 100%; margin: 0 0 10px; padding: 6px 12px 6px 6px; cursor: pointer;
@@ -376,8 +380,6 @@
   .c-text b { display: block; font-size: 15px; font-weight: 900; }
   .c-text span { display: block; font-size: 12px; font-weight: 800; opacity: 0.75; }
   .c-go { font-size: 28px; font-weight: 900; color: var(--pink); }
-  /* The records are on the scoreboard; the menu card needs the room for the challenge. */
-  #menu-best { display: none; }
   #challenge-hud { margin-top: 6px; font-size: 14px; font-weight: 900; color: var(--ink); }
   #challenge-hud:empty { display: none; }
   .toolbox-scroll { max-height: 62vh; overflow-y: auto; margin: 0 0 16px; text-align: left; }
@@ -461,13 +463,13 @@
 <button id="stop" class="btn" type="button">STOP!</button>
 
 <section id="menu" class="screen show">
-  <button id="menu-kit" type="button" aria-label="Gereedschapskist bekijken">🧰<span class="n" id="menu-kit-n"></span></button>
+  <button id="menu-kit" class="corner-btn" type="button" aria-label="Gereedschapskist bekijken">🧰<span class="n" id="menu-kit-n"></span></button>
+  <button id="menu-goals-btn" class="corner-btn" type="button" aria-label="Doelen bekijken">🎯<span class="n" id="menu-goals-n"></span></button>
   <div id="menu-lives"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
   <div class="logo">
     <h1>STAPEL<br>GEK</h1>
   </div>
   <div class="card">
-    <div class="goals-box"><p class="box-title">DOELEN</p><ol id="menu-goals" class="goals"></ol></div>
     <button id="challenge-btn" class="challenge" type="button">
       <span class="c-face" id="challenge-face"></span>
       <span class="c-text"><b>Opa Joop daagt je uit</b><span id="challenge-sub"></span></span>
@@ -516,6 +518,15 @@
     <ol class="board" id="board"></ol>
     <p class="board-empty" id="board-empty">Nog geen scores. Ga snel stapelen!</p>
     <button id="scores-back" class="btn btn-start" type="button">TERUG</button>
+  </div>
+</section>
+
+<section id="goals" class="screen">
+  <div class="card">
+    <p class="board-title">Doelen</p>
+    <ol id="menu-goals" class="goals"></ol>
+    <p class="goals-note">Haal een doel en je krijgt het gereedschap dat erachter staat. Daarna komt er een nieuw, iets moeilijker doel voor in de plaats.</p>
+    <button id="goals-back" class="btn btn-start" type="button">TERUG</button>
   </div>
 </section>
 

@@ -435,8 +435,18 @@ function spawn(speed, kind = 'normal') {
   const { x, z, sx, sz } = game.top;
   const mesh = makeBlock(game.level + 1, x, 0, z, sx, H, sz);
   if (kind === 'golden') mesh.material = specialMaterial('golden');
-  game.moving = { mesh, kind, axis, offset: kind === 'golden' ? 0 : side * TRAVEL, dir: -side, speed, age: 0, sx, sz };
+  // A new block ignores taps until it first reaches the tower, so a tap meant for the block before never wastes it.
+  game.moving = { mesh, kind, axis, offset: kind === 'golden' ? 0 : side * TRAVEL, dir: -side, speed, age: 0, sx, sz, entering: kind !== 'golden' };
   placeMoving();
+  paintStop();
+}
+
+// While a golden block falls by itself, the STOP button turns gold: no need to tap.
+function paintStop() {
+  const golden = !!game.moving && game.moving.kind === 'golden';
+  const button = $('stop');
+  button.classList.toggle('golden', golden);
+  button.textContent = golden ? 'GOUD!' : 'STOP!';
 }
 
 function placeMoving() {
@@ -468,7 +478,8 @@ function callout(text, kind = '') {
 // ---------- Placing a block ----------
 
 function drop() {
-  if (game.state !== 'play' || !game.moving || game.moving.kind === 'golden' || performance.now() - game.startedAt < 150) return;
+  if (game.state !== 'play' || !game.moving || game.moving.kind === 'golden' || game.moving.entering) return;
+  if (performance.now() - game.startedAt < 150) return;
   const m = game.moving;
   const top = game.top;
   const onX = m.axis === 'x';
@@ -1210,6 +1221,10 @@ function frame(now) {
     } else {
       const speed = m.speed * (game.slowLeft > 0 ? 0.5 : 1);
       m.offset += m.dir * speed * dt;
+      if (m.entering) {
+        const reach = m.axis === 'x' ? (game.top.sx + m.sx) / 2 : (game.top.sz + m.sz) / 2;
+        if (Math.abs(m.offset) < reach) m.entering = false;
+      }
       if (Math.abs(m.offset) > TRAVEL) {
         m.offset = Math.sign(m.offset) * TRAVEL;
         m.dir = -m.dir;

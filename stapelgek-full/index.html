@@ -100,6 +100,12 @@
     display: none;
   }
   #stop.show { display: block; }
+  #stop.golden {
+    background: linear-gradient(180deg, #fff1a8, #ffc928 55%, #f0a500);
+    box-shadow: 0 9px 0 #b87c00, 0 0 28px rgba(255, 201, 40, 0.8);
+    animation: shine 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes shine { to { filter: brightness(1.15); } }
   @media (max-height: 520px) {
     #stop { font-size: 28px; padding: 14px 20px; bottom: 16px; width: min(50vw, 300px); }
     #score { font-size: 56px; }

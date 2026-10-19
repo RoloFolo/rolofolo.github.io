@@ -162,8 +162,8 @@
     text-shadow: 0 5px 0 var(--pink), 0 10px 0 var(--pink-dark), 0 18px 30px rgba(27, 20, 64, 0.25);
     transform: rotate(-4deg);
   }
-  /* This menu card holds lives and goals too, so the logo sits higher and a little smaller. */
-  #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 3vh); }
+  /* This menu card holds the goals too, so the logo is a little smaller; it sits below the corner buttons. */
+  #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 70px); }
   #menu .logo h1 { font-size: clamp(42px, 12.5vw, 66px); }
   .logo p {
     margin: 26px auto 0; max-width: 300px;
@@ -338,6 +338,29 @@
   .kit:disabled { opacity: 0.35; cursor: default; }
   .lives-hearts.big { font-size: 34px; margin: 6px 0; }
   #over .lives-row { margin: 16px 0 0; font-size: 18px; }
+  /* Lives in the top-left corner of the menu, across from the sound buttons. */
+  #menu-lives {
+    position: fixed; z-index: 3;
+    top: calc(env(safe-area-inset-top, 0px) + 14px); left: calc(env(safe-area-inset-left, 0px) + 14px);
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  }
+  #menu-lives .lives-hearts {
+    padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.55);
+    font-size: 17px; letter-spacing: 1px; line-height: 1.2;
+  }
+  #menu-lives .pill { font-size: 12px; padding: 5px 10px; }
+  /* Small phones: a more compact menu, so Joop and his balloon stay below the logo. */
+  @media (max-height: 720px) {
+    #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 58px); }
+    #menu .logo h1 { font-size: 38px; }
+    #menu .mode-hint { display: none; }
+    #menu .modes .btn { padding: 14px 8px; }
+    #menu .links .btn-small { margin-top: 6px; padding: 8px 12px; }
+    #menu .goals-box { margin-bottom: 8px; padding: 8px; }
+    #menu .goals { gap: 4px; }
+    #menu .best { margin-bottom: 10px; font-size: 15px; }
+    #menu { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
+  }
 
   /* Video for a reward. A test screen until the app plays real AdMob videos. */
   #ad {
@@ -385,11 +408,11 @@
 <button id="stop" class="btn" type="button">STOP!</button>
 
 <section id="menu" class="screen show">
+  <div id="menu-lives"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
   <div class="logo">
     <h1>STAPEL<br>GEK</h1>
   </div>
   <div class="card">
-    <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
     <div class="goals-box"><p class="box-title">DOELEN</p><ol id="menu-goals" class="goals"></ol></div>
     <p class="best" id="menu-best"></p>
     <div class="modes">

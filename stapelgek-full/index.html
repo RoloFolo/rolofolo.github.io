@@ -349,6 +349,34 @@
     font-size: 17px; letter-spacing: 1px; line-height: 1.2;
   }
   #menu-lives .pill { font-size: 12px; padding: 5px 10px; }
+  /* The toolbox button sits under the sound buttons; the number shows how many tools you have. */
+  #menu-kit {
+    position: fixed; z-index: 3;
+    top: calc(env(safe-area-inset-top, 0px) + 126px); right: 14px;
+    width: 48px; height: 48px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+    background: rgba(255, 255, 255, 0.55); font-size: 24px; display: grid; place-items: center;
+  }
+  #menu-kit .n {
+    position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px;
+    display: grid; place-items: center; font-size: 12px; font-weight: 900;
+    background: var(--pink); color: var(--white); border: 2px solid var(--ink);
+  }
+  #menu-kit .n:empty { display: none; }
+  .toolbox-scroll { max-height: 62vh; overflow-y: auto; margin: 0 0 16px; text-align: left; }
+  .kit-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; }
+  .kit-list li {
+    display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center;
+    padding: 8px 10px; border-radius: 14px; background: rgba(27, 20, 64, 0.05);
+  }
+  .kit-list li.none { opacity: 0.55; }
+  .kit-list .icon { font-size: 28px; text-align: center; }
+  .kit-list .what { min-width: 0; }
+  .kit-list .what b { display: block; font-size: 15px; font-weight: 900; }
+  .kit-list .what span { display: block; font-size: 12px; font-weight: 700; opacity: 0.75; line-height: 1.3; }
+  .kit-list .have { font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .how { padding: 10px 12px; border-radius: 16px; background: rgba(255, 210, 63, 0.35); }
+  .how ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .how li { display: grid; grid-template-columns: 24px 1fr; gap: 8px; font-size: 13px; font-weight: 800; line-height: 1.3; }
   /* Small phones: a more compact menu, so Joop and his balloon stay below the logo. */
   @media (max-height: 720px) {
     #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 58px); }
@@ -408,6 +436,7 @@
 <button id="stop" class="btn" type="button">STOP!</button>
 
 <section id="menu" class="screen show">
+  <button id="menu-kit" type="button" aria-label="Gereedschapskist bekijken">🧰<span class="n" id="menu-kit-n"></span></button>
   <div id="menu-lives"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
   <div class="logo">
     <h1>STAPEL<br>GEK</h1>
@@ -457,6 +486,28 @@
     <ol class="board" id="board"></ol>
     <p class="board-empty" id="board-empty">Nog geen scores. Ga snel stapelen!</p>
     <button id="scores-back" class="btn btn-start" type="button">TERUG</button>
+  </div>
+</section>
+
+<section id="toolbox" class="screen">
+  <div class="card">
+    <p class="board-title">Gereedschapskist</p>
+    <p class="board-best" id="toolbox-count"></p>
+    <div class="toolbox-scroll">
+      <ul class="kit-list" id="toolbox-list"></ul>
+      <div class="how">
+        <p class="box-title">ZO WERKT HET</p>
+        <ul>
+          <li><span>🎯</span><span>Haal de doelen in het menu. Elk doel levert gereedschap op.</span></li>
+          <li><span>💎</span><span>Bij 50, 100, 150 ... hoog krijg je een diamant.</span></li>
+          <li><span>🥇</span><span>Bij 75, 125, 175 ... valt er vanzelf een gouden blok, perfect en zonder snee.</span></li>
+          <li><span>🧰</span><span>Voor elk potje neem je maximaal 3 stuks mee. Tik tijdens het spelen op een knop rechts om het te gebruiken. Wat je niet gebruikt, houd je.</span></li>
+          <li><span>📺</span><span>Na een potje kun je een filmpje kijken, dan telt je buit dubbel.</span></li>
+          <li><span>❤️</span><span>Je hebt 5 levens per dag. Een nieuw record of 40 hoog geeft een extra leven.</span></li>
+        </ul>
+      </div>
+    </div>
+    <button id="toolbox-back" class="btn btn-start" type="button">TERUG</button>
   </div>
 </section>
 

@@ -972,6 +972,7 @@ function menu() {
   reset();
   game.state = 'menu';
   $('menu-best').textContent = bestLine();
+  $('menu-kit-n').textContent = itemCount() || '';
   paintLives();
   paintGoals();
   spawn(1.6);
@@ -1048,6 +1049,23 @@ function begin(pack) {
   checkGoals();
   joop.quietUntil = 0;
   joop.chat(pick(LINES.start[game.mode]));
+}
+
+// The toolbox to look in from the menu: what you have and what each tool does.
+function showToolbox() {
+  const list = $('toolbox-list');
+  list.innerHTML = '';
+  for (const id of ITEM_IDS) {
+    const li = document.createElement('li');
+    if (!inventory[id]) li.className = 'none';
+    li.innerHTML = `<span class="icon">${ITEMS[id].icon}</span><span class="what"><b></b><span></span></span><span class="have">×${inventory[id]}</span>`;
+    li.querySelector('b').textContent = ITEMS[id].name;
+    li.querySelector('.what span').textContent = ITEMS[id].info;
+    list.append(li);
+  }
+  const n = itemCount();
+  $('toolbox-count').textContent = n ? `${n} stuks gereedschap in je kist` : 'Je kist is nog leeg. Haal een doel!';
+  showScreen('toolbox');
 }
 
 function showNoLives() {
@@ -1180,6 +1198,8 @@ $('scores-back').addEventListener('click', () => showScreen(scoresFrom));
 $('loadout-go').addEventListener('click', () => begin(chosen));
 $('loadout-none').addEventListener('click', () => begin({}));
 $('loadout-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
+$('menu-kit').addEventListener('click', showToolbox);
+$('toolbox-back').addEventListener('click', () => showScreen('menu'));
 $('nolives-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
 $('nolives-video').addEventListener('click', () => videoForLife(() => prepare(game.mode)));
 $('menu-video').addEventListener('click', () => videoForLife());

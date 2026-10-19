@@ -36,10 +36,9 @@ export const itemCount = () => ITEM_IDS.reduce((sum, id) => sum + inventory[id],
 export const MAX_LIVES = 5;
 const LIVES_CAP = 9;
 export const VIDEOS_PER_DAY = 5;
-const today = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-};
+const dayName = (d) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+const today = () => dayName(new Date());
+const yesterday = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayName(d); };
 const livesData = store.json('stapelgekfull-lives', { day: '', n: MAX_LIVES, videos: 0 });
 
 export const lives = {
@@ -94,9 +93,9 @@ const REWARD_WEIGHTS = { pump: 4, slow: 4, magnet: 4, buoy: 3, bomb: 3, dynamite
 const goalData = store.json('stapelgekfull-goals', { tier: 0, list: [] });
 const saveGoals = () => store.setJson('stapelgekfull-goals', goalData);
 
-function rollReward() {
+function rollReward(random = Math.random) {
   const total = Object.values(REWARD_WEIGHTS).reduce((a, b) => a + b, 0);
-  let r = Math.random() * total;
+  let r = random() * total;
   for (const [id, w] of Object.entries(REWARD_WEIGHTS)) { r -= w; if (r < 0) return id; }
   return 'pump';
 }
@@ -139,5 +138,53 @@ export const goals = {
     while (goalData.list.length < 3) goalData.list.push(newGoal());
     saveGoals();
     return done;
+  },
+};
+
+// ---------- Opa Joop's daily challenge ----------
+// Each day Joop sets a height a bit above what you usually reach. Beat it once for two tools.
+
+// The same day always gives the same challenge.
+function seeded(text) {
+  let h = 2166136261;
+  for (const c of text) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return () => {
+    h += 0x6d2b79f5;
+    let t = h;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const challengeData = store.json('stapelgekfull-challenge', { day: '', mode: 'easy', target: 0, reward: [], won: false, streak: 0, lastWon: '' });
+
+export const challenge = {
+  // Today's challenge, made from the scores of your last games the first time it is asked for.
+  today(recent) {
+    const day = today();
+    if (challengeData.day !== day) {
+      const random = seeded(`stapelgek-${day}`);
+      const mode = random() < 0.7 ? 'easy' : 'hard';
+      const own = recent.filter((r) => r.m === mode).map((r) => r.s);
+      const pool = (own.length ? own : recent.map((r) => r.s * (mode === 'hard' ? 0.7 : 1))).sort((a, b) => b - a).slice(0, 5);
+      const usual = pool.length ? pool.reduce((a, b) => a + b, 0) / pool.length : 15;
+      const target = Math.round(Math.min(200, Math.max(10, usual * (0.95 + random() * 0.35))));
+      Object.assign(challengeData, { day, mode, target, reward: [rollReward(random), rollReward(random)], won: false });
+      store.setJson('stapelgekfull-challenge', challengeData);
+    }
+    return challengeData;
+  },
+  // Days in a row won, counting today or yesterday.
+  get streak() {
+    return challengeData.lastWon === today() || challengeData.lastWon === yesterday() ? challengeData.streak : 0;
+  },
+  win() {
+    if (challengeData.won) return challengeData;
+    challengeData.streak = challengeData.lastWon === yesterday() ? challengeData.streak + 1 : 1;
+    challengeData.lastWon = today();
+    challengeData.won = true;
+    store.setJson('stapelgekfull-challenge', challengeData);
+    return challengeData;
   },
 };

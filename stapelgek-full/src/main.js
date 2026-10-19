@@ -3,11 +3,11 @@
 import {
   AdditiveBlending, BoxGeometry, BufferAttribute, CanvasTexture, Color, DoubleSide, EdgesGeometry, Group,
   LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RepeatWrapping,
-  RingGeometry, Scene, SRGBColorSpace, WebGLRenderer,
+  RingGeometry, Scene, Sprite, SpriteMaterial, SRGBColorSpace, WebGLRenderer,
 } from 'three';
 import { store } from './store.js';
 import {
-  ITEMS, ITEM_IDS, LOADOUT_MAX, MAX_LIVES, addItem, goals, inventory, itemCount, lives, takeItem, untilTomorrow,
+  ITEMS, ITEM_IDS, LOADOUT_MAX, MAX_LIVES, addItem, challenge, goals, inventory, itemCount, lives, takeItem, untilTomorrow,
 } from './progress.js';
 import { showRewardedAd } from './ads.js';
 
@@ -413,6 +413,7 @@ function reset() {
   for (const layer of game.history.slice(1)) world.remove(layer.mesh);
   for (const mesh of [...game.pieces.map((p) => p.mesh), ...game.effects.map((e) => e.mesh)]) world.remove(mesh);
   if (game.moving) world.remove(game.moving.mesh);
+  if (game.marker) world.remove(game.marker);
   hue0 = Math.random() * 360;
   pedestal.material.color.copy(colorAt(0));
   paintSky(0);
@@ -423,6 +424,7 @@ function reset() {
     bar: {}, loot: {}, slowLeft: 0, magnetLeft: 0, awarded: new Set(), golden: false,
     stats: { height: 1, maxCombo: 0, perfects: 0, mode: game.mode },
     recorded: false, continued: false, doubled: false, lifeForHeight: false, lifeForRecord: false,
+    challenge: null, marker: null,
   });
   view.worldY = 0;
   view.zoom = 1;
@@ -583,6 +585,7 @@ function settle(m, placed, perfect) {
   game.stats.maxCombo = Math.max(game.stats.maxCombo, game.combo);
   if (perfect) game.stats.perfects += 1;
   goals.count('blocks');
+  if (game.challenge && !game.challenge.won && height() > game.challenge.target) beatJoop();
   view.worldY = -game.level * H;
   setScore(true);
   paintSky(game.level);
@@ -594,6 +597,84 @@ function settle(m, placed, perfect) {
   spawn(game.speed, golden ? 'golden' : 'normal');
   checkGoals();
   paintEffects();
+}
+
+// ---------- Opa Joop's challenge ----------
+
+// A pink band around the tower at Joop's height, with his name and score beside it.
+function addJoopMarker(target) {
+  const marker = new Group();
+  const band = new Mesh(squareRing, new MeshBasicMaterial({ color: 0xff3d8b, transparent: true, opacity: 0.9, depthWrite: false }));
+  band.scale.set(BASE * 1.35, 1, BASE * 1.35);
+  marker.add(band);
+  const label = new Sprite(new SpriteMaterial({ map: labelTexture(`Joop: ${target}`), depthTest: false }));
+  label.scale.set(2.6, 0.9, 1);
+  label.position.set(-2.9, 0.4, 2.9); // to the left of the tower on screen
+  marker.add(label);
+  marker.position.y = (target - 1) * H + 0.02; // on top of Joop's last block
+  world.add(marker);
+  game.marker = marker;
+  game.markerBand = band;
+}
+
+function labelTexture(text) {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 88;
+  const g = c.getContext('2d');
+  // A pill; older WebViews have no roundRect, so it is drawn with arcs.
+  const pill = (x, y, w, h) => {
+    const r = h / 2;
+    g.beginPath();
+    g.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5);
+    g.arc(x + w - r, y + r, r, Math.PI * 1.5, Math.PI / 2);
+    g.closePath();
+    g.fill();
+  };
+  g.fillStyle = '#1b1440';
+  pill(4, 10, 248, 74);
+  g.fillStyle = '#ff3d8b';
+  pill(4, 4, 248, 72);
+  g.fillStyle = '#ffffff';
+  g.font = '900 40px Nunito, "Arial Rounded MT Bold", Arial, sans-serif';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.fillText(text, 128, 42);
+  const tex = new CanvasTexture(c);
+  tex.colorSpace = SRGBColorSpace;
+  return tex;
+}
+
+function beatJoop() {
+  game.challenge.won = true;
+  const today = challenge.win();
+  for (const id of today.reward) grant(id, 1);
+  if (game.markerBand) game.markerBand.material.color.setHex(0x2ee59d);
+  callout('JOOP VERSLAGEN!');
+  sound.perfect(8);
+  buzz([40, 30, 80]);
+  joop.chat(`Je hebt me verslagen! Hier is je beloning: ${today.reward.map((id) => ITEMS[id].icon).join(' ')}`, { cheer: true, force: true });
+  paintChallengeHud();
+}
+
+function paintChallengeHud() {
+  const el = $('challenge-hud');
+  if (!game.challenge) { el.textContent = ''; return; }
+  el.textContent = game.challenge.won ? '✅ Joop verslagen!' : `🏁 Versla Joop: ${game.challenge.target}`;
+}
+
+function challengeLine(c) {
+  return `Ik haalde vandaag ${c.target} in ${MODE_NAME[c.mode]}. Kun jij hoger? Dan krijg je ${c.reward.map((id) => ITEMS[id].icon).join(' ')}`;
+}
+
+function paintChallenge() {
+  const c = challenge.today(scores);
+  const button = $('challenge-btn');
+  button.classList.toggle('won', c.won);
+  const streak = challenge.streak;
+  const flame = streak > 1 ? ` · 🔥 ${streak} dagen op rij` : '';
+  $('challenge-sub').textContent = c.won
+    ? `Verslagen! Morgen een nieuwe uitdaging${flame}`
+    : `Joop haalde ${c.target} in ${MODE_NAME[c.mode]} · beloning ${c.reward.map((id) => ITEMS[id].icon).join(' ')}${flame}`;
 }
 
 // Milestones, each once per game: a diamond at 50, 100, 150 ..., a golden block at 75, 125, 175 ...
@@ -975,6 +1056,7 @@ function menu() {
   $('menu-kit-n').textContent = itemCount() || '';
   paintLives();
   paintGoals();
+  paintChallenge();
   spawn(1.6);
   showScreen('menu');
   music.start(108);
@@ -986,13 +1068,16 @@ function menu() {
     store.set('stapelgekfull-news-2', '1');
     joop.say(LINES.news);
   } else {
-    joop.say([pick(LINES.hello)]);
+    const c = challenge.today(scores);
+    joop.say([!c.won && Math.random() < 0.6 ? challengeLine(c) : pick(LINES.hello)]);
   }
 }
 
 // Choose a mode: check the lives, then pack tools if there are any.
 let chosen = {};
-function prepare(mode) {
+let asChallenge = false;
+function prepare(mode, joopChallenge = false) {
+  asChallenge = joopChallenge;
   game.mode = mode;
   store.set('stapelgekfull-mode', mode);
   if (lives.count <= 0) { showNoLives(); return; }
@@ -1033,6 +1118,11 @@ function begin(pack) {
   if (game.state === 'over') reset();
   game.stats.mode = game.mode;
   game.bar = { ...pack };
+  if (asChallenge) {
+    game.challenge = { target: challenge.today(scores).target, won: false };
+    addJoopMarker(game.challenge.target);
+  }
+  paintChallengeHud();
   game.speed = START_SPEED;
   music.start(bpmFor(game.speed));
   if (!game.moving) spawn(game.speed);
@@ -1048,7 +1138,7 @@ function begin(pack) {
   paintEffects();
   checkGoals();
   joop.quietUntil = 0;
-  joop.chat(pick(LINES.start[game.mode]));
+  joop.chat(game.challenge ? `Ik haalde ${game.challenge.target}. Kom maar op, kleintje!` : pick(LINES.start[game.mode]));
 }
 
 // The toolbox to look in from the menu: what you have and what each tool does.
@@ -1122,7 +1212,10 @@ function gameOver() {
     if (game.state !== 'over') return;
     showScreen('over');
     music.start(100);
-    const line = overLine(score, isBest);
+    const c = game.challenge;
+    let line = overLine(score, isBest);
+    if (c && c.won) line = { text: `Je hebt opa verslagen met ${score}! Morgen daag ik je weer uit.`, cheer: true };
+    else if (c) line = { text: pick([`Haha, opa wint! Ik haalde ${c.target}, jij ${score}. Nog een keer?`, `Bijna! Nog ${c.target + 1 - score} blokken en je had me. Probeer het nog eens!`]) };
     joop.say([line.text], { cheer: line.cheer });
   }, 700);
 }
@@ -1189,7 +1282,7 @@ game.mode = store.get('stapelgekfull-mode', 'easy') === 'hard' ? 'hard' : 'easy'
 if (location.protocol === 'file:') $('get-app').remove();
 $('start-easy').addEventListener('click', () => prepare('easy'));
 $('start-hard').addEventListener('click', () => prepare('hard'));
-$('again').addEventListener('click', () => prepare(game.mode));
+$('again').addEventListener('click', () => prepare(game.mode, !!(game.challenge && !game.challenge.won)));
 $('to-menu').addEventListener('click', menu);
 $('menu-help').addEventListener('click', () => joop.say(LINES.intro));
 $('menu-scores').addEventListener('click', () => showScores('menu'));
@@ -1199,6 +1292,12 @@ $('loadout-go').addEventListener('click', () => begin(chosen));
 $('loadout-none').addEventListener('click', () => begin({}));
 $('loadout-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
 $('menu-kit').addEventListener('click', showToolbox);
+$('challenge-face').append($('joop-figure').querySelector('svg').cloneNode(true));
+$('challenge-btn').addEventListener('click', () => {
+  const c = challenge.today(scores);
+  if (c.won) joop.say(['Je hebt me vandaag al verslagen! Morgen bedenk ik een nieuwe uitdaging.'], { cheer: true });
+  else prepare(c.mode, true);
+});
 $('toolbox-back').addEventListener('click', () => showScreen('menu'));
 $('nolives-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
 $('nolives-video').addEventListener('click', () => videoForLife(() => prepare(game.mode)));

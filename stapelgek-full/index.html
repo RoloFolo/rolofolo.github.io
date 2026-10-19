@@ -362,6 +362,24 @@
     background: var(--pink); color: var(--white); border: 2px solid var(--ink);
   }
   #menu-kit .n:empty { display: none; }
+  /* Opa Joop's daily challenge */
+  .challenge {
+    width: 100%; margin: 0 0 10px; padding: 6px 12px 6px 6px; cursor: pointer;
+    display: grid; grid-template-columns: 46px 1fr auto; gap: 8px; align-items: center; text-align: left;
+    font: inherit; color: var(--ink);
+    background: var(--white); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 0 4px 0 var(--ink);
+  }
+  .challenge:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .challenge.won { background: #d9fbe9; }
+  .c-face svg { display: block; width: 46px; height: auto; }
+  .c-text { min-width: 0; }
+  .c-text b { display: block; font-size: 15px; font-weight: 900; }
+  .c-text span { display: block; font-size: 12px; font-weight: 800; opacity: 0.75; }
+  .c-go { font-size: 28px; font-weight: 900; color: var(--pink); }
+  /* The records are on the scoreboard; the menu card needs the room for the challenge. */
+  #menu-best { display: none; }
+  #challenge-hud { margin-top: 6px; font-size: 14px; font-weight: 900; color: var(--ink); }
+  #challenge-hud:empty { display: none; }
   .toolbox-scroll { max-height: 62vh; overflow-y: auto; margin: 0 0 16px; text-align: left; }
   .kit-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; }
   .kit-list li {
@@ -388,6 +406,12 @@
     #menu .goals { gap: 4px; }
     #menu .best { margin-bottom: 10px; font-size: 15px; }
     #menu { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
+    #menu .box-title { display: none; }
+    #menu .goals li { font-size: 12px; padding: 3px 8px; }
+    .challenge { grid-template-columns: 34px 1fr auto; padding: 4px 10px 4px 4px; margin-bottom: 8px; }
+    .c-face svg { width: 34px; }
+    .c-text b { font-size: 14px; }
+    .c-text span { font-size: 11px; }
   }
 
   /* Video for a reward. A test screen until the app plays real AdMob videos. */
@@ -418,6 +442,7 @@
   <div id="score">1</div>
   <div id="score-label">BLOKKEN</div>
   <div id="mode-chip">MAKKELIJK</div>
+  <div id="challenge-hud"></div>
   <ol id="goals-hud" class="goals mini" aria-label="Doelen"></ol>
   <div id="effects"></div>
 </div>
@@ -443,6 +468,11 @@
   </div>
   <div class="card">
     <div class="goals-box"><p class="box-title">DOELEN</p><ol id="menu-goals" class="goals"></ol></div>
+    <button id="challenge-btn" class="challenge" type="button">
+      <span class="c-face" id="challenge-face"></span>
+      <span class="c-text"><b>Opa Joop daagt je uit</b><span id="challenge-sub"></span></span>
+      <span class="c-go" aria-hidden="true">›</span>
+    </button>
     <p class="best" id="menu-best"></p>
     <div class="modes">
       <button id="start-easy" class="btn btn-start" type="button">MAKKELIJK</button>

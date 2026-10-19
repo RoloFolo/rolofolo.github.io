@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ff5ea8">
-<title>Stapelgek Full Game</title>
-<meta name="description" content="Stapelgek Full Game: stapel de blokken zo hoog als je kan, met diamanten, bommen, doelen en Joop die je aanmoedigt.">
+<title>Stapelgek</title>
+<meta name="description" content="Stapelgek: stapel de blokken zo hoog als je kan, met diamanten, bommen, doelen en Joop die je aanmoedigt.">
 <link rel="icon" href="icon.png" type="image/png">
 <style>
   :root {
@@ -156,14 +156,9 @@
     text-shadow: 0 5px 0 var(--pink), 0 10px 0 var(--pink-dark), 0 18px 30px rgba(27, 20, 64, 0.25);
     transform: rotate(-4deg);
   }
-  /* The full game has more in its menu card, so the logo sits higher and a little smaller. */
+  /* This menu card holds lives and goals too, so the logo sits higher and a little smaller. */
   #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 3vh); }
   #menu .logo h1 { font-size: clamp(42px, 12.5vw, 66px); }
-  .full-badge {
-    display: inline-block; margin: 0 0 10px; padding: 4px 12px; border-radius: 999px;
-    background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
-    font-size: 15px; font-weight: 900; letter-spacing: 0.12em; transform: rotate(3deg);
-  }
   .logo p {
     margin: 26px auto 0; max-width: 300px;
     font-size: 17px; font-weight: 800; color: var(--ink); opacity: 0.75;
@@ -385,7 +380,6 @@
 
 <section id="menu" class="screen show">
   <div class="logo">
-    <p class="full-badge">FULL GAME</p>
     <h1>STAPEL<br>GEK</h1>
   </div>
   <div class="card">

@@ -1,5 +1,5 @@
-// Stapelgek Full Game: stop the floating block above the tower; whatever sticks out is cut off.
-// The classic Stapelgek plus tools, goals, lives and special blocks.
+// Stapelgek: stop the floating block above the tower; whatever sticks out is cut off.
+// Stapelgek Mini plus tools, goals, lives and special blocks.
 import {
   AdditiveBlending, BoxGeometry, BufferAttribute, CanvasTexture, Color, DoubleSide, EdgesGeometry, Group,
   LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RepeatWrapping,

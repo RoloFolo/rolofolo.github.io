@@ -1,4 +1,4 @@
-// Stapelgek: stop the floating block above the tower; whatever sticks out is cut off.
+// Stapelgek Mini: stop the floating block above the tower; whatever sticks out is cut off.
 import {
   AdditiveBlending, BoxGeometry, BufferAttribute, Color, DoubleSide, EdgesGeometry, Group, LineBasicMaterial,
   LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RingGeometry, Scene, WebGLRenderer,

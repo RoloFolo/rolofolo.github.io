@@ -357,13 +357,24 @@
   #menu-lives {
     position: fixed; z-index: 3;
     top: calc(env(safe-area-inset-top, 0px) + 14px); left: calc(env(safe-area-inset-left, 0px) + 14px);
-    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    display: flex; flex-direction: row; align-items: center; gap: 8px;
   }
   #menu-lives .lives-hearts {
     padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.55);
     font-size: 17px; letter-spacing: 1px; line-height: 1.2;
   }
-  #menu-lives .pill { font-size: 12px; padding: 5px 10px; }
+  /* One more life for a video: a play sign and what you get, so it explains itself. */
+  .life-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 6px; cursor: pointer;
+    border: 2px solid var(--ink); border-radius: 999px; background: var(--green); color: var(--ink);
+    box-shadow: 0 3px 0 var(--ink); font: 900 14px Nunito, "Arial Rounded MT Bold", sans-serif;
+  }
+  .life-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+  .life-btn .play {
+    display: inline-grid; place-items: center; width: 20px; height: 20px; padding-left: 2px; box-sizing: border-box;
+    border-radius: 50%; background: var(--ink); color: var(--white); font-size: 9px;
+  }
+  .life-btn[hidden] { display: none; }
   /* The toolbox button sits under the sound buttons; the number shows how many tools you have. */
   .corner-btn {
     position: fixed; z-index: 3;
@@ -480,7 +491,7 @@
 <section id="menu" class="screen show">
   <button id="menu-kit" class="corner-btn" type="button" aria-label="Gereedschapskist bekijken">🧰<span class="n" id="menu-kit-n"></span></button>
   <button id="menu-goals-btn" class="corner-btn" type="button" aria-label="Doelen bekijken">🎯<span class="n" id="menu-goals-n"></span></button>
-  <div id="menu-lives"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="pill life-video" type="button">📺 +1 leven</button></div>
+  <div id="menu-lives"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="life-btn life-video" type="button" aria-label="Kijk een filmpje voor 1 extra leven"><span class="play" aria-hidden="true">▶</span>+1 ❤️</button></div>
   <div class="logo">
     <h1>STAPEL<br>GEK</h1>
   </div>

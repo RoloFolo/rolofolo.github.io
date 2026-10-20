@@ -3,7 +3,7 @@
 import {
   AdditiveBlending, BoxGeometry, BufferAttribute, CanvasTexture, Color, DoubleSide, EdgesGeometry, Group,
   LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RepeatWrapping,
-  RingGeometry, Scene, Sprite, SpriteMaterial, SRGBColorSpace, WebGLRenderer,
+  RingGeometry, Scene, Sprite, SpriteMaterial, SRGBColorSpace, Vector3, WebGLRenderer,
 } from 'three';
 import { store } from './store.js';
 import {
@@ -22,11 +22,27 @@ const ISO_UP = 2 / Math.sqrt(6); // screen height of one world unit straight up
 const CUT_RED = new Color(0xff1744);
 
 const $ = (id) => document.getElementById(id);
+// Themes only change how the game looks; the game itself stays the same.
+const THEMES = [
+  { id: 'classic', name: 'Klassiek' },
+  { id: 'sky', name: '☁️ Hemelreis' },
+  { id: 'pixel', name: '🕹️ Pixel Arcade' },
+  { id: 'neon', name: '🌌 Neon Nacht' },
+];
+const savedTheme = store.get('stapelgekfull-theme', 'classic');
+const LOOK = THEMES.some((t) => t.id === savedTheme) ? savedTheme : 'classic';
+document.body.classList.add(`look-${LOOK}`);
+$('card-toggle').addEventListener('click', () => {
+  const folded = $('over').classList.toggle('folded');
+  $('card-toggle').textContent = folded ? '▴ Toon je score' : '▾ Bekijk je toren';
+  $('card-toggle').setAttribute('aria-expanded', String(!folded));
+});
 
 // ---------- Scene ----------
 
-const renderer = new WebGLRenderer({ antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+const renderer = new WebGLRenderer({ antialias: LOOK !== 'pixel', alpha: true });
+// Pixel Arcade draws the 3D world at a fraction of the screen resolution, then blows it up into chunky pixels.
+renderer.setPixelRatio(LOOK === 'pixel' ? 0.3 : Math.min(window.devicePixelRatio || 1, 2));
 document.body.insertBefore(renderer.domElement, $('hud'));
 
 const scene = new Scene();
@@ -54,7 +70,23 @@ let hue0 = Math.random() * 360;
 const hueAt = (level) => (hue0 + level * 9) % 360;
 const colorAt = (level) => new Color().setHSL(hueAt(level) / 360, 0.88, 0.6);
 
+const neonHalo = new BoxGeometry(1, 1, 1);
 function makeBlock(level, x, y, z, sx, sy, sz) {
+  if (LOOK === 'neon') {
+    // Neon: a dark glassy block with glowing edges and a soft halo in the same colour.
+    const glow = new Color().setHSL(hueAt(level) / 360, 1, 0.62);
+    const mesh = new Mesh(unitShaded, new MeshBasicMaterial({ color: glow.clone().multiplyScalar(0.22), vertexColors: true }));
+    mesh.add(new LineSegments(unitEdges, new LineBasicMaterial({ color: glow })));
+    if (sy <= H) { // the tall first block gets no halo, or it would light up the whole bottom
+      const halo = new Mesh(neonHalo, new MeshBasicMaterial({ color: glow, transparent: true, opacity: 0.1, blending: AdditiveBlending, depthWrite: false }));
+      halo.scale.set(1.08, 0.96, 1.08);
+      mesh.add(halo);
+    }
+    mesh.position.set(x, y, z);
+    mesh.scale.set(sx, sy, sz);
+    world.add(mesh);
+    return mesh;
+  }
   const mesh = new Mesh(unitShaded, new MeshBasicMaterial({ color: colorAt(level), vertexColors: true }));
   mesh.position.set(x, y, z);
   mesh.scale.set(sx, sy, sz);
@@ -63,6 +95,7 @@ function makeBlock(level, x, y, z, sx, sy, sz) {
 }
 
 function paintSky(level) {
+  if (LOOK !== 'classic') return; // the other themes have their own backgrounds
   const h = (hueAt(level) + 170) % 360;
   const sky = $('sky').style;
   sky.setProperty('--sky-top', `hsl(${h}, 95%, 88%)`);
@@ -72,6 +105,21 @@ function paintSky(level) {
 // ---------- View ----------
 
 const view = { hh: 10, targetY: 0, worldY: 0, zoom: 1 };
+if (LOOK === 'pixel') {
+  const c = document.createElement('canvas');
+  c.width = 104; c.height = 226;
+  const g = c.getContext('2d');
+  const bands = ['#0d0b24', '#141038', '#1d1650', '#2a1d66', '#3d2380', '#5a2a8f'];
+  bands.forEach((col, i) => { g.fillStyle = col; g.fillRect(0, i * 26, 104, 27); });
+  for (let i = 0; i < 6; i++) { g.fillStyle = bands[i + 1] || bands[5]; for (let x = (i % 2); x < 104; x += 2) g.fillRect(x, i * 26 + 25, 1, 1); } // dithered seams
+  for (let i = 0; i < 60; i++) { g.fillStyle = i % 7 ? '#ffffff' : '#ffd23f'; g.fillRect((i * 37) % 104, (i * 53) % 140, 1, 1); }
+  g.fillStyle = '#ffe9a8'; g.fillRect(74, 22, 14, 14); g.fillRect(72, 25, 18, 8); g.fillRect(77, 20, 8, 18);
+  g.fillStyle = '#d9c78a'; g.fillRect(78, 26, 3, 3); g.fillRect(83, 31, 2, 2);
+  // a pixel city on the horizon
+  const sky = [[0, 18], [8, 30], [14, 22], [22, 40], [30, 26], [38, 34], [46, 20], [54, 44], [62, 28], [70, 36], [80, 24], [88, 38], [96, 30]];
+  for (const [x, hgt] of sky) { g.fillStyle = '#120c2c'; g.fillRect(x, 226 - hgt - 40, 9, hgt + 40); g.fillStyle = '#ffd23f'; for (let wy = 226 - hgt - 34; wy < 220; wy += 6) if ((x + wy) % 4 === 0) g.fillRect(x + 3, wy, 2, 2); }
+  $('sky').style.background = `url(${c.toDataURL()}) center / 100% 100% no-repeat, #0d0b24`;
+}
 
 function resize() {
   const w = window.innerWidth;
@@ -91,7 +139,32 @@ window.addEventListener('resize', resize);
 resize();
 
 // Zoom out so the whole tower fits in the top half of the screen, above the game-over card.
+// Hemelreis: at the end the whole journey shows as one picture, with the tower reaching as far as you got.
+// Heights map to the picture through a few anchor points (the ground, the moon, the sun), in screen fractions.
+const POSTERS = { 1: [[0, 0.905], [100, 0.1]], 2: [[0, 0.915], [100, 0.622], [200, 0.067]] };
+function posterY(anchors, h) {
+  for (let i = 1; i < anchors.length; i++) {
+    const [h0, y0] = anchors[i - 1];
+    const [h1, y1] = anchors[i];
+    if (h <= h1 || i === anchors.length - 1) return y0 + ((Math.min(h, h1) - h0) / (h1 - h0)) * (y1 - y0);
+  }
+  return anchors[0][1];
+}
+function fitToPoster() {
+  const h = height();
+  const which = h > 100 ? 2 : 1;
+  const viewH = window.innerHeight;
+  const ground = posterY(POSTERS[which], 0) * viewH;
+  const top = posterY(POSTERS[which], h) * viewH;
+  const k = (ISO_UP * viewH) / (2 * view.hh); // screen pixels per world unit straight up
+  view.zoom = Math.min(1, (ground - top) / ((game.level * H + PEDESTAL) * k));
+  view.worldY = view.targetY + PEDESTAL + (viewH / 2 - ground) / (k * view.zoom);
+  document.body.classList.add(`poster-${which}`);
+  $('p1-flag').style.display = h >= 100 ? '' : 'none';
+}
+
 function showWholeTower() {
+  if (LOOK === 'sky' && height() >= 15) { fitToPoster(); return; }
   const towerHeight = game.level * H;
   view.zoom = Math.min(1, (0.85 * view.hh) / (towerHeight * ISO_UP + 3));
   view.worldY = view.targetY + (0.45 * view.hh) / (view.zoom * ISO_UP) - towerHeight / 2;
@@ -437,7 +510,7 @@ function reset() {
   if (game.moving) world.remove(game.moving.mesh);
   if (game.marker) world.remove(game.marker);
   hue0 = Math.random() * 360;
-  pedestal.material.color.copy(colorAt(0));
+  if (LOOK !== 'neon') pedestal.material.color.copy(colorAt(0));
   paintSky(0);
   const top = { x: 0, z: 0, sx: BASE, sz: BASE };
   Object.assign(game, {
@@ -450,6 +523,8 @@ function reset() {
   });
   view.worldY = 0;
   view.zoom = 1;
+  document.body.classList.remove('poster-1', 'poster-2');
+  $('over').classList.remove('folded');
   setScore();
 }
 
@@ -481,7 +556,64 @@ function placeMoving() {
   if (m.axis === 'x') { m.mesh.position.x = game.top.x + m.offset; m.mesh.position.z = game.top.z; } else { m.mesh.position.z = game.top.z + m.offset; m.mesh.position.x = game.top.x; }
 }
 
+// The tower stands in the village: while the ground is in view it moves exactly with the tower's foot,
+// with a strip of grass and tulips in front of it. Once the village is gone, the journey up takes over.
+const foot = new Vector3();
+let skyRef = null;
+function paintSkyLayers() {
+  foot.set(0, -PEDESTAL, 0);
+  world.localToWorld(foot);
+  foot.project(camera);
+  const footY = ((1 - foot.y) / 2) * window.innerHeight;
+  const viewH = window.innerHeight;
+  const byGround = footY - 0.95 * viewH;
+  const h = height();
+  const screens = h <= 100 ? Math.min(1, Math.max(0, (h - 8) / 92)) * 3 : 3 + Math.min(1, (h - 100) / 100) * 4;
+  const byHeight = screens * viewH;
+  $('journey').style.transform = `translateY(${Math.max(byGround, byHeight)}px)`;
+  // Front to back: tulips, the river, the village. Farther layers sink a little slower, which gives depth.
+  if (skyRef === null || height() === 1) skyRef = footY;
+  const sink = footY - skyRef;
+  // The tulips reach above the back of the tower's foot, so it stands in the field and not in the water.
+  $('front').style.transform = `translateY(${footY - 66}px)`;
+  $('river').style.transform = `translateY(${footY - 140 - sink * 0.15}px)`;
+  $('village').style.transform = `translateY(${footY - 246 - sink * 0.3}px)`;
+  $('sun').style.opacity = Math.max(0, 1 - (height() - 30) / 20); // gone by the time you reach space
+}
+
+// Sky journey: the scenery scrolls from the village at the bottom up to the moon at 100.
+// The journey comes in chapters of 100; the meter starts over in every chapter.
+const CHAPTERS = [
+  { title: '1 · Naar de maan', icons: ['🌙', '🚀', '✈️', '☁️', '🏡'] },
+  { title: '2 · Zonnestelsel', icons: ['☀️', '🪐', '☄️', '🔴', '🌙'] },
+];
+let shownChapter = 0;
+function paintJourney(h) {
+  const chapter = h > 100 ? 1 : 0;
+  if (chapter !== shownChapter) {
+    shownChapter = chapter;
+    $('meter-title').textContent = CHAPTERS[chapter].title;
+    $('meter').querySelectorAll('span').forEach((el, i) => { el.textContent = CHAPTERS[chapter].icons[i]; });
+  }
+  const p = chapter ? Math.min(1, (h - 100) / 100) : Math.min(1, Math.max(0, (h - 1) / 99));
+  $('moon-flag').setAttribute('opacity', h >= 100 ? '1' : '0');
+  if ((h === 100 || h === 200) && game.state === 'play') showChapter(h);
+  $('meter-pin').style.bottom = `${p * 100}%`;
+  $('meter-pin').textContent = h;
+}
+
+function showChapter(h) {
+  const el = $('chapter');
+  el.querySelector('.ch-big').textContent = h === 100 ? '🌙 OP DE MAAN!' : '☀️ BIJ DE ZON!';
+  el.querySelector('.ch-small').textContent = h === 100 ? 'Hoofdstuk 2 · Het zonnestelsel' : 'Hoofdstuk 3 · De Melkweg';
+  el.classList.add('show');
+  $('callout').style.visibility = 'hidden'; // the chapter banner gets the stage to itself
+  clearTimeout(showChapter.timer);
+  showChapter.timer = setTimeout(() => { el.classList.remove('show'); $('callout').style.visibility = ''; }, 2600);
+}
+
 function setScore(bump) {
+  if (LOOK === 'sky') paintJourney(height());
   const el = $('score');
   el.textContent = height();
   if (bump) {
@@ -749,15 +881,18 @@ function addSlice(axis, at, y, other, otherSize) {
   mesh.scale.set(otherSize + 0.6, H + 0.6, 1);
   world.add(mesh);
   game.effects.push({ mesh, age: 0, life: 0.35, kind: 'slice', sx: otherSize + 0.6 });
-  sparks(axis === 'x' ? at : other, y, axis === 'x' ? other : at, axis, otherSize, [0xffffff, 0xff3d6e], 12);
+  const hex = colorAt(game.level + 1).getHex();
+  if (LOOK === 'pixel') sparks(axis === 'x' ? at : other, y, axis === 'x' ? other : at, axis, otherSize, [hex, 0xffffff, hex, 0x1b1440], 26, 2.2);
+  else if (LOOK === 'neon') sparks(axis === 'x' ? at : other, y, axis === 'x' ? other : at, axis, otherSize, [0xffffff, 0x3ef0ff, 0xff3df0], 22);
+  else sparks(axis === 'x' ? at : other, y, axis === 'x' ? other : at, axis, otherSize, [0xffffff, 0xff3d6e], 12);
 }
 
-function sparks(x, y, z, axis, spread, colors, count) {
+function sparks(x, y, z, axis, spread, colors, count, size = 1) {
   for (let i = 0; i < count; i++) {
     const spark = new Mesh(unitBox, new MeshBasicMaterial({ color: colors[i % colors.length], transparent: true }));
     const along = (Math.random() - 0.5) * spread;
     spark.position.set(x + (axis === 'z' ? along : 0), y + (Math.random() - 0.5) * H, z + (axis === 'x' ? along : 0));
-    spark.scale.setScalar(0.08 + Math.random() * 0.08);
+    spark.scale.setScalar((0.08 + Math.random() * 0.08) * size);
     world.add(spark);
     game.effects.push({
       mesh: spark, age: 0, life: 0.5 + Math.random() * 0.3, kind: 'spark',
@@ -1050,6 +1185,7 @@ window.addEventListener('resize', () => joop.place());
 // ---------- Screens ----------
 
 function showScreen(id) {
+  document.body.classList.toggle('playing', id === null);
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id);
   $('hud').classList.toggle('show', id === null);
   $('stop').classList.toggle('show', id === null);
@@ -1264,6 +1400,8 @@ async function continueGame() {
   const ok = await showRewardedAd('Na dit filmpje mag je verder met je toren.');
   if (!ok) return;
   game.continued = true;
+  document.body.classList.remove('poster-1', 'poster-2');
+  $('over').classList.remove('folded');
   game.state = 'play';
   game.startedAt = performance.now();
   view.zoom = 1;
@@ -1324,6 +1462,28 @@ $('challenge-btn').addEventListener('click', () => {
 $('toolbox-back').addEventListener('click', () => showScreen('menu'));
 $('menu-goals-btn').addEventListener('click', () => { paintGoals(); showScreen('goals'); });
 $('goals-back').addEventListener('click', () => showScreen('menu'));
+
+// Theme picker: a new theme gets a NEW sticker on the button until you have looked.
+if (store.get('stapelgekfull-themes-seen', '') === '1') $('themes-new').remove();
+for (const t of THEMES) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = `theme${t.id === LOOK ? ' on' : ''}`;
+  b.setAttribute('aria-pressed', String(t.id === LOOK));
+  b.innerHTML = `<img src="themes/${t.id}.jpg" alt=""><span>${t.name}</span>`;
+  b.addEventListener('click', () => {
+    if (t.id === LOOK) { showScreen('menu'); return; }
+    store.set('stapelgekfull-theme', t.id);
+    location.reload(); // every theme sets up its own scene, so start fresh
+  });
+  $('theme-grid').append(b);
+}
+$('menu-themes').addEventListener('click', () => {
+  store.set('stapelgekfull-themes-seen', '1');
+  $('themes-new')?.remove();
+  showScreen('themes');
+});
+$('themes-back').addEventListener('click', () => showScreen('menu'));
 $('nolives-back').addEventListener('click', () => showScreen(game.state === 'over' ? 'over' : 'menu'));
 $('nolives-video').addEventListener('click', () => videoForLife(() => prepare(game.mode)));
 $('menu-video').addEventListener('click', () => videoForLife());
@@ -1448,6 +1608,7 @@ function frame(now) {
     camera.updateProjectionMatrix();
   }
 
+  if (LOOK === 'sky') paintSkyLayers();
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }

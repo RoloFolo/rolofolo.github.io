@@ -6,7 +6,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")"
-VERSION_CODE=${VERSION_CODE:-9}
+VERSION_CODE=${VERSION_CODE:-10}
 # The version name comes from package.json, the same number the game shows in its settings.
 VERSION_NAME=${VERSION_NAME:-$(node -p "require('../package.json').version")}
 MIN_SDK=24
@@ -33,6 +33,7 @@ rm -rf "$BUILD/out" && mkdir -p "$BUILD/out/res" "$BUILD/out/classes" "$BUILD/ou
 
 # The game itself goes in as assets.
 cp ../index.html ../game.js ../icon.png "$BUILD/out/assets/"
+cp -r ../fonts ../themes "$BUILD/out/assets/"
 
 # Resources and manifest.
 "$TOOLS/aapt2" compile --dir res -o "$BUILD/out/res"

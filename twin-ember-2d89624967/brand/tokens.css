@@ -1,0 +1,28 @@
+/* Twin Ember — generated from tokens.json */
+:root {
+  --night-000: #0e0c0b;
+  --night-100: #171412;
+  --night-200: #241f1b;
+  --ash: #4a4038;
+  --smoke: #a69c92;
+  --bone: #efe7dc;
+  --ember: #ff6a1f;
+  --amber: #ffb347;
+  --cinder: #9a3412;
+  --on-ember: #1a0e07;
+  --paper: #f6f1ea;
+  --paper-200: #ebe3d8;
+  --ink: #1a1512;
+  --ink-muted: #5f554c;
+  --ember-deep: #c2410c;
+  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --font-sans: "Archivo", system-ui, sans-serif;
+  --font-pixel: "Silkscreen", ui-monospace, monospace;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-10: 40px;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-pill: 9999px;
+}

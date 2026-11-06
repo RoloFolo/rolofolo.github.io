@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twin Ember Style Guide</title>
+<link rel="icon" href="brand/logo/twin-ember-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&family=Silkscreen&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="brand/tokens.css">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--night-100);color:var(--bone);font-family:var(--font-sans);font-size:16px;line-height:24px}
+a{color:var(--amber)}a:hover{color:var(--ember)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+header.top{border-bottom:1px solid var(--ash);background:var(--night-000)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;padding-top:20px;padding-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--bone);font-family:var(--font-display);font-weight:800;font-size:24px;text-transform:uppercase}
+.brand b{color:var(--ember);font-weight:800}
+nav.toc{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:14px}
+nav.toc a{color:var(--smoke);text-decoration:none;padding:8px 0}
+nav.toc a:hover{color:var(--amber)}
+.back{margin-left:auto}
+.hero{padding-top:96px;padding-bottom:64px}
+.label{font-family:var(--font-pixel);font-size:12px;line-height:16px;letter-spacing:.04em;color:var(--amber)}
+h1{margin:16px 0 20px;font-family:var(--font-display);font-weight:800;font-size:clamp(48px,8vw,96px);line-height:.92;text-transform:uppercase}
+h1 span{color:var(--ember)}
+.lead{font-size:20px;line-height:30px;max-width:640px;margin:0}
+.muted{color:var(--smoke)}
+section.part{padding:72px 0;border-top:1px solid var(--ash)}
+section.part > .wrap > .label{margin-bottom:12px}
+h2{margin:0 0 12px;font-family:var(--font-display);font-weight:700;font-size:44px;line-height:48px}
+h3{margin:0 0 8px;font-size:18px;line-height:26px;font-weight:600}
+p{margin:0 0 12px}
+.intro{max-width:680px;margin-bottom:40px;color:var(--smoke)}
+.grid{display:grid;gap:24px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g5{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.card{background:var(--night-200);border-radius:var(--radius-md);padding:24px}
+.cap{font-size:14px;line-height:20px;color:var(--smoke);margin-top:12px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--amber)}
+.light code{color:var(--ember-deep)}
+/* logo */
+.logo-tile{border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;padding:32px;min-height:220px}
+.logo-tile img{max-width:100%;max-height:180px;display:block}
+.on-night{background:var(--night-000)}
+.on-paper{background:var(--paper)}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 24px;margin-top:32px;padding:0;list-style:none}
+.rules li{display:flex;gap:10px;font-size:15px;line-height:22px}
+.rules svg{flex-shrink:0;margin-top:1px}
+/* colour */
+.sw{border-radius:var(--radius-md);overflow:hidden;background:var(--night-200);display:flex;flex-direction:column}
+.sw .chip{height:110px;display:flex;align-items:flex-end;padding:12px;font-family:var(--font-pixel);font-size:12px}
+.sw .meta{padding:14px 16px 18px}
+.sw .name{font-weight:600}
+.sw .hex{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--smoke)}
+.sw .use{font-size:14px;line-height:20px;color:var(--smoke);margin-top:6px}
+.light-panel{background:var(--paper);color:var(--ink);border-radius:var(--radius-md);padding:32px;margin-top:40px}
+.light-panel h3{color:var(--ink)}
+.light-panel .sw{background:var(--paper-200)}
+.light-panel .sw .hex,.light-panel .sw .use{color:var(--ink-muted)}
+.ratio{display:flex;height:20px;border-radius:var(--radius-sm);overflow:hidden;margin-top:32px}
+/* type */
+.spec{display:grid;grid-template-columns:200px 1fr;gap:16px 32px;padding:28px 0;border-bottom:1px solid var(--ash);align-items:baseline}
+.spec:last-child{border-bottom:0}
+.spec .info{font-size:14px;line-height:20px;color:var(--smoke)}
+.spec .info strong{display:block;color:var(--bone);font-weight:600;margin-bottom:4px}
+.t-display{font-family:var(--font-display);font-weight:800;font-size:72px;line-height:68px;letter-spacing:-.01em;text-transform:uppercase}
+.t-heading{font-family:var(--font-display);font-weight:700;font-size:36px;line-height:40px}
+.t-title{font-weight:600;font-size:20px;line-height:28px}
+.t-body{font-size:16px;line-height:24px}
+.t-small{font-size:14px;line-height:20px;color:var(--smoke)}
+.t-pixel{font-family:var(--font-pixel);font-size:12px;line-height:16px;letter-spacing:.04em;color:var(--amber)}
+@media (max-width:640px){.spec{grid-template-columns:1fr}.t-display{font-size:48px;line-height:46px}}
+/* space */
+.space-row{display:flex;align-items:center;gap:20px;padding:12px 0}
+.space-row .bar{background:var(--ember);height:16px;border-radius:1px}
+.space-row .nm{width:110px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.space-row .us{font-size:14px;line-height:20px;color:var(--smoke);flex:1;min-width:0}
+.radius-demo{width:96px;height:96px;background:var(--cinder);margin-bottom:16px}
+/* components */
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border-radius:var(--radius-sm);font-family:var(--font-sans);font-weight:600;font-size:16px;text-decoration:none;border:0;cursor:pointer}
+.btn-primary{background:var(--ember);color:var(--on-ember)}
+.btn-primary:hover{background:var(--amber);color:var(--on-ember)}
+.btn-secondary{background:transparent;color:var(--bone);border:1px solid var(--smoke)}
+.btn-secondary:hover{border-color:var(--amber);color:var(--amber)}
+.btn-text{background:transparent;color:var(--amber);padding:0 8px}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.tag{font-family:var(--font-pixel);font-size:12px;line-height:16px;padding:6px 10px;border-radius:var(--radius-sm)}
+.tag-ember{background:var(--ember);color:var(--on-ember)}
+.tag-line{border:1px solid var(--ash);color:var(--smoke)}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--smoke)}
+.status i{width:8px;height:8px;border-radius:var(--radius-pill);background:var(--amber)}
+.field{display:flex;flex-direction:column;gap:6px;max-width:360px}
+.field label{font-size:14px;font-weight:500}
+.field input{background:var(--night-000);border:1px solid var(--smoke);border-radius:var(--radius-sm);color:var(--bone);font:inherit;min-height:48px;padding:0 14px}
+.field input:focus{outline:none;border-color:var(--amber)}
+.depth{display:inline-flex;gap:12px;background:var(--night-000);border:1px solid var(--ash);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font-pixel);font-size:12px;line-height:16px}
+.depth .segs{display:flex;flex-direction:column;gap:2px;width:6px}
+.depth .segs i{flex:1;min-height:3px;background:var(--ash)}
+.depth .segs i.on{background:var(--ember)}
+/* icons, avatars */
+.icon-cell{background:var(--night-200);border-radius:var(--radius-md);padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:12px;font-size:13px;color:var(--smoke)}
+.icon-cell img{width:32px;height:32px;filter:invert(93%) sepia(9%) saturate(254%) hue-rotate(338deg) brightness(101%)}
+.icons{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+.avatar{display:flex;gap:20px;align-items:center}
+.avatar img{width:112px;height:112px;border-radius:var(--radius-md);image-rendering:pixelated;flex-shrink:0}
+/* tone */
+.say{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.say .card p{font-size:18px;line-height:28px;margin:8px 0 0}
+.tagline{font-family:var(--font-display);font-weight:700;font-size:32px;line-height:36px}
+footer{border-top:1px solid var(--ash);padding:32px 0 48px;font-size:14px;color:var(--smoke)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="brand/logo/twin-ember-mark.svg" alt="" width="24" height="28"><span>Twin <b>Ember</b></span></a>
+    <nav class="toc" aria-label="Sections">
+      <a href="#logo">Logo</a><a href="#colour">Colour</a><a href="#type">Type</a><a href="#space">Space</a><a href="#components">Components</a><a href="#icons">Icons</a><a href="#tone">Tone</a>
+    </nav>
+    <a class="back btn btn-secondary" href="index.html" style="min-height:40px;padding:0 16px;font-size:14px">View the website</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="label">BRAND GUIDE · VERSION 2</div>
+    <h1>Two embers.<br><span>One fire.</span></h1>
+    <p class="lead">Twin Ember V.O.F. is the digital studio of Roland and Patrick. Games first (Darklife is the first title), then anything digital that needs a spark. Everything in this style comes from one image: <strong>light in the dark</strong>.</p>
+    <p class="muted" style="margin-top:20px;max-width:640px">An ember is what's left when the fire seems out: a coal that keeps glowing until someone gives it air. Grown up in the 8-bit era, rekindled together around forty.</p>
+  </div>
+
+  <!-- LOGO -->
+  <section class="part" id="logo"><div class="wrap">
+    <div class="label">01 · LOGO</div>
+    <h2>The pixel flame</h2>
+    <p class="intro">One flame from two halves: ember on the left, amber on the right. At the bottom two loose coals that together become one flame. The wordmark is Big Shoulders Display 800 in capitals, with "Ember" in ember (ember-deep on light).</p>
+    <div class="grid g2">
+      <div><div class="logo-tile on-night"><img src="brand/logo/twin-ember-lockup-dark.svg" alt="Twin Ember lockup on dark"></div><div class="cap">Lockup on dark · <code>twin-ember-lockup-dark.svg</code></div></div>
+      <div><div class="logo-tile on-paper"><img src="brand/logo/twin-ember-lockup-light.svg" alt="Twin Ember lockup on light"></div><div class="cap">Lockup on light · <code>twin-ember-lockup-light.svg</code></div></div>
+    </div>
+    <div class="grid g3" style="margin-top:24px">
+      <div><div class="logo-tile on-night"><img src="brand/logo/twin-ember-mark.svg" alt="Mark on dark" style="height:140px"></div><div class="cap">Mark on night · <code>twin-ember-mark.svg</code></div></div>
+      <div><div class="logo-tile on-paper"><img src="brand/logo/twin-ember-mark-on-light.svg" alt="Mark on light" style="height:140px"></div><div class="cap">Mark on light: cinder + ember, amber disappears on paper · <code>twin-ember-mark-on-light.svg</code></div></div>
+      <div><div class="logo-tile on-night"><img src="brand/logo/twin-ember-mark-mono-bone.svg" alt="Mono mark in bone" style="height:140px"></div><div class="cap">One colour, bone · <code>twin-ember-mark-mono-bone.svg</code></div></div>
+      <div><div class="logo-tile on-paper"><img src="brand/logo/twin-ember-mark-mono-ink.svg" alt="Mono mark in ink" style="height:140px"></div><div class="cap">One colour, ink: stamps, engraving, embroidery · <code>twin-ember-mark-mono-ink.svg</code></div></div>
+      <div><div class="logo-tile on-night" style="background:var(--night-200)"><img src="brand/logo/twin-ember-app-icon.svg" alt="App icon" style="height:150px;border-radius:24px"></div><div class="cap">App icon and avatar, with margin for round crops · <code>twin-ember-app-icon.svg</code></div></div>
+      <div><div class="logo-tile on-night" style="background:var(--night-200)"><img src="brand/logo/twin-ember-app-icon-cinder.svg" alt="App icon on cinder" style="height:150px;border-radius:24px"></div><div class="cap">App icon, cinder variant · <code>twin-ember-app-icon-cinder.svg</code></div></div>
+    </div>
+    <ul class="rules">
+      <li><img src="brand/icons/check.svg" alt="" width="20" height="20" style="filter:invert(56%) sepia(76%) saturate(2400%) hue-rotate(347deg) brightness(101%)">Clear space around the mark: at least two "pixels" of the mark.</li>
+      <li><img src="brand/icons/check.svg" alt="" width="20" height="20" style="filter:invert(56%) sepia(76%) saturate(2400%) hue-rotate(347deg) brightness(101%)">Smallest size: 16 px on screen, 6 mm in print.</li>
+      <li><img src="brand/icons/check.svg" alt="" width="20" height="20" style="filter:invert(56%) sepia(76%) saturate(2400%) hue-rotate(347deg) brightness(101%)">No gradient, shadow, glow, rotation or other colours.</li>
+      <li><img src="brand/icons/check.svg" alt="" width="20" height="20" style="filter:invert(56%) sepia(76%) saturate(2400%) hue-rotate(347deg) brightness(101%)">The lockups use live text: convert to outlines for print.</li>
+    </ul>
+  </div></section>
+
+  <!-- COLOUR -->
+  <section class="part" id="colour"><div class="wrap">
+    <div class="label">02 · COLOUR</div>
+    <h2>Dark is the base. Ember is the fire.</h2>
+    <p class="intro">Use ember sparingly: one primary action or accent per screen. Depth comes from the night steps, not from shadows.</p>
+    <div class="grid g5">
+      <div class="sw"><div class="chip" style="background:#0e0c0b;color:var(--smoke)">Aa</div><div class="meta"><div class="name">night-000</div><div class="hex">#0e0c0b</div><div class="use">Heroes, splash, app icons.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#171412;color:var(--smoke);box-shadow:inset 0 0 0 1px var(--ash)">Aa</div><div class="meta"><div class="name">night-100</div><div class="hex">#171412</div><div class="use">Default page ground.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#241f1b;color:var(--smoke);box-shadow:inset 0 0 0 1px var(--ash)">Aa</div><div class="meta"><div class="name">night-200</div><div class="hex">#241f1b</div><div class="use">Cards and panels.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#4a4038;color:var(--bone)">Aa</div><div class="meta"><div class="name">ash</div><div class="hex">#4a4038</div><div class="use">Decorative lines only.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#a69c92;color:var(--night-000)">Aa</div><div class="meta"><div class="name">smoke</div><div class="hex">#a69c92</div><div class="use">Muted text, field borders.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#efe7dc;color:var(--night-000)">Aa</div><div class="meta"><div class="name">bone</div><div class="hex">#efe7dc</div><div class="use">Body text (13:1+ on night).</div></div></div>
+      <div class="sw"><div class="chip" style="background:#ff6a1f;color:var(--on-ember)">Aa</div><div class="meta"><div class="name">ember</div><div class="hex">#ff6a1f</div><div class="use">Brand colour; text on it is on-ember.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#ffb347;color:var(--on-ember)">Aa</div><div class="meta"><div class="name">amber</div><div class="hex">#ffb347</div><div class="use">Glow: hover, focus, sparks.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#9a3412;color:var(--bone)"></div><div class="meta"><div class="name">cinder</div><div class="hex">#9a3412</div><div class="use">Large areas, never text.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1a0e07;color:var(--ember);box-shadow:inset 0 0 0 1px var(--ash)">Aa</div><div class="meta"><div class="name">on-ember</div><div class="hex">#1a0e07</div><div class="use">Text on ember and amber.</div></div></div>
+    </div>
+    <div class="ratio" aria-label="Rough colour proportion on a page">
+      <div style="flex:46;background:#0e0c0b"></div><div style="flex:24;background:#171412"></div><div style="flex:14;background:#241f1b"></div><div style="flex:9;background:#efe7dc"></div><div style="flex:4;background:#a69c92"></div><div style="flex:2;background:#ff6a1f"></div><div style="flex:1;background:#ffb347"></div>
+    </div>
+    <div class="cap">Rough proportion on a page: mostly night, some bone, a spark of ember.</div>
+
+    <div class="light-panel light">
+      <h3>Light variant, for documents</h3>
+      <p style="color:var(--ink-muted);max-width:620px">Invoices, letters, proposals. Ember turns into ember-deep for text and the wordmark; amber is not used on paper.</p>
+      <div class="grid g5" style="margin-top:20px">
+        <div class="sw"><div class="chip" style="background:#f6f1ea;box-shadow:inset 0 0 0 1px #ebe3d8;color:var(--ink)">Aa</div><div class="meta"><div class="name">paper</div><div class="hex">#f6f1ea</div><div class="use">Page ground.</div></div></div>
+        <div class="sw"><div class="chip" style="background:#ebe3d8;color:var(--ink)">Aa</div><div class="meta"><div class="name">paper-200</div><div class="hex">#ebe3d8</div><div class="use">Panels, table rows.</div></div></div>
+        <div class="sw"><div class="chip" style="background:#1a1512;color:var(--paper)">Aa</div><div class="meta"><div class="name">ink</div><div class="hex">#1a1512</div><div class="use">Body text.</div></div></div>
+        <div class="sw"><div class="chip" style="background:#5f554c;color:var(--paper)">Aa</div><div class="meta"><div class="name">ink-muted</div><div class="hex">#5f554c</div><div class="use">Secondary text.</div></div></div>
+        <div class="sw"><div class="chip" style="background:#c2410c;color:var(--paper)">Aa</div><div class="meta"><div class="name">ember-deep</div><div class="hex">#c2410c</div><div class="use">Accent and wordmark on light.</div></div></div>
+      </div>
+    </div>
+    <p class="cap" style="margin-top:20px">All tokens: <code>brand/tokens.json</code>; as CSS variables in <code>brand/tokens.css</code>, used as <code>var(--ember)</code>.</p>
+  </div></section>
+
+  <!-- TYPE -->
+  <section class="part" id="type"><div class="wrap">
+    <div class="label">03 · TYPE</div>
+    <h2>Forged, sturdy, a wink of pixels</h2>
+    <p class="intro">Three free Google Fonts. Big Shoulders Display is narrow and industrial, like forged iron. Archivo is sturdy and readable, also small. Silkscreen only for short labels.</p>
+    <div class="spec"><div class="info"><strong>Display</strong>Big Shoulders 800 · 72/68 · caps<br>Heroes, game titles, posters. One per screen.</div><div class="t-display">Two embers. One fire.</div></div>
+    <div class="spec"><div class="info"><strong>Heading</strong>Big Shoulders 700 · 36/40<br>Section and page titles.</div><div class="t-heading">Darklife</div></div>
+    <div class="spec"><div class="info"><strong>Title</strong>Archivo 600 · 20/28<br>Card titles, lead lines.</div><div class="t-title">A digital studio for ideas that need a spark</div></div>
+    <div class="spec"><div class="info"><strong>Body</strong>Archivo 400 · 16/24<br>Running text and interface.</div><div class="t-body">Small team, short lines. You talk to the people who design and build it. Prototypes you can hold within days, not slide decks.</div></div>
+    <div class="spec"><div class="info"><strong>Small</strong>Archivo 400 · 14/20 · smoke<br>Captions, meta, footer.</div><div class="t-small">Twin Ember V.O.F. · Land van Cuijk</div></div>
+    <div class="spec"><div class="info"><strong>Pixel label</strong>Silkscreen · 12/16 · amber<br>Tags and labels, short only.</div><div class="t-pixel">PRESS START · DEPTH 01 · LEVEL 1</div></div>
+  </div></section>
+
+  <!-- SPACE -->
+  <section class="part" id="space"><div class="wrap">
+    <div class="label">04 · SHAPE AND SPACE</div>
+    <h2>Almost square, on an 8 px grid</h2>
+    <p class="intro">Flat, no shadows. Depth comes from the night steps and from layering. The motif: sparks as pixels rising from two sources.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Spacing</h3>
+        <div class="space-row"><span class="nm">space-2 · 8</span><span class="bar" style="width:8px"></span><span class="us">Inside an element: icon beside label. Also the pixel size in patterns.</span></div>
+        <div class="space-row"><span class="nm">space-4 · 16</span><span class="bar" style="width:16px"></span><span class="us">Button and card padding; between related elements.</span></div>
+        <div class="space-row"><span class="nm">space-6 · 24</span><span class="bar" style="width:24px"></span><span class="us">Between blocks in a section; page margin on mobile.</span></div>
+        <div class="space-row"><span class="nm">space-10 · 40</span><span class="bar" style="width:40px"></span><span class="us">Between sections; page margin on desktop.</span></div>
+      </div>
+      <div class="card">
+        <h3>Radius</h3>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px">
+          <div><div class="radius-demo" style="border-radius:2px"></div><code>radius-sm · 2</code><div class="cap" style="margin-top:4px">The default: buttons, fields, tags.</div></div>
+          <div><div class="radius-demo" style="border-radius:6px"></div><code>radius-md · 6</code><div class="cap" style="margin-top:4px">Cards, panels, images.</div></div>
+          <div><div class="radius-demo" style="border-radius:9999px;width:24px;height:24px;margin-top:36px;margin-bottom:52px"></div><code>radius-pill</code><div class="cap" style="margin-top:4px">Status dots and small badges only.</div></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- COMPONENTS -->
+  <section class="part" id="components"><div class="wrap">
+    <div class="label">05 · COMPONENTS</div>
+    <h2>Building blocks from the website</h2>
+    <p class="intro">Minimum touch target 44 px. Hover and focus glow amber.</p>
+    <div class="grid g2">
+      <div class="card"><h3>Buttons</h3><div class="row" style="margin-top:16px"><a class="btn btn-primary" href="#components">Start a project</a><a class="btn btn-secondary" href="#components">Descend</a><a class="btn btn-text" href="#components">Read the devlog →</a></div><div class="cap">Primary in ember (one per screen), secondary as outline, text link in amber.</div></div>
+      <div class="card"><h3>Tags and status</h3><div class="row" style="margin-top:16px"><span class="tag tag-ember">LEVEL 1</span><span class="tag tag-line">MOBILE</span><span class="status"><i></i>In development</span></div><div class="cap">Pixel font for tags; pill only for the status dot.</div></div>
+      <div class="card"><h3>Field</h3><div class="field" style="margin-top:16px"><label for="f1">Your email</label><input id="f1" type="email" placeholder="you@example.com"></div><div class="cap">Night-000 ground, smoke border, amber on focus.</div></div>
+      <div class="card"><h3>Depth meter</h3><div style="margin-top:16px"><span class="depth"><span class="segs"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span style="display:flex;flex-direction:column"><span class="muted">DEPTH</span><span style="color:var(--amber)">0412 M</span></span></span></div><div class="cap">The website's scroll gauge: the visitor descends into the shaft towards the core.</div></div>
+    </div>
+    <div class="grid g3" style="margin-top:24px">
+      <div class="card"><svg aria-hidden="true" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#ff6a1f" stroke-width="2" stroke-linecap="square"><rect x="2" y="7" width="20" height="11"></rect><path d="M6 12.5h4M8 10.5v4M15 11h1M18 14h1"></path></svg><h3 style="margin-top:16px">Card</h3><p class="muted" style="margin:0">Night-200 on night, radius-md, 32 px padding. No border, no shadow.</p></div>
+      <div class="card"><div class="label" style="color:var(--smoke)">01 · SPARK</div><h3 style="font-family:var(--font-display);font-weight:700;font-size:32px;line-height:36px;margin-top:12px">Step card</h3><p class="muted" style="margin:0">Numbered pixel label above a display heading.</p></div>
+      <div class="card" style="background:var(--cinder);display:flex;align-items:center;justify-content:center;min-height:180px">[KEY ART]</div>
+    </div>
+  </div></section>
+
+  <!-- ICONS -->
+  <section class="part" id="icons"><div class="wrap">
+    <div class="label">06 · ICONS AND AVATARS</div>
+    <h2>Square lines, 8-bit faces</h2>
+    <p class="intro">Icons are 24×24, 2 px line, square corners, drawn in <code>currentColor</code>. Avatars are 8-bit portraits of the two makers.</p>
+    <div class="grid icons">
+      <div class="icon-cell"><img src="brand/icons/arrow-right.svg" alt="">arrow-right</div>
+      <div class="icon-cell"><img src="brand/icons/calendar.svg" alt="">calendar</div>
+      <div class="icon-cell"><img src="brand/icons/check.svg" alt="">check</div>
+      <div class="icon-cell"><img src="brand/icons/download.svg" alt="">download</div>
+      <div class="icon-cell"><img src="brand/icons/game.svg" alt="">game</div>
+      <div class="icon-cell"><img src="brand/icons/location.svg" alt="">location</div>
+      <div class="icon-cell"><img src="brand/icons/mail.svg" alt="">mail</div>
+      <div class="icon-cell"><img src="brand/icons/person.svg" alt="">person</div>
+      <div class="icon-cell"><img src="brand/icons/phone.svg" alt="">phone</div>
+      <div class="icon-cell"><img src="brand/icons/play.svg" alt="">play</div>
+      <div class="icon-cell"><img src="brand/icons/spark.svg" alt="">spark</div>
+      <div class="icon-cell"><img src="brand/icons/web.svg" alt="">web</div>
+    </div>
+    <div class="grid g2" style="margin-top:32px">
+      <div class="card avatar"><img src="brand/avatars/roland.svg" alt="Roland in 8-bit"><div><div class="label">CLASS: DREAMER</div><div style="font-size:22px;font-weight:600;margin-top:4px">Roland <span class="muted" style="font-weight:400">· Sparkmaker</span></div><p class="muted" style="margin:6px 0 0;font-size:15px;line-height:22px">Worlds, ideas, art direction. Lights the spark.</p></div></div>
+      <div class="card avatar"><img src="brand/avatars/patrick.svg" alt="Patrick in 8-bit"><div><div class="label">CLASS: STRATEGIST</div><div style="font-size:22px;font-weight:600;margin-top:4px">Patrick <span class="muted" style="font-weight:400">· Firekeeper</span></div><p class="muted" style="margin:6px 0 0;font-size:15px;line-height:22px">Business, deals, the plan. Keeps the fire burning.</p></div></div>
+    </div>
+  </div></section>
+
+  <!-- TONE -->
+  <section class="part" id="tone"><div class="wrap">
+    <div class="label">07 · TONE OF VOICE</div>
+    <h2>Short and confident</h2>
+    <p class="intro">Warm, never loud: no exclamation marks, no emoji. Retro as a wink, never as a joke. English to the outside world; Dutch is fine locally.</p>
+    <div class="say">
+      <div class="card"><div class="label">SAY</div><p>Playable early, better every week.</p></div>
+      <div class="card"><div class="label" style="color:var(--smoke)">NOT</div><p class="muted">We are SO excited to share our amazing new game!!! 🔥</p></div>
+    </div>
+    <div class="grid g3" style="margin-top:32px">
+      <div class="card"><div class="label">TAGLINE</div><div class="tagline" style="margin-top:12px">Two embers.<br>One fire.</div></div>
+      <div class="card"><div class="label">TAGLINE</div><div class="tagline" style="margin-top:12px">Rekindled since the 8-bit era.</div></div>
+      <div class="card"><div class="label">TAGLINE</div><div class="tagline" style="margin-top:12px">Small spark.<br>Big fire.</div></div>
+    </div>
+    <div class="card" style="margin-top:32px;border:1px dashed var(--ash);background:transparent">
+      <h3>Still open</h3>
+      <p class="muted" style="margin:0">Domain and email addresses, surnames, KvK, VAT and IBAN. Darklife key art and pitch for the website.</p>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="wrap"><span>Twin Ember V.O.F. · brand guide v2 · source files in <code>website/brand/</code></span><a href="index.html">Back to the website</a></div></footer>
+</body>
+</html>

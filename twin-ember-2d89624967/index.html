@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twin Ember — digital studio</title>
+<meta name="description" content="Twin Ember is a two-person digital studio. We build games, apps and web experiences for ideas that need a spark.">
+<link rel="icon" href="brand/logo/twin-ember-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0e0c0b}
+a{color:#ffb347}a:hover{color:#ff6a1f}
+@keyframes te-rise-l{0%{transform:translate(0,0);opacity:0}12%{opacity:1}80%{opacity:1}100%{transform:translate(-0.8px,-4px);opacity:0}}
+@keyframes te-rise-r{0%{transform:translate(0,0);opacity:0}12%{opacity:1}80%{opacity:1}100%{transform:translate(0.8px,-4px);opacity:0}}
+@keyframes te-flk{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes te-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.te-sp{animation:te-rise-l 2.4s steps(12) infinite}
+.te-sp.r{animation-name:te-rise-r}
+.te-sp.d1{animation-delay:.3s}.te-sp.d2{animation-delay:.6s}.te-sp.d3{animation-delay:.9s}.te-sp.d4{animation-delay:1.2s}.te-sp.d5{animation-delay:1.5s}.te-sp.d6{animation-delay:1.8s}.te-sp.d7{animation-delay:2.1s}
+.te-flk{animation:te-flk .8s steps(1) infinite}
+.te-flk.b{animation-delay:.4s}
+.te-flk.c{animation-duration:1.3s}
+.te-bob{animation:te-bob 1.6s steps(4) infinite}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.te-sp,.te-flk,.te-bob{animation:none}.te-sp{opacity:0}}
+</style>
+</head>
+<body>
+<div id="te-root" style="position: relative; background: #1f1a17; color: #efe7dc; font-family: Archivo, system-ui, sans-serif; overflow-x: clip;">
+
+  <!-- ===== ACHTERGROND: verre lagen, bewegen langzamer dan de inhoud ===== -->
+  <div aria-hidden="true" style="position: sticky; top: 0; height: 100vh; margin-bottom: -100vh; overflow: hidden; z-index: 0;">
+    <div id="te-glow" style="position: absolute; left: 50%; bottom: -40px; width: 80px; height: 80px; transform: translateX(-50%); background: #2a120a; border-radius: 6px;"></div>
+    <div id="te-glow2" style="position: absolute; left: 50%; bottom: -10px; width: 40px; height: 40px; transform: translateX(-50%); background: #4a1a0b; border-radius: 6px;"></div>
+    <div style="position: absolute; left: 0; right: 0; top: 0; will-change: transform;" id="te-far">
+    </div>
+    <div style="position: absolute; left: 0; right: 0; top: 0; will-change: transform;" id="te-mid">
+    </div>
+  </div>
+
+  <!-- ===== VOORGROND: dichtbij, beweegt sneller dan de inhoud ===== -->
+  <div aria-hidden="true" style="position: sticky; top: 0; height: 100vh; margin-bottom: -100vh; overflow: hidden; z-index: 2; pointer-events: none;">
+    <div style="position: absolute; left: 0; right: 0; top: 0; will-change: transform;" id="te-fg">
+    </div>
+    <div style="position: absolute; left: 0; right: 0; top: 0; will-change: transform;" id="te-sp">
+    </div>
+    <div style="position: absolute; right: 20px; bottom: 20px; background: #0e0c0b; border: 1px solid #4a4038; border-radius: 2px; padding: 10px 12px; display: flex; gap: 12px; align-items: stretch; font-family: Silkscreen, monospace; font-size: 12px; line-height: 16px;">
+      <div id="te-segbox" style="display: flex; flex-direction: column; gap: 2px; width: 6px;">
+        
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <span style="color: #a69c92;">DEPTH</span>
+        <span style="color: #ffb347;"><span id="te-depth">0000</span> M</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== INHOUD ===== -->
+  <div style="position: relative; z-index: 1;">
+
+    <!-- HERO: de ingang van de schacht -->
+    <section id="top" style="min-height: 880px; box-sizing: border-box; position: relative;">
+      <nav aria-label="Main" style="max-width: 1100px; margin: 0 auto; padding: 28px 24px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px;">
+        <a href="#top" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #efe7dc; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 24px; text-transform: uppercase;">
+          <svg aria-hidden="true" viewBox="0 0 6 7" width="24" height="28">
+            <path fill="#ff6a1f" d="M2.07 1.07h.86v.86h-.86zM1.07 2.07h.86v.86h-.86zM2.07 2.07h.86v.86h-.86zM1.07 3.07h.86v.86h-.86zM2.07 3.07h.86v.86h-.86zM.07 4.07h.86v.86h-.86zM1.07 4.07h.86v.86h-.86zM2.07 4.07h.86v.86h-.86zM.07 5.07h.86v.86h-.86zM1.07 5.07h.86v.86h-.86zM2.07 5.07h.86v.86h-.86zM.07 6.07h.86v.86h-.86zM1.07 6.07h.86v.86h-.86z"></path>
+            <path fill="#ffb347" d="M3.07 .07h.86v.86h-.86zM3.07 1.07h.86v.86h-.86zM5.07 1.07h.86v.86h-.86zM3.07 2.07h.86v.86h-.86zM3.07 3.07h.86v.86h-.86zM4.07 3.07h.86v.86h-.86zM3.07 4.07h.86v.86h-.86zM4.07 4.07h.86v.86h-.86zM5.07 4.07h.86v.86h-.86zM3.07 5.07h.86v.86h-.86zM4.07 5.07h.86v.86h-.86zM5.07 5.07h.86v.86h-.86zM4.07 6.07h.86v.86h-.86zM5.07 6.07h.86v.86h-.86z"></path>
+          </svg>
+          <span>Twin <span style="color: #ff6a1f;">Ember</span></span>
+        </a>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 15px; font-weight: 500;">
+          <a href="#work" style="color: #efe7dc; text-decoration: none; padding: 12px 0;">Work</a>
+          <a href="#games" style="color: #a69c92; text-decoration: none; padding: 12px 0;">Games</a>
+          <a href="#studio" style="color: #a69c92; text-decoration: none; padding: 12px 0;">Studio</a>
+          <a href="#contact" style="color: #a69c92; text-decoration: none; padding: 12px 0;">Contact</a>
+        </div>
+        <a href="#contact" style="margin-left: auto; background: #ff6a1f; color: #1a0e07; text-decoration: none; font-weight: 600; font-size: 15px; min-height: 44px; padding: 0 20px; border-radius: 2px; display: flex; align-items: center;">Start a project</a>
+      </nav>
+
+      <div style="max-width: 1100px; margin: 0 auto; padding: 112px 24px 160px; display: flex; flex-wrap: wrap; align-items: center; gap: 48px;">
+        <div style="flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 28px; " id="te-txt">
+          <div style="font-family: Silkscreen, monospace; font-size: 12px; letter-spacing: 0.04em; color: #ffb347;">DIGITAL STUDIO · LAND VAN CUIJK</div>
+          <h1 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: clamp(56px, 9vw, 120px); line-height: 0.9; letter-spacing: -0.01em; text-transform: uppercase;">Two embers.<br><span style="color: #ff6a1f;">One fire.</span></h1>
+          <p style="margin: 0; font-size: 20px; line-height: 30px; max-width: 520px;">Twin Ember is a two-person digital studio. We build games, apps and web experiences for ideas that need a spark.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <a href="#contact" style="background: #ff6a1f; color: #1a0e07; text-decoration: none; font-weight: 600; font-size: 16px; min-height: 48px; padding: 0 24px; border-radius: 2px; display: flex; align-items: center;">Start a project</a>
+            <a href="#work" style="border: 1px solid #a69c92; color: #efe7dc; text-decoration: none; font-weight: 600; font-size: 16px; min-height: 48px; padding: 0 24px; border-radius: 2px; display: flex; align-items: center; box-sizing: border-box;">Descend</a>
+          </div>
+        </div>
+        <div style="flex: 1 1 320px; display: flex; justify-content: center; " id="te-flame">
+          <svg role="img" aria-label="Two embers rising into one pixel flame" viewBox="-3 -3 12 11" width="400" height="367" style="max-width: 100%; height: auto; overflow: visible;">
+            <path fill="#ff6a1f" d="M2.07 1.07h.86v.86h-.86zM1.07 2.07h.86v.86h-.86zM2.07 2.07h.86v.86h-.86zM1.07 3.07h.86v.86h-.86zM2.07 3.07h.86v.86h-.86zM.07 4.07h.86v.86h-.86zM1.07 4.07h.86v.86h-.86zM2.07 4.07h.86v.86h-.86zM.07 5.07h.86v.86h-.86zM1.07 5.07h.86v.86h-.86zM2.07 5.07h.86v.86h-.86zM.07 6.07h.86v.86h-.86zM1.07 6.07h.86v.86h-.86z"></path>
+            <path fill="#ffb347" d="M3.07 1.07h.86v.86h-.86zM3.07 2.07h.86v.86h-.86zM3.07 3.07h.86v.86h-.86zM4.07 3.07h.86v.86h-.86zM3.07 4.07h.86v.86h-.86zM4.07 4.07h.86v.86h-.86zM5.07 4.07h.86v.86h-.86zM3.07 5.07h.86v.86h-.86zM4.07 5.07h.86v.86h-.86zM5.07 5.07h.86v.86h-.86zM4.07 6.07h.86v.86h-.86zM5.07 6.07h.86v.86h-.86z"></path>
+            <rect class="te-flk" x="3.07" y=".07" width=".86" height=".86" fill="#ffb347"></rect>
+            <rect class="te-flk b" x="2.07" y=".07" width=".86" height=".86" fill="#ff6a1f"></rect>
+            <rect class="te-flk c" x="5.07" y="1.07" width=".86" height=".86" fill="#ffb347"></rect>
+            <rect class="te-sp" x="1.6" y="1.2" width=".4" height=".4" fill="#ff6a1f"></rect>
+            <rect class="te-sp r d1" x="3.4" y=".2" width=".4" height=".4" fill="#ffb347"></rect>
+            <rect class="te-sp d2" x="2.4" y="-.2" width=".4" height=".4" fill="#ff6a1f"></rect>
+            <rect class="te-sp r d3" x="4.6" y="2.2" width=".4" height=".4" fill="#ffb347"></rect>
+            <rect class="te-sp d4" x=".8" y="3" width=".4" height=".4" fill="#ff6a1f"></rect>
+            <rect class="te-sp r d5" x="5.4" y=".6" width=".4" height=".4" fill="#ffb347"></rect>
+            <rect class="te-sp d6" x="3" y="-.6" width=".4" height=".4" fill="#ff6a1f"></rect>
+            <rect class="te-sp r d7" x="4" y="1.4" width=".4" height=".4" fill="#ffb347"></rect>
+          </svg>
+        </div>
+      </div>
+
+      <a href="#work" style="position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #a69c92; font-family: Silkscreen, monospace; font-size: 12px; min-height: 44px;" id="te-cue">
+        <span>SCROLL TO DESCEND</span>
+        <svg class="te-bob" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffb347" stroke-width="2" stroke-linecap="square"><path d="M12 4v14M6 12l6 6 6-6"></path></svg>
+      </a>
+    </section>
+
+    <!-- DEPTH 01 -->
+    <section id="work" style="max-width: 1100px; margin: 0 auto; padding: 160px 24px; display: flex; flex-direction: column; gap: 48px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">DEPTH 01 · WHAT WE MAKE</div>
+          <h2 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 52px; line-height: 52px;">Games first. Everything digital next.</h2>
+        </div>
+        <p style="margin: 0; max-width: 400px; font-size: 16px; line-height: 24px; color: #a69c92;">Small team, short lines. You talk to the people who design and build it.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#ff6a1f" stroke-width="2" stroke-linecap="square"><rect x="2" y="7" width="20" height="11"></rect><path d="M6 12.5h4M8 10.5v4M15 11h1M18 14h1"></path></svg>
+          <h3 style="margin: 0; font-size: 22px; line-height: 28px; font-weight: 600;">Games</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">Our own titles for mobile, built with the care we wish more games had.</p>
+        </div>
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#efe7dc" stroke-width="2" stroke-linecap="square"><rect x="7" y="3" width="10" height="18"></rect><path d="M11 18h2"></path></svg>
+          <h3 style="margin: 0; font-size: 22px; line-height: 28px; font-weight: 600;">Apps</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">Mobile and web apps, from first prototype to store release.</p>
+        </div>
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#efe7dc" stroke-width="2" stroke-linecap="square"><rect x="3" y="4" width="18" height="16"></rect><path d="M3 8h18M6 6h0M9 6h0"></path></svg>
+          <h3 style="margin: 0; font-size: 22px; line-height: 28px; font-weight: 600;">Web</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">Sites and interactive experiences that feel made, not assembled.</p>
+        </div>
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#efe7dc" stroke-width="2" stroke-linecap="square"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"></path><rect x="10" y="10" width="4" height="4"></rect></svg>
+          <h3 style="margin: 0; font-size: 22px; line-height: 28px; font-weight: 600;">Concepts &amp; AI</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">Turning a loose idea into something you can click, test and show.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPTH 02 -->
+    <section id="games" style="max-width: 1100px; margin: 0 auto; padding: 160px 24px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
+      <div style="flex: 1 1 480px; min-width: 0; aspect-ratio: 16 / 10; background: #9a3412; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #efe7dc;">[KEY ART DARKLIFE]</div>
+      <div style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+        <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">DEPTH 02 · GAMES</div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span style="font-family: Silkscreen, monospace; font-size: 12px; padding: 6px 10px; border-radius: 2px; background: #ff6a1f; color: #1a0e07;">LEVEL 1</span>
+          <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #a69c92;"><span style="width: 8px; height: 8px; border-radius: 9999px; background: #ffb347;"></span>In development</span>
+        </div>
+        <h2 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: 72px; line-height: 68px; text-transform: uppercase;">Darklife</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 28px;">Our first title. [ONE-LINE PITCH OF THE GAME]</p>
+        <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">[PLATFORMS · GENRE · RELEASE WINDOW]</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
+          <a href="#contact" style="background: #ff6a1f; color: #1a0e07; text-decoration: none; font-weight: 600; font-size: 16px; min-height: 48px; padding: 0 24px; border-radius: 2px; display: flex; align-items: center;">Follow development</a>
+          <a href="#games" style="color: #ffb347; text-decoration: none; font-weight: 600; font-size: 16px; min-height: 48px; padding: 0 8px; display: flex; align-items: center;">Read the devlog →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPTH 03 -->
+    <section id="studio" style="max-width: 1100px; margin: 0 auto; padding: 160px 24px; display: flex; flex-direction: column; gap: 56px;">
+      <div style="display: flex; flex-wrap: wrap; gap: 48px;">
+        <div style="flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">DEPTH 03 · THE STUDIO</div>
+          <h2 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 52px; line-height: 52px;">Rekindled since the 8-bit era.</h2>
+        </div>
+        <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 16px; font-size: 18px; line-height: 28px;">
+          <p style="margin: 0;">An ember is what's left when the fire seems out: a coal that keeps glowing until someone gives it air.</p>
+          <p style="margin: 0; color: #a69c92;">We grew up with pixels, cartridges and long nights behind the screen. Life happened, the fire never went out. Now, around forty, we're blowing on it together. Two embers, one fire.</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        <div style="background: #241f1b; border-radius: 6px; padding: 24px; display: flex; gap: 20px; align-items: center;">
+          <div style="width: 112px; height: 112px; flex-shrink: 0;">
+            <svg role="img" aria-label="Roland in 8-bit" viewBox="0 0 16 16" width="112" height="112" shape-rendering="crispEdges" style="display:block;border-radius:6px;background:#ff6a1f"><path fill="#f0c090" d="M4 6h1v1h-1zM5 6h1v1h-1zM8 6h1v1h-1zM9 6h1v1h-1zM12 6h1v1h-1zM3 7h1v1h-1zM6 7h1v1h-1zM7 7h1v1h-1zM8 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM3 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM9 8h1v1h-1zM12 8h1v1h-1zM2 9h1v1h-1zM3 9h1v1h-1zM6 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM9 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM2 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM6 11h1v1h-1zM7 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM10 11h1v1h-1zM11 11h1v1h-1zM13 11h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM11 12h1v1h-1zM12 12h1v1h-1zM4 13h1v1h-1zM5 13h1v1h-1zM10 13h1v1h-1zM11 13h1v1h-1zM6 14h1v1h-1zM7 14h1v1h-1zM8 14h1v1h-1zM9 14h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1z"/><path fill="#d9a273" d="M1 8h1v1h-1zM14 8h1v1h-1zM1 9h1v1h-1zM14 9h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1z"/><path fill="#e8916a" d="M3 11h1v1h-1zM12 11h1v1h-1z"/><path fill="#2b1d14" d="M5 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM5 3h1v1h-1zM6 3h1v1h-1zM7 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM6 4h1v1h-1zM7 4h1v1h-1zM8 4h1v1h-1zM11 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM2 5h1v1h-1zM3 5h1v1h-1zM4 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM7 5h1v1h-1zM8 5h1v1h-1zM9 5h1v1h-1zM10 5h1v1h-1zM11 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM13 6h1v1h-1zM1 7h1v1h-1zM2 7h1v1h-1zM4 7h1v1h-1zM5 7h1v1h-1zM10 7h1v1h-1zM11 7h1v1h-1zM13 7h1v1h-1zM14 7h1v1h-1zM2 8h1v1h-1zM13 8h1v1h-1z"/><path fill="#5a4030" d="M4 4h1v1h-1zM5 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1z"/><path fill="#efe7dc" d="M4 8h1v1h-1zM10 8h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1z"/><path fill="#1a0e07" d="M5 8h1v1h-1zM11 8h1v1h-1z"/><path fill="#9a5a3a" d="M5 12h1v1h-1zM10 12h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM8 13h1v1h-1zM9 13h1v1h-1z"/><path fill="#1a0e07" d="M5 1h1v1h-1zM6 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM11 2h1v1h-1zM12 2h1v1h-1zM2 3h1v1h-1zM13 3h1v1h-1zM1 4h1v1h-1zM14 4h1v1h-1zM1 5h1v1h-1zM14 5h1v1h-1zM1 6h1v1h-1zM14 6h1v1h-1zM0 7h1v1h-1zM15 7h1v1h-1zM0 8h1v1h-1zM15 8h1v1h-1zM0 9h1v1h-1zM15 9h1v1h-1zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM2 12h1v1h-1zM13 12h1v1h-1zM3 13h1v1h-1zM12 13h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM6 15h1v1h-1zM9 15h1v1h-1z"/></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">CLASS: DREAMER</div>
+            <div style="font-size: 22px; font-weight: 600;">Roland <span style="color: #a69c92; font-weight: 400;">· Sparkmaker</span></div>
+            <div style="font-size: 15px; line-height: 22px; margin-top: 4px;">Dreams it up. Worlds, ideas and art direction. Lights the spark.</div>
+          </div>
+        </div>
+        <div style="background: #241f1b; border-radius: 6px; padding: 24px; display: flex; gap: 20px; align-items: center;">
+          <div style="width: 112px; height: 112px; flex-shrink: 0;">
+            <svg role="img" aria-label="Patrick in 8-bit" viewBox="0 0 16 16" width="112" height="112" shape-rendering="crispEdges" style="display:block;border-radius:6px;background:#ffb347"><path fill="#f0c090" d="M4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM3 7h1v1h-1zM7 7h1v1h-1zM8 7h1v1h-1zM12 7h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM9 8h1v1h-1zM12 8h1v1h-1zM13 8h1v1h-1zM2 9h1v1h-1zM3 9h1v1h-1zM6 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM9 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM11 11h1v1h-1zM12 11h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1z"/><path fill="#d9a273" d="M1 8h1v1h-1zM14 8h1v1h-1zM1 9h1v1h-1zM14 9h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1z"/><path fill="#5a3a22" d="M4 3h1v1h-1zM5 3h1v1h-1zM6 3h1v1h-1zM7 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM11 4h1v1h-1zM12 4h1v1h-1zM3 5h1v1h-1zM4 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM7 5h1v1h-1zM8 5h1v1h-1zM9 5h1v1h-1zM10 5h1v1h-1zM11 5h1v1h-1zM12 5h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1zM13 6h1v1h-1zM2 7h1v1h-1zM4 7h1v1h-1zM5 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM10 7h1v1h-1zM11 7h1v1h-1zM13 7h1v1h-1z"/><path fill="#8a6040" d="M4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM7 4h1v1h-1z"/><path fill="#5a3a22" d="M2 11h1v1h-1zM5 11h1v1h-1zM6 11h1v1h-1zM7 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM10 11h1v1h-1zM13 11h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM10 12h1v1h-1zM11 12h1v1h-1zM12 12h1v1h-1zM4 13h1v1h-1zM5 13h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM8 13h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM11 13h1v1h-1zM6 14h1v1h-1zM7 14h1v1h-1zM8 14h1v1h-1zM9 14h1v1h-1z"/><path fill="#efe7dc" d="M4 8h1v1h-1zM11 8h1v1h-1zM4 9h1v1h-1zM11 9h1v1h-1z"/><path fill="#1a0e07" d="M5 8h1v1h-1zM10 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1z"/><path fill="#e0b088" d="M6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1z"/><path fill="#1a0e07" d="M4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1zM3 3h1v1h-1zM12 3h1v1h-1zM2 4h1v1h-1zM13 4h1v1h-1zM2 5h1v1h-1zM13 5h1v1h-1zM1 6h1v1h-1zM14 6h1v1h-1zM1 7h1v1h-1zM14 7h1v1h-1zM0 8h1v1h-1zM15 8h1v1h-1zM0 9h1v1h-1zM15 9h1v1h-1zM1 10h1v1h-1zM14 10h1v1h-1zM1 11h1v1h-1zM14 11h1v1h-1zM2 12h1v1h-1zM13 12h1v1h-1zM3 13h1v1h-1zM12 13h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM6 15h1v1h-1zM9 15h1v1h-1z"/></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">CLASS: STRATEGIST</div>
+            <div style="font-size: 22px; font-weight: 600;">Patrick <span style="color: #a69c92; font-weight: 400;">· Firekeeper</span></div>
+            <div style="font-size: 15px; line-height: 22px; margin-top: 4px;">Makes it real. Business, deals and the plan. Keeps the fire burning.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPTH 04 -->
+    <section style="max-width: 1100px; margin: 0 auto; padding: 160px 24px; display: flex; flex-direction: column; gap: 48px;">
+      <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">DEPTH 04 · HOW WE WORK</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #a69c92;">01 · SPARK</div>
+          <h3 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 36px; line-height: 40px;">Find the idea worth building</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">One conversation to get to the core: who it's for and what has to feel right.</p>
+        </div>
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #a69c92;">02 · BUILD</div>
+          <h3 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 36px; line-height: 40px;">Playable early, better every week</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">Prototypes you can hold within days, not slide decks.</p>
+        </div>
+        <div style="background: #241f1b; border-radius: 6px; padding: 32px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #a69c92;">03 · SHIP</div>
+          <h3 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 36px; line-height: 40px;">Launch, then keep it burning</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 24px; color: #a69c92;">Store, web or both. We stay on after launch.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPTH 05: de kern -->
+    <section id="contact" style="max-width: 1100px; margin: 0 auto; padding: 200px 24px 120px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px;">
+      <div style="font-family: Silkscreen, monospace; font-size: 12px; color: #ffb347;">DEPTH 05 · THE CORE</div>
+      <h2 style="margin: 0; font-family: 'Big Shoulders Display', sans-serif; font-weight: 800; font-size: clamp(48px, 7vw, 96px); line-height: 0.92; text-transform: uppercase;">Small spark.<br><span style="color: #ff6a1f;">Big fire.</span></h2>
+      <p style="margin: 0; font-size: 18px; line-height: 28px; color: #efe7dc; max-width: 520px;">You made it to the bottom. Got an idea, a game or a project that needs a spark? Tell us about it.</p>
+      <a href="#contact" style="background: #ff6a1f; color: #1a0e07; text-decoration: none; font-weight: 600; font-size: 18px; min-height: 56px; padding: 0 32px; border-radius: 2px; display: flex; align-items: center;">hallo@[domain]</a>
+      <svg role="img" aria-label="The flame at the core" viewBox="-3 -3 12 11" width="200" height="183" style="margin-top: 48px; overflow: visible;">
+        <path fill="#ff6a1f" d="M2.07 1.07h.86v.86h-.86zM1.07 2.07h.86v.86h-.86zM2.07 2.07h.86v.86h-.86zM1.07 3.07h.86v.86h-.86zM2.07 3.07h.86v.86h-.86zM.07 4.07h.86v.86h-.86zM1.07 4.07h.86v.86h-.86zM2.07 4.07h.86v.86h-.86zM.07 5.07h.86v.86h-.86zM1.07 5.07h.86v.86h-.86zM2.07 5.07h.86v.86h-.86zM.07 6.07h.86v.86h-.86zM1.07 6.07h.86v.86h-.86z"></path>
+        <path fill="#ffb347" d="M3.07 1.07h.86v.86h-.86zM3.07 2.07h.86v.86h-.86zM3.07 3.07h.86v.86h-.86zM4.07 3.07h.86v.86h-.86zM3.07 4.07h.86v.86h-.86zM4.07 4.07h.86v.86h-.86zM5.07 4.07h.86v.86h-.86zM3.07 5.07h.86v.86h-.86zM4.07 5.07h.86v.86h-.86zM5.07 5.07h.86v.86h-.86zM4.07 6.07h.86v.86h-.86zM5.07 6.07h.86v.86h-.86z"></path>
+        <rect class="te-flk" x="3.07" y=".07" width=".86" height=".86" fill="#ffb347"></rect>
+        <rect class="te-flk b" x="2.07" y=".07" width=".86" height=".86" fill="#ff6a1f"></rect>
+        <rect class="te-flk c" x="5.07" y="1.07" width=".86" height=".86" fill="#ffb347"></rect>
+        <rect class="te-sp" x="1.6" y="1.2" width=".4" height=".4" fill="#ff6a1f"></rect>
+        <rect class="te-sp r d2" x="3.4" y=".2" width=".4" height=".4" fill="#ffb347"></rect>
+        <rect class="te-sp d4" x="2.4" y="-.2" width=".4" height=".4" fill="#ff6a1f"></rect>
+        <rect class="te-sp r d6" x="4.6" y="2.2" width=".4" height=".4" fill="#ffb347"></rect>
+      </svg>
+    </section>
+
+    <footer style="max-width: 1100px; margin: 0 auto; padding: 32px 24px 48px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; font-size: 14px; line-height: 20px; color: #a69c92;">
+      <span>Twin Ember V.O.F. · Land van Cuijk · KvK [number]</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px;">
+        <a href="#games" style="color: #a69c92;">Games</a>
+        <a href="#studio" style="color: #a69c92;">Studio</a>
+        <a href="#contact" style="color: #a69c92;">LinkedIn</a>
+        <a href="#contact" style="color: #a69c92;">Privacy</a>
+        <a href="styleguide.html" style="color: #a69c92;">Style guide</a>
+      </div>
+    </footer>
+  </div>
+</div>
+<script>
+(function () {
+  var root = document.getElementById('te-root');
+  if (!root) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var F = { far: 0.3, mid: 0.6, fg: 1.5, sp: 2.1 };
+  var COL = { far: '#15110f', mid: '#2a231e', fg: '#050403' };
+  var el = {};
+  ['far', 'mid', 'fg', 'sp', 'glow', 'glow2', 'txt', 'flame', 'cue', 'depth', 'segbox'].forEach(function (k) { el[k] = document.getElementById('te-' + k); });
+
+  function rng(seed) {
+    var a = seed;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function block(parent, x, w, t, h, c) {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:absolute;left:' + x + '%;width:' + w + '%;top:' + t + 'px;height:' + h + 'px;background:' + c;
+    parent.appendChild(d);
+  }
+  function walls(parent, seed, height, start, minW, maxW, sMin, sMax, c) {
+    var r = rng(seed), y = start, q = function (v) { return Math.round(v / 1.5) * 1.5; };
+    parent.innerHTML = '';
+    while (y < height) {
+      var h = Math.round((sMin + r() * (sMax - sMin)) / 8) * 8;
+      var wl = q(minW + r() * (maxW - minW)), wr = q(minW + r() * (maxW - minW));
+      block(parent, 0, wl, y, h, c);
+      block(parent, 100 - wr, wr, y, h, c);
+      y += h;
+    }
+  }
+  function sparks(parent, seed, height, n) {
+    var r = rng(seed);
+    parent.innerHTML = '';
+    for (var i = 0; i < n; i++) {
+      var d = document.createElement('div'), z = [4, 6, 8][Math.floor(r() * 3)];
+      d.style.cssText = 'position:absolute;left:' + Math.round(4 + r() * 92) + '%;top:' + Math.round(700 + r() * (height - 700)) + 'px;width:' + z + 'px;height:' + z + 'px;border-radius:1px;background:' + (r() > 0.5 ? '#ff6a1f' : '#ffb347');
+      parent.appendChild(d);
+    }
+  }
+  var segs = [];
+  for (var i = 0; i < 10; i++) {
+    var s = document.createElement('div');
+    s.style.cssText = 'flex-grow:1;min-height:3px;background:#4a4038';
+    el.segbox.appendChild(s); segs.push(s);
+  }
+
+  var vh, H, travel;
+  function layout() {
+    vh = window.innerHeight; H = root.offsetHeight; travel = Math.max(1, H - vh);
+    var lh = function (f) { return Math.round(travel * f + vh + 200); };
+    walls(el.far, 11, lh(F.far), 460, 10, 28, 96, 200, COL.far);
+    walls(el.mid, 23, lh(F.mid), 620, 5, 17, 72, 160, COL.mid);
+    walls(el.fg, 37, lh(F.fg), 900, 1.5, 6, 48, 128, COL.fg);
+    sparks(el.sp, 51, lh(F.sp), 46);
+    update();
+  }
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var y = reduce ? 0 : Math.max(0, -root.getBoundingClientRect().top);
+    var p = Math.min(1, y / travel);
+    el.far.style.transform = 'translate3d(0,' + (-y * F.far) + 'px,0)';
+    el.mid.style.transform = 'translate3d(0,' + (-y * F.mid) + 'px,0)';
+    el.fg.style.transform = 'translate3d(0,' + (-y * F.fg) + 'px,0)';
+    el.sp.style.transform = 'translate3d(0,' + (-y * F.sp) + 'px,0)';
+    var mix = function (a, b) { return Math.round(a + (b - a) * p); };
+    root.style.background = 'rgb(' + mix(31, 6) + ',' + mix(26, 5) + ',' + mix(23, 4) + ')';
+    var g = Math.round(80 + p * p * 760);
+    el.glow.style.width = el.glow.style.height = g + 'px';
+    el.glow.style.bottom = Math.round(-g / 2) + 'px';
+    el.glow2.style.width = el.glow2.style.height = Math.round(g * 0.5) + 'px';
+    el.glow2.style.bottom = Math.round(-g * 0.25) + 'px';
+    var o = Math.max(0, 1 - y / 650);
+    el.txt.style.transform = 'translate3d(0,' + (-y * 0.35) + 'px,0)';
+    el.txt.style.opacity = o;
+    el.cue.style.opacity = o;
+    el.flame.style.transform = 'translate3d(0,' + (y * 0.55) + 'px,0) scale(' + Math.max(0.6, 1 - y / 2000) + ')';
+    el.depth.textContent = String(Math.round(y / 6)).padStart(4, '0');
+    for (var i = 0; i < 10; i++) segs[i].style.background = (i / 10) < p ? '#ff6a1f' : '#4a4038';
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', layout);
+  window.addEventListener('load', layout);
+  layout();
+})();
+
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-// Stapelgek: stop the floating block above the tower; whatever sticks out is cut off.
-// Stapelgek Mini plus tools, goals, lives and special blocks.
+// Stacking Mad: stop the floating block above the tower; whatever sticks out is cut off.
+// Stapelgek Mini plus tools, goals, lives, special blocks and themes, in English and Dutch.
 import {
   AdditiveBlending, BoxGeometry, BufferAttribute, CanvasTexture, Color, DoubleSide, EdgesGeometry, Group,
   LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, OrthographicCamera, PlaneGeometry, RepeatWrapping,
@@ -10,6 +10,7 @@ import {
   ITEMS, ITEM_IDS, LOADOUT_MAX, MAX_LIVES, addItem, challenge, goals, inventory, itemCount, lives, takeItem, untilTomorrow,
 } from './progress.js';
 import { showRewardedAd } from './ads.js';
+import { NAME, NL, switchLanguage, tr } from './lang.js';
 
 const BASE = 3;          // footprint of the first block
 const H = 0.7;           // height of one layer
@@ -24,17 +25,17 @@ const CUT_RED = new Color(0xff1744);
 const $ = (id) => document.getElementById(id);
 // Themes only change how the game looks; the game itself stays the same.
 const THEMES = [
-  { id: 'classic', name: 'Klassiek' },
-  { id: 'sky', name: '☁️ Hemelreis' },
+  { id: 'classic', name: tr('Classic', 'Klassiek') },
+  { id: 'sky', name: tr('☁️ Sky Journey', '☁️ Hemelreis') },
   { id: 'pixel', name: '🕹️ Pixel Arcade' },
-  { id: 'neon', name: '🌌 Neon Nacht' },
+  { id: 'neon', name: tr('🌌 Neon Night', '🌌 Neon Nacht') },
 ];
 const savedTheme = store.get('stapelgekfull-theme', 'classic');
 const LOOK = THEMES.some((t) => t.id === savedTheme) ? savedTheme : 'classic';
 document.body.classList.add(`look-${LOOK}`);
 $('card-toggle').addEventListener('click', () => {
   const folded = $('over').classList.toggle('folded');
-  $('card-toggle').textContent = folded ? '▴ Toon je score' : '▾ Bekijk je toren';
+  $('card-toggle').textContent = folded ? tr('▴ Show your score', '▴ Toon je score') : tr('▾ See your tower', '▾ Bekijk je toren');
   $('card-toggle').setAttribute('aria-expanded', String(!folded));
 });
 
@@ -373,7 +374,8 @@ function paintSound() {
   }
 }
 paintSound();
-$('set-version').textContent = `Stapelgek versie ${__VERSION__}`;
+$('set-lang').addEventListener('click', switchLanguage);
+$('set-version').textContent = tr(`${NAME} version ${__VERSION__}`, `${NAME} versie ${__VERSION__}`);
 
 function openSettings(open) {
   $('settings').hidden = !open;
@@ -499,7 +501,7 @@ const best = {
   hard: parseInt(store.get('stapelgekfull-best-hard', store.get('stapelgekfull-best', '0')), 10) || 0,
 };
 let scores = store.json('stapelgekfull-scores', []);
-const MODE_NAME = { easy: 'Makkelijk', hard: 'Moeilijk' };
+const MODE_NAME = { easy: tr('Easy', 'Makkelijk'), hard: tr('Hard', 'Moeilijk') };
 const pedestal = makeBlock(0, 0, -PEDESTAL / 2, 0, BASE, PEDESTAL, BASE);
 
 const height = () => game.level + 1;
@@ -545,7 +547,7 @@ function paintStop() {
   const golden = !!game.moving && game.moving.kind === 'golden';
   const button = $('stop');
   button.classList.toggle('golden', golden);
-  button.textContent = golden ? 'GOUD!' : 'STOP!';
+  button.textContent = golden ? tr('GOLD!', 'GOUD!') : 'STOP!';
 }
 
 function placeMoving() {
@@ -584,8 +586,8 @@ function paintSkyLayers() {
 // Sky journey: the scenery scrolls from the village at the bottom up to the moon at 100.
 // The journey comes in chapters of 100; the meter starts over in every chapter.
 const CHAPTERS = [
-  { title: '1 · Naar de maan', icons: ['🌙', '🚀', '✈️', '☁️', '🏡'] },
-  { title: '2 · Zonnestelsel', icons: ['☀️', '🪐', '☄️', '🔴', '🌙'] },
+  { title: tr('1 · To the moon', '1 · Naar de maan'), icons: ['🌙', '🚀', '✈️', '☁️', '🏡'] },
+  { title: tr('2 · Solar system', '2 · Zonnestelsel'), icons: ['☀️', '🪐', '☄️', '🔴', '🌙'] },
 ];
 let shownChapter = 0;
 function paintJourney(h) {
@@ -604,8 +606,8 @@ function paintJourney(h) {
 
 function showChapter(h) {
   const el = $('chapter');
-  el.querySelector('.ch-big').textContent = h === 100 ? '🌙 OP DE MAAN!' : '☀️ BIJ DE ZON!';
-  el.querySelector('.ch-small').textContent = h === 100 ? 'Hoofdstuk 2 · Het zonnestelsel' : 'Hoofdstuk 3 · De Melkweg';
+  el.querySelector('.ch-big').textContent = h === 100 ? tr('🌙 ON THE MOON!', '🌙 OP DE MAAN!') : tr('☀️ AT THE SUN!', '☀️ BIJ DE ZON!');
+  el.querySelector('.ch-small').textContent = h === 100 ? tr('Chapter 2 · The solar system', 'Hoofdstuk 2 · Het zonnestelsel') : tr('Chapter 3 · The Milky Way', 'Hoofdstuk 3 · De Melkweg');
   el.classList.add('show');
   $('callout').style.visibility = 'hidden'; // the chapter banner gets the stage to itself
   clearTimeout(showChapter.timer);
@@ -651,9 +653,9 @@ function drop() {
     // Missed completely: the whole block falls, unless a lifebuoy saves the game.
     addPiece(m.mesh, m.axis, Math.sign(delta) || 1);
     if (useFromBar('buoy')) {
-      callout('GERED!');
+      callout(tr('SAVED!', 'GERED!'));
       sound.tool();
-      joop.chat('Gered door de reddingsboei! Nog een kans.', { cheer: true, force: true });
+      joop.chat(tr('Saved by the life buoy! One more chance.', 'Gered door de reddingsboei! Nog een kans.'), { cheer: true, force: true });
       spawn(game.speed);
       return;
     }
@@ -665,7 +667,7 @@ function drop() {
     // A diamond is never cut: it lands centred on the tower at its own size.
     game.combo += 1;
     sound.perfect(game.combo);
-    callout('DIAMANT!');
+    callout(tr('DIAMOND!', 'DIAMANT!'));
     buzz(30);
     settle(m, { x: top.x, z: top.z, sx: m.sx, sz: m.sz }, true);
     return;
@@ -718,7 +720,7 @@ function landGolden() {
   game.moving = null;
   game.combo += 1;
   sound.perfect(game.combo);
-  callout('GOUD!');
+  callout(tr('GOLD!', 'GOUD!'));
   buzz(30);
   settle(m, { ...game.top }, true);
 }
@@ -803,21 +805,22 @@ function beatJoop() {
   const today = challenge.win();
   for (const id of today.reward) grant(id, 1);
   if (game.markerBand) game.markerBand.material.color.setHex(0x2ee59d);
-  callout('JOOP VERSLAGEN!');
+  callout(tr('YOU BEAT JOOP!', 'JOOP VERSLAGEN!'));
   sound.perfect(8);
   buzz([40, 30, 80]);
-  joop.chat(`Je hebt me verslagen! Hier is je beloning: ${today.reward.map((id) => ITEMS[id].icon).join(' ')}`, { cheer: true, force: true });
+  joop.chat(tr('You beat me! Here is your reward: ', 'Je hebt me verslagen! Hier is je beloning: ') + today.reward.map((id) => ITEMS[id].icon).join(' '), { cheer: true, force: true });
   paintChallengeHud();
 }
 
 function paintChallengeHud() {
   const el = $('challenge-hud');
   if (!game.challenge) { el.textContent = ''; return; }
-  el.textContent = game.challenge.won ? '✅ Joop verslagen!' : `🏁 Versla Joop: ${game.challenge.target}`;
+  el.textContent = game.challenge.won ? tr('✅ You beat Joop!', '✅ Joop verslagen!') : tr(`🏁 Beat Joop: ${game.challenge.target}`, `🏁 Versla Joop: ${game.challenge.target}`);
 }
 
 function challengeLine(c) {
-  return `Ik haalde vandaag ${c.target} in ${MODE_NAME[c.mode]}. Kun jij hoger? Dan krijg je ${c.reward.map((id) => ITEMS[id].icon).join(' ')}`;
+  const reward = c.reward.map((id) => ITEMS[id].icon).join(' ');
+  return tr(`Today I got ${c.target} in ${MODE_NAME[c.mode]}. Can you go higher? Then you get ${reward}`, `Ik haalde vandaag ${c.target} in ${MODE_NAME[c.mode]}. Kun jij hoger? Dan krijg je ${reward}`);
 }
 
 function paintChallenge() {
@@ -825,10 +828,10 @@ function paintChallenge() {
   const button = $('challenge-btn');
   button.classList.toggle('won', c.won);
   const streak = challenge.streak;
-  const flame = streak > 1 ? ` · 🔥 ${streak} dagen op rij` : '';
+  const flame = streak > 1 ? tr(` · 🔥 ${streak} days in a row`, ` · 🔥 ${streak} dagen op rij`) : '';
   $('challenge-sub').textContent = c.won
-    ? `Verslagen! Morgen een nieuwe uitdaging${flame}`
-    : `Joop haalde ${c.target} in ${MODE_NAME[c.mode]} · beloning ${c.reward.map((id) => ITEMS[id].icon).join(' ')}${flame}`;
+    ? tr(`Beaten! A new challenge tomorrow${flame}`, `Verslagen! Morgen een nieuwe uitdaging${flame}`)
+    : tr(`Joop got ${c.target} in ${MODE_NAME[c.mode]} · reward `, `Joop haalde ${c.target} in ${MODE_NAME[c.mode]} · beloning `) + c.reward.map((id) => ITEMS[id].icon).join(' ') + flame;
 }
 
 // Milestones, each once per game: a diamond at 50, 100, 150 ..., a golden block at 75, 125, 175 ...
@@ -839,21 +842,21 @@ function rewardsFor(h) {
   let said = false;
   if (h >= 50 && h % 50 === 0) {
     grant('diamond', 1);
-    joop.chat(h === 50 ? '50 hoog! Hier, een diamanten blok. Tik op 💎 als je hem nodig hebt.' : `${h} hoog! Nog een diamant voor jou!`, { cheer: true, force: true });
+    joop.chat(h === 50 ? tr('50 high! Here, a diamond block. Tap 💎 when you need it.', '50 hoog! Hier, een diamanten blok. Tik op 💎 als je hem nodig hebt.') : tr(`${h} high! Another diamond for you!`, `${h} hoog! Nog een diamant voor jou!`), { cheer: true, force: true });
     said = true;
   } else if (h >= 75 && (h - 75) % 50 === 0) {
     golden = true;
-    joop.chat('Een gouden blok! Die valt vanzelf perfect op zijn plek.', { cheer: true, force: true });
+    joop.chat(tr('A golden block! It lands perfectly all by itself.', 'Een gouden blok! Die valt vanzelf perfect op zijn plek.'), { cheer: true, force: true });
     said = true;
   }
   if (h === LIFE_HEIGHT && !game.lifeForHeight) {
     game.lifeForHeight = true;
     lives.add(1);
-    callout('+1 LEVEN ❤️');
-    if (!said) joop.chat(`${LIFE_HEIGHT} hoog! Daar krijg je een extra leven voor.`, { cheer: true, force: true });
+    callout(tr('+1 LIFE ❤️', '+1 LEVEN ❤️'));
+    if (!said) joop.chat(tr(`${LIFE_HEIGHT} high! That earns you an extra life.`, `${LIFE_HEIGHT} hoog! Daar krijg je een extra leven voor.`), { cheer: true, force: true });
     said = true;
   }
-  if (!said && (h % 10 === 0 || h === 25)) joop.chat(LINES.milestone[h] || `${h} hoog! Ga zo door!`, { cheer: true, force: true });
+  if (!said && (h % 10 === 0 || h === 25)) joop.chat(LINES.milestone[h] || tr(`${h} high! Keep going!`, `${h} hoog! Ga zo door!`), { cheer: true, force: true });
   return golden;
 }
 
@@ -945,24 +948,24 @@ function useTool(id) {
     m.mesh.material = specialMaterial('diamond');
     m.grow = 0;
     sparks(m.mesh.position.x, m.mesh.position.y, m.mesh.position.z, 'x', 1.5, [0xffffff, 0x7fe7ff], 14);
-    joop.chat('Een diamant! Die snijd ik echt niet door.', { force: true });
+    joop.chat(tr("A diamond! I'm not cutting that one.", 'Een diamant! Die snijd ik echt niet door.'), { force: true });
   } else if (id === 'pump') {
-    if (game.level === 0 || (game.top.sx >= BASE && game.top.sz >= BASE)) { joop.chat('Je toren is al op zijn breedst!', { force: true }); return; }
+    if (game.level === 0 || (game.top.sx >= BASE && game.top.sz >= BASE)) { joop.chat(tr('Your tower is already as wide as it gets!', 'Je toren is al op zijn breedst!'), { force: true }); return; }
     const layer = game.history[game.level];
     layer.sx = game.top.sx = Math.min(BASE, game.top.sx + PUMP_GROW);
     layer.sz = game.top.sz = Math.min(BASE, game.top.sz + PUMP_GROW);
     layer.mesh.scale.set(layer.sx, H, layer.sz);
     if (m.kind === 'normal') { m.sx = layer.sx; m.sz = layer.sz; m.mesh.scale.set(m.sx, H, m.sz); }
     addRing(game.top, game.level * H, 0xffe14d);
-    joop.chat('Pffff... opgeblazen! Weer lekker breed.', { force: true });
+    joop.chat(tr('Pffff... pumped up! Nice and wide again.', 'Pffff... opgeblazen! Weer lekker breed.'), { force: true });
   } else if (id === 'slow') {
     game.slowLeft += SLOW_BLOCKS;
-    joop.chat('Slakkengang! Rustig aan nu.', { force: true });
+    joop.chat(tr("Snail's pace! Nice and easy now.", 'Slakkengang! Rustig aan nu.'), { force: true });
   } else if (id === 'magnet') {
     game.magnetLeft += MAGNET_BLOCKS;
-    joop.chat('Magneet aan! Dichtbij is goed genoeg.', { force: true });
+    joop.chat(tr('Magnet on! Close is good enough.', 'Magneet aan! Dichtbij is goed genoeg.'), { force: true });
   } else if (id === 'bomb' || id === 'dynamite') {
-    if (game.level === 0) { joop.chat('Er valt nog niks op te blazen!', { force: true }); return; }
+    if (game.level === 0) { joop.chat(tr("There's nothing to blow up yet!", 'Er valt nog niks op te blazen!'), { force: true }); return; }
     blast(id === 'bomb' ? 5 : 10);
   } else {
     return;
@@ -988,9 +991,9 @@ function blast(layers) {
   view.worldY = -game.level * H;
   setScore(true);
   paintSky(game.level);
-  callout(n >= 10 ? 'KABOEM!' : 'BOEM!', 'cut');
+  callout(n >= 10 ? tr('KABOOM!', 'KABOEM!') : tr('BOOM!', 'BOEM!'), 'cut');
   buzz([80, 30, 160]);
-  joop.chat(n >= 10 ? 'KABOEM! Tien lagen de lucht in!' : 'Boem! Weer lekker veel ruimte.', { force: true });
+  joop.chat(n >= 10 ? tr('KABOOM! Ten layers up in the air!', 'KABOEM! Tien lagen de lucht in!') : tr('Boom! Plenty of room again.', 'Boem! Weer lekker veel ruimte.'), { force: true });
   spawn(game.speed);
 }
 
@@ -1008,7 +1011,7 @@ function paintTools() {
     b.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      if (id === 'buoy') joop.chat('De reddingsboei werkt vanzelf als je helemaal mist.', { force: true });
+      if (id === 'buoy') joop.chat(tr('The life buoy works by itself when you miss completely.', 'De reddingsboei werkt vanzelf als je helemaal mist.'), { force: true });
       else useTool(id);
     });
     bar.append(b);
@@ -1028,9 +1031,10 @@ function checkGoals() {
   const done = goals.collect(game.state === 'play' ? game.stats : null);
   for (const g of done) {
     const item = ITEMS[g.reward];
-    if (game.state === 'play') grant(g.reward, g.amount, 'DOEL GEHAALD!');
+    if (game.state === 'play') grant(g.reward, g.amount, tr('GOAL REACHED!', 'DOEL GEHAALD!'));
     else addItem(g.reward, g.amount);
-    joop.chat(`Doel gehaald! Je krijgt ${g.amount > 1 ? `${g.amount}× ` : 'een '}${item.name.toLowerCase()} ${item.icon}`, { cheer: true, force: true });
+    const what = `${g.amount > 1 ? `${g.amount}× ` : tr('a ', 'een ')}${item.name.toLowerCase()} ${item.icon}`;
+    joop.chat(tr(`Goal reached! You get ${what}`, `Doel gehaald! Je krijgt ${what}`), { cheer: true, force: true });
   }
   paintGoals();
 }
@@ -1057,48 +1061,48 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
 const LINES = {
   intro: [
-    'Hoi! Ik ben Joop, stapelkampioen van de familie.',
-    'Zo komt er een blok aangezweefd. Druk op STOP als hij precies boven je toren hangt.',
-    'Steekt er een stukje uit? Snip snap, dat snij ik er gewoon af!',
-    'Precies goed is PERFECT. Drie keer op rij? Dan groeit je blok weer een beetje.',
-    'Haal je doelen en verdien gereedschap: een bom, een pomp, een slakje en nog veel meer. Je doelen staan onder de 🎯 rechtsboven.',
-    'Je hebt 5 levens per dag. Een nieuw record of 40 hoog levert een extra leven op.',
-    'Kies Makkelijk of Moeilijk. Bij Moeilijk gaat het steeds sneller. Succes!',
+    tr("Hi! I'm Joop, the stacking champion of the family.", 'Hoi! Ik ben Joop, stapelkampioen van de familie.'),
+    tr('Here comes a block floating in. Press STOP when it hangs right above your tower.', 'Zo komt er een blok aangezweefd. Druk op STOP als hij precies boven je toren hangt.'),
+    tr("Does a bit stick out? Snip snap, I'll just cut it off!", 'Steekt er een stukje uit? Snip snap, dat snij ik er gewoon af!'),
+    tr('Spot on is PERFECT. Three in a row? Then your block grows a little again.', 'Precies goed is PERFECT. Drie keer op rij? Dan groeit je blok weer een beetje.'),
+    tr('Reach your goals and earn tools: a bomb, a pump, a snail and lots more. Your goals are under the 🎯 at the top right.', 'Haal je doelen en verdien gereedschap: een bom, een pomp, een slakje en nog veel meer. Je doelen staan onder de 🎯 rechtsboven.'),
+    tr('You have 5 lives a day. A new record or 40 high earns you an extra life.', 'Je hebt 5 levens per dag. Een nieuw record of 40 hoog levert een extra leven op.'),
+    tr('Pick Easy or Hard. In Hard it keeps getting faster. Good luck!', 'Kies Makkelijk of Moeilijk. Bij Moeilijk gaat het steeds sneller. Succes!'),
   ],
   news: [
-    'Nieuw! Onder de 🎯 rechtsboven staan drie doelen. Haal ze en je krijgt gereedschap.',
-    'Bij 50 hoog krijg je een diamant, en bij 75 valt er een gouden blok.',
-    'Let op: je hebt 5 levens per dag. Morgen krijg je er weer 5.',
+    tr('New! Under the 🎯 at the top right are three goals. Reach them and you get tools.', 'Nieuw! Onder de 🎯 rechtsboven staan drie doelen. Haal ze en je krijgt gereedschap.'),
+    tr('At 50 high you get a diamond, and at 75 a golden block drops in.', 'Bij 50 hoog krijg je een diamant, en bij 75 valt er een gouden blok.'),
+    tr('Heads up: you have 5 lives a day. Tomorrow you get 5 again.', 'Let op: je hebt 5 levens per dag. Morgen krijg je er weer 5.'),
   ],
   hello: [
-    'Zin in een potje stapelen?',
-    'Hoe hoog kom jij vandaag?',
-    'Ik heb mijn stropdas al rechtgetrokken. Kom maar op!',
-    'Tik op mij als je de uitleg nog een keer wilt horen.',
-    'Vijftig jaar getrouwd, maar stapelen blijft spannend!',
-    'Tik eens op de 🎯 rechtsboven. Daar staan je doelen, en die leveren gereedschap op!',
+    tr('Fancy a round of stacking?', 'Zin in een potje stapelen?'),
+    tr('How high will you go today?', 'Hoe hoog kom jij vandaag?'),
+    tr("I've already straightened my tie. Bring it on!", 'Ik heb mijn stropdas al rechtgetrokken. Kom maar op!'),
+    tr('Tap me if you want to hear how it works again.', 'Tik op mij als je de uitleg nog een keer wilt horen.'),
+    tr('Fifty years married, but stacking is still exciting!', 'Vijftig jaar getrouwd, maar stapelen blijft spannend!'),
+    tr('Tap the 🎯 at the top right. Your goals are there, and they earn you tools!', 'Tik eens op de 🎯 rechtsboven. Daar staan je doelen, en die leveren gereedschap op!'),
   ],
   start: {
-    easy: ['Rustig aan, we hebben alle tijd!', 'Makkelijk is ook heel knap hoor!', 'Lekker in je eigen tempo.'],
-    hard: ['Moeilijk? Petje af! Het gaat steeds sneller.', 'Hou je vast, dit wordt snel!', 'Echte bikkels kiezen Moeilijk!'],
+    easy: [tr('Take it easy, we have all the time in the world!', 'Rustig aan, we hebben alle tijd!'), tr('Easy is a fine achievement too!', 'Makkelijk is ook heel knap hoor!'), tr('Nice and steady, at your own pace.', 'Lekker in je eigen tempo.')],
+    hard: [tr('Hard? Hats off! It keeps getting faster.', 'Moeilijk? Petje af! Het gaat steeds sneller.'), tr('Hold on tight, this is going to be fast!', 'Hou je vast, dit wordt snel!'), tr('Real tough cookies pick Hard!', 'Echte bikkels kiezen Moeilijk!')],
   },
-  perfect: ['Prachtig!', 'Keurig netjes!', 'Zo recht als mijn stropdas!', 'Dat had ik zelf niet beter gekund!', 'Precies goed!', 'Vakwerk!'],
-  streak: ['Drie op rij! Je blok groeit weer!', 'Je bent op dreef!', 'Wat een stapelaar ben jij!'],
-  bigCut: ['Oei, dat was een flink stuk!', 'Snip snap! De volgende beter.', 'Niet getreurd, gewoon doorstapelen!', 'Au, daar gaat een stuk!'],
-  narrow: ['Hij wordt wel smal, hè? Concentratie!', 'Voorzichtig nu, het is nog maar een smal blokje!'],
+  perfect: [tr('Beautiful!', 'Prachtig!'), tr('Very neat!', 'Keurig netjes!'), tr('As straight as my tie!', 'Zo recht als mijn stropdas!'), tr("I couldn't have done it better myself!", 'Dat had ik zelf niet beter gekund!'), tr('Spot on!', 'Precies goed!'), tr('Craftsmanship!', 'Vakwerk!')],
+  streak: [tr('Three in a row! Your block grows again!', 'Drie op rij! Je blok groeit weer!'), tr("You're on a roll!", 'Je bent op dreef!'), tr('What a stacker you are!', 'Wat een stapelaar ben jij!')],
+  bigCut: [tr('Oops, that was a big piece!', 'Oei, dat was een flink stuk!'), tr('Snip snap! Better luck with the next one.', 'Snip snap! De volgende beter.'), tr("Don't worry, just keep stacking!", 'Niet getreurd, gewoon doorstapelen!'), tr('Ouch, there goes a piece!', 'Au, daar gaat een stuk!')],
+  narrow: [tr("It's getting narrow, huh? Concentrate!", 'Hij wordt wel smal, hè? Concentratie!'), tr("Careful now, it's only a narrow little block!", 'Voorzichtig nu, het is nog maar een smal blokje!')],
   milestone: {
-    10: 'Tien hoog! Mooi begin!',
-    25: '25 hoog! Een zilveren toren!',
-    100: '100! Ik ben sprakeloos. Bijna.',
+    10: tr('Ten high! Nice start!', 'Tien hoog! Mooi begin!'),
+    25: tr('25 high! A silver tower!', '25 hoog! Een zilveren toren!'),
+    100: tr("100! I'm speechless. Almost.", '100! Ik ben sprakeloos. Bijna.'),
   },
 };
 
 function overLine(score, isBest) {
-  if (isBest && score > 2) return { text: `Gefeliciteerd! Een nieuw record: ${score} blokken!`, cheer: true };
-  if (score < 5) return { text: pick(['Ach, iedereen begint klein. Nog een keer!', 'Oefening baart kunst. Probeer het nog eens!']) };
-  if (score < 15) return { text: pick(['Goed bezig! Volgende keer nog hoger?', 'Netjes! Ik zie talent.']) };
-  if (score < 30) return { text: pick(['Knap gedaan! Ik ben trots op je.', 'Wat een toren! Gefeliciteerd!']), cheer: true };
-  return { text: pick(['Ongelooflijk! Gefeliciteerd, kampioen!', 'Daar kan ik nog wat van leren. Bravo!']), cheer: true };
+  if (isBest && score > 2) return { text: tr(`Congratulations! A new record: ${score} blocks!`, `Gefeliciteerd! Een nieuw record: ${score} blokken!`), cheer: true };
+  if (score < 5) return { text: pick([tr('Oh well, everyone starts small. Once more!', 'Ach, iedereen begint klein. Nog een keer!'), tr('Practice makes perfect. Try again!', 'Oefening baart kunst. Probeer het nog eens!')]) };
+  if (score < 15) return { text: pick([tr('Well done! Even higher next time?', 'Goed bezig! Volgende keer nog hoger?'), tr('Neat! I see talent.', 'Netjes! Ik zie talent.')]) };
+  if (score < 30) return { text: pick([tr("Great job! I'm proud of you.", 'Knap gedaan! Ik ben trots op je.'), tr('What a tower! Congratulations!', 'Wat een toren! Gefeliciteerd!')]), cheer: true };
+  return { text: pick([tr('Incredible! Congratulations, champ!', 'Ongelooflijk! Gefeliciteerd, kampioen!'), tr('I could learn a thing or two from that. Bravo!', 'Daar kan ik nog wat van leren. Bravo!')]), cheer: true };
 }
 
 const joop = {
@@ -1145,7 +1149,7 @@ const joop = {
     if (this.queue.length) {
       const more = document.createElement('span');
       more.className = 'more';
-      more.textContent = 'tik voor meer ›';
+      more.textContent = tr('tap for more ›', 'tik voor meer ›');
       this.balloon.append(more);
     }
     this.balloon.classList.remove('show');
@@ -1196,8 +1200,8 @@ function showScreen(id) {
 }
 
 function bestLine() {
-  if (!best.easy && !best.hard) return 'Hoe hoog kom jij?';
-  return `Record: Makkelijk ${best.easy} · Moeilijk ${best.hard}`;
+  if (!best.easy && !best.hard) return tr('How high can you go?', 'Hoe hoog kom jij?');
+  return `Record: ${MODE_NAME.easy} ${best.easy} · ${MODE_NAME.hard} ${best.hard}`;
 }
 
 function paintLives() {
@@ -1244,7 +1248,7 @@ function prepare(mode, joopChallenge = false) {
   chosen = {};
   paintLoadout();
   showScreen('loadout');
-  joop.say([`Kies maximaal ${LOADOUT_MAX} stuks gereedschap voor dit potje. Wat je niet gebruikt, houd je.`]);
+  joop.say([tr(`Pick up to ${LOADOUT_MAX} tools for this game. Whatever you don't use, you keep.`, `Kies maximaal ${LOADOUT_MAX} stuks gereedschap voor dit potje. Wat je niet gebruikt, houd je.`)]);
 }
 
 function paintLoadout() {
@@ -1258,7 +1262,7 @@ function paintLoadout() {
     b.type = 'button';
     b.className = `kit${sel ? ' picked' : ''}`;
     b.disabled = !have;
-    b.innerHTML = `<span class="icon">${ITEMS[id].icon}</span><span class="kit-name"></span><span class="kit-info"></span><span class="kit-n">${sel ? `${sel} mee · ` : ''}${have} in je kist</span>`;
+    b.innerHTML = `<span class="icon">${ITEMS[id].icon}</span><span class="kit-name"></span><span class="kit-info"></span><span class="kit-n">${sel ? tr(`${sel} packed · `, `${sel} mee · `) : ''}${tr(`${have} in your box`, `${have} in je kist`)}</span>`;
     b.querySelector('.kit-name').textContent = ITEMS[id].name;
     b.querySelector('.kit-info').textContent = ITEMS[id].info;
     b.addEventListener('click', () => {
@@ -1268,7 +1272,7 @@ function paintLoadout() {
     });
     grid.append(b);
   }
-  $('loadout-count').textContent = `${total} van ${LOADOUT_MAX} gekozen`;
+  $('loadout-count').textContent = tr(`${total} of ${LOADOUT_MAX} picked`, `${total} van ${LOADOUT_MAX} gekozen`);
 }
 
 function begin(pack) {
@@ -1297,7 +1301,7 @@ function begin(pack) {
   paintEffects();
   checkGoals();
   joop.quietUntil = 0;
-  joop.chat(game.challenge ? `Ik haalde ${game.challenge.target}. Kom maar op, kleintje!` : pick(LINES.start[game.mode]));
+  joop.chat(game.challenge ? tr(`I got ${game.challenge.target}. Bring it on, kiddo!`, `Ik haalde ${game.challenge.target}. Kom maar op, kleintje!`) : pick(LINES.start[game.mode]));
 }
 
 // The toolbox to look in from the menu: what you have and what each tool does.
@@ -1313,24 +1317,24 @@ function showToolbox() {
     list.append(li);
   }
   const n = itemCount();
-  $('toolbox-count').textContent = n ? `${n} stuks gereedschap in je kist` : 'Je kist is nog leeg. Haal een doel!';
+  $('toolbox-count').textContent = n ? tr(`${n} tool${n > 1 ? 's' : ''} in your box`, `${n} stuks gereedschap in je kist`) : tr('Your box is still empty. Reach a goal!', 'Je kist is nog leeg. Haal een doel!');
   showScreen('toolbox');
 }
 
 function showNoLives() {
   paintLives();
-  $('nolives-wait').textContent = `Over ${untilTomorrow()} krijg je weer ${MAX_LIVES} levens.`;
+  $('nolives-wait').textContent = tr(`In ${untilTomorrow()} you get ${MAX_LIVES} lives again.`, `Over ${untilTomorrow()} krijg je weer ${MAX_LIVES} levens.`);
   showScreen('nolives');
-  joop.say([lives.videosLeft > 0 ? 'Op is op! Kijk een filmpje voor een extra leven, of kom morgen terug.' : 'Op is op! Morgen mag je weer.']);
+  joop.say([lives.videosLeft > 0 ? tr('All gone! Watch a video for an extra life, or come back tomorrow.', 'Op is op! Kijk een filmpje voor een extra leven, of kom morgen terug.') : tr('All gone! You can play again tomorrow.', 'Op is op! Morgen mag je weer.')]);
 }
 
 async function videoForLife(after) {
   if (lives.videosLeft <= 0) return;
-  const ok = await showRewardedAd('Na dit filmpje krijg je 1 leven extra.');
+  const ok = await showRewardedAd(tr('After this video you get 1 extra life.', 'Na dit filmpje krijg je 1 leven extra.'));
   if (!ok) return;
   lives.add(1, true);
   paintLives();
-  joop.say(['Een extra leven! Veel plezier.'], { cheer: true });
+  joop.say([tr('An extra life! Have fun.', 'Een extra leven! Veel plezier.')], { cheer: true });
   if (after) after();
 }
 
@@ -1356,7 +1360,7 @@ function gameOver() {
   if (isBest && score > 2 && !game.lifeForRecord) {
     game.lifeForRecord = true;
     lives.add(1);
-    lifeLine = 'Nieuw record: +1 leven ❤️';
+    lifeLine = tr('New record: +1 life ❤️', 'Nieuw record: +1 leven ❤️');
   }
   checkGoals();
   $('over-score').textContent = score;
@@ -1373,31 +1377,34 @@ function gameOver() {
     music.start(100);
     const c = game.challenge;
     let line = overLine(score, isBest);
-    if (c && c.won) line = { text: `Je hebt opa verslagen met ${score}! Morgen daag ik je weer uit.`, cheer: true };
-    else if (c) line = { text: pick([`Haha, opa wint! Ik haalde ${c.target}, jij ${score}. Nog een keer?`, `Bijna! Nog ${c.target + 1 - score} blokken en je had me. Probeer het nog eens!`]) };
+    if (c && c.won) line = { text: tr(`You beat Grandpa with ${score}! I'll challenge you again tomorrow.`, `Je hebt opa verslagen met ${score}! Morgen daag ik je weer uit.`), cheer: true };
+    else if (c) line = { text: pick([
+      tr(`Haha, Grandpa wins! I got ${c.target}, you ${score}. Again?`, `Haha, opa wint! Ik haalde ${c.target}, jij ${score}. Nog een keer?`),
+      tr(`So close! ${c.target + 1 - score} more blocks and you'd have had me. Try again!`, `Bijna! Nog ${c.target + 1 - score} blokken en je had me. Probeer het nog eens!`),
+    ]) };
     joop.say([line.text], { cheer: line.cheer });
   }, 700);
 }
 
 function paintLoot() {
   const ids = ITEM_IDS.filter((id) => game.loot[id]);
-  $('loot').textContent = ids.length ? `Buit: ${ids.map((id) => `${ITEMS[id].icon}×${game.loot[id]}`).join('  ')}` : '';
+  $('loot').textContent = ids.length ? `${tr('Loot', 'Buit')}: ${ids.map((id) => `${ITEMS[id].icon}×${game.loot[id]}`).join('  ')}` : '';
   $('double').hidden = !ids.length || game.doubled;
 }
 
 // Watch a video to double what this game earned.
 async function doubleLoot() {
-  const ok = await showRewardedAd('Na dit filmpje krijg je je buit dubbel.');
+  const ok = await showRewardedAd(tr('After this video your loot is doubled.', 'Na dit filmpje krijg je je buit dubbel.'));
   if (!ok) return;
   game.doubled = true;
   for (const id of ITEM_IDS) if (game.loot[id]) { addItem(id, game.loot[id]); game.loot[id] *= 2; }
   paintLoot();
-  joop.say(['Dubbel zoveel! Je gereedschapskist puilt uit.'], { cheer: true });
+  joop.say([tr('Twice as much! Your toolbox is bursting.', 'Dubbel zoveel! Je gereedschapskist puilt uit.')], { cheer: true });
 }
 
 // Watch a video to carry on with the same tower, once per game.
 async function continueGame() {
-  const ok = await showRewardedAd('Na dit filmpje mag je verder met je toren.');
+  const ok = await showRewardedAd(tr('After this video you can carry on with your tower.', 'Na dit filmpje mag je verder met je toren.'));
   if (!ok) return;
   game.continued = true;
   document.body.classList.remove('poster-1', 'poster-2');
@@ -1410,7 +1417,7 @@ async function continueGame() {
   music.start(bpmFor(game.speed));
   spawn(game.speed);
   paintTools();
-  joop.chat('Daar gaan we weer! Nu goed opletten.', { force: true });
+  joop.chat(tr('Here we go again! Pay attention now.', 'Daar gaan we weer! Nu goed opletten.'), { force: true });
 }
 
 let scoresFrom = 'menu';
@@ -1420,14 +1427,14 @@ function showScores(from) {
   list.innerHTML = '';
   const fmt = (t) => {
     try {
-      return new Date(t).toLocaleString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      return new Date(t).toLocaleString(NL ? 'nl-NL' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
     } catch (e) { return ''; }
   };
   scores.forEach((row, i) => {
     const li = document.createElement('li');
     if (i === 0 && from === 'over') li.className = 'latest';
     const pts = document.createElement('span'); pts.className = 'pts'; pts.textContent = row.s;
-    const unit = document.createElement('span'); unit.className = 'unit'; unit.textContent = 'blokken';
+    const unit = document.createElement('span'); unit.className = 'unit'; unit.textContent = tr('blocks', 'blokken');
     const chip = document.createElement('span'); chip.className = `chip ${row.m}`; chip.textContent = MODE_NAME[row.m] || '';
     const when = document.createElement('span'); when.className = 'when'; when.textContent = fmt(row.t);
     li.append(pts, unit, chip, when);
@@ -1456,7 +1463,7 @@ $('menu-kit').addEventListener('click', showToolbox);
 $('challenge-face').append($('joop-figure').querySelector('svg').cloneNode(true));
 $('challenge-btn').addEventListener('click', () => {
   const c = challenge.today(scores);
-  if (c.won) joop.say(['Je hebt me vandaag al verslagen! Morgen bedenk ik een nieuwe uitdaging.'], { cheer: true });
+  if (c.won) joop.say([tr("You already beat me today! I'll think up a new challenge tomorrow.", 'Je hebt me vandaag al verslagen! Morgen bedenk ik een nieuwe uitdaging.')], { cheer: true });
   else prepare(c.mode, true);
 });
 $('toolbox-back').addEventListener('click', () => showScreen('menu'));

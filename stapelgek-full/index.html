@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ff5ea8">
-<title>Stapelgek</title>
-<meta name="description" content="Stapelgek: stapel de blokken zo hoog als je kan, met diamanten, bommen, doelen en Joop die je aanmoedigt.">
+<title>Stacking Mad</title>
+<meta name="description" content="Stacking Mad: stack the blocks as high as you can, with diamonds, bombs, goals and Grandpa Joop cheering you on.">
 <link rel="icon" href="icon.png" type="image/png">
 <style>
   :root {
@@ -146,6 +146,7 @@
   }
   .set-row.on .switch { background: var(--green); }
   .set-row.on .switch::after { transform: translateX(20px); }
+  .lang-val { padding: 3px 10px; border-radius: 999px; background: rgba(27, 20, 64, 0.08); font-size: 13px; font-weight: 900; }
   .set-paused { margin: 6px 0 0; font-size: 12px; font-weight: 800; color: var(--pink-dark); }
   .set-version { margin: 8px 0 0; padding-top: 8px; border-top: 2px solid rgba(27, 20, 64, 0.08); font-size: 12px; font-weight: 800; opacity: 0.55; }
 
@@ -179,7 +180,7 @@
   }
   /* This menu card holds the goals too, so the logo is a little smaller; it sits below the corner buttons. */
   #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 70px); }
-  #menu .logo h1 { font-size: clamp(42px, 12.5vw, 66px); }
+  #menu .logo h1 { font-size: clamp(34px, 10vw, 52px); }
   .logo p {
     margin: 26px auto 0; max-width: 300px;
     font-size: 17px; font-weight: 800; color: var(--ink); opacity: 0.75;
@@ -426,7 +427,7 @@
   /* Small phones: a more compact menu, so Joop and his balloon stay below the logo. */
   @media (max-height: 720px) {
     #menu .logo { top: calc(env(safe-area-inset-top, 0px) + 58px); }
-    #menu .logo h1 { font-size: 38px; }
+    #menu .logo h1 { font-size: 32px; }
     #menu .mode-hint { display: none; }
     #menu .modes .btn { padding: 14px 8px; }
     #menu .links .btn-small { margin-top: 6px; padding: 8px 12px; }
@@ -601,77 +602,78 @@
 <div id="scan"></div>
 <svg id="sun" viewBox="0 0 160 160" aria-hidden="true"><circle cx="80" cy="80" r="74" fill="#fff3b0" opacity="0.5"/><circle cx="80" cy="80" r="46" fill="#ffd84d"/></svg>
 <svg id="front" viewBox="0 0 412 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 Q60 4 130 26 T260 20 T412 30 V300 H0 Z" fill="#5cb847" stroke="#1b1440" stroke-width="3"/><path d="M0 70 Q90 46 200 66 T412 62 V300 H0 Z" fill="#4aa63a"/><rect x="0" y="290" width="412" height="900" fill="#4aa63a"/><rect x="4" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M-2 44 Q5.5 24 13 44 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="26" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M20 44 Q27.5 24 35 44 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="48" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M42 44 Q49.5 24 57 44 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="70" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M64 44 Q71.5 24 79 44 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="92" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M86 44 Q93.5 24 101 44 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="114" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M108 44 Q115.5 24 123 44 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="136" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M130 44 Q137.5 24 145 44 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="158" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M152 44 Q159.5 24 167 44 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="180" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M174 44 Q181.5 24 189 44 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="202" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M196 44 Q203.5 24 211 44 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="224" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M218 44 Q225.5 24 233 44 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="246" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M240 44 Q247.5 24 255 44 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="268" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M262 44 Q269.5 24 277 44 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="290" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M284 44 Q291.5 24 299 44 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="312" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M306 44 Q313.5 24 321 44 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="334" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M328 44 Q335.5 24 343 44 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="356" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M350 44 Q357.5 24 365 44 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="378" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M372 44 Q379.5 24 387 44 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="400" y="44" width="3" height="16" fill="#2e7d2e"/><path d="M394 44 Q401.5 24 409 44 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="15" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M9 74 Q16.5 54 24 74 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="37" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M31 74 Q38.5 54 46 74 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="59" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M53 74 Q60.5 54 68 74 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="81" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M75 74 Q82.5 54 90 74 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="103" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M97 74 Q104.5 54 112 74 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="125" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M119 74 Q126.5 54 134 74 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="147" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M141 74 Q148.5 54 156 74 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="169" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M163 74 Q170.5 54 178 74 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="191" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M185 74 Q192.5 54 200 74 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="213" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M207 74 Q214.5 54 222 74 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="235" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M229 74 Q236.5 54 244 74 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="257" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M251 74 Q258.5 54 266 74 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="279" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M273 74 Q280.5 54 288 74 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="301" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M295 74 Q302.5 54 310 74 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="323" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M317 74 Q324.5 54 332 74 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="345" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M339 74 Q346.5 54 354 74 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="367" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M361 74 Q368.5 54 376 74 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="389" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M383 74 Q390.5 54 398 74 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="411" y="74" width="3" height="16" fill="#2e7d2e"/><path d="M405 74 Q412.5 54 420 74 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="4" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M-2 104 Q5.5 84 13 104 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="26" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M20 104 Q27.5 84 35 104 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="48" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M42 104 Q49.5 84 57 104 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="70" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M64 104 Q71.5 84 79 104 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="92" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M86 104 Q93.5 84 101 104 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="114" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M108 104 Q115.5 84 123 104 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="136" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M130 104 Q137.5 84 145 104 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="158" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M152 104 Q159.5 84 167 104 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="180" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M174 104 Q181.5 84 189 104 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="202" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M196 104 Q203.5 84 211 104 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="224" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M218 104 Q225.5 84 233 104 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="246" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M240 104 Q247.5 84 255 104 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="268" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M262 104 Q269.5 84 277 104 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="290" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M284 104 Q291.5 84 299 104 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="312" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M306 104 Q313.5 84 321 104 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="334" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M328 104 Q335.5 84 343 104 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="356" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M350 104 Q357.5 84 365 104 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="378" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M372 104 Q379.5 84 387 104 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="400" y="104" width="3" height="16" fill="#2e7d2e"/><path d="M394 104 Q401.5 84 409 104 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="15" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M9 134 Q16.5 114 24 134 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="37" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M31 134 Q38.5 114 46 134 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="59" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M53 134 Q60.5 114 68 134 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="81" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M75 134 Q82.5 114 90 134 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="103" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M97 134 Q104.5 114 112 134 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="125" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M119 134 Q126.5 114 134 134 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="147" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M141 134 Q148.5 114 156 134 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="169" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M163 134 Q170.5 114 178 134 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="191" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M185 134 Q192.5 114 200 134 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="213" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M207 134 Q214.5 114 222 134 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="235" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M229 134 Q236.5 114 244 134 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="257" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M251 134 Q258.5 114 266 134 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="279" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M273 134 Q280.5 114 288 134 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="301" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M295 134 Q302.5 114 310 134 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="323" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M317 134 Q324.5 114 332 134 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="345" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M339 134 Q346.5 114 354 134 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="367" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M361 134 Q368.5 114 376 134 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="389" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M383 134 Q390.5 114 398 134 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="411" y="134" width="3" height="16" fill="#2e7d2e"/><path d="M405 134 Q412.5 114 420 134 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="4" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M-2 164 Q5.5 144 13 164 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="26" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M20 164 Q27.5 144 35 164 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="48" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M42 164 Q49.5 144 57 164 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="70" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M64 164 Q71.5 144 79 164 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="92" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M86 164 Q93.5 144 101 164 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="114" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M108 164 Q115.5 144 123 164 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="136" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M130 164 Q137.5 144 145 164 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="158" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M152 164 Q159.5 144 167 164 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="180" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M174 164 Q181.5 144 189 164 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="202" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M196 164 Q203.5 144 211 164 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="224" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M218 164 Q225.5 144 233 164 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="246" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M240 164 Q247.5 144 255 164 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="268" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M262 164 Q269.5 144 277 164 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="290" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M284 164 Q291.5 144 299 164 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><rect x="312" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M306 164 Q313.5 144 321 164 Z" fill="#ffffff" stroke="#1b1440" stroke-width="2"/><rect x="334" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M328 164 Q335.5 144 343 164 Z" fill="#b06cff" stroke="#1b1440" stroke-width="2"/><rect x="356" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M350 164 Q357.5 144 365 164 Z" fill="#ff3d8b" stroke="#1b1440" stroke-width="2"/><rect x="378" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M372 164 Q379.5 144 387 164 Z" fill="#ffd23f" stroke="#1b1440" stroke-width="2"/><rect x="400" y="164" width="3" height="16" fill="#2e7d2e"/><path d="M394 164 Q401.5 144 409 164 Z" fill="#ff6b3d" stroke="#1b1440" stroke-width="2"/><circle cx="40" cy="40" r="18" fill="#3d9a3a" stroke="#1b1440" stroke-width="3"/><circle cx="372" cy="44" r="20" fill="#3d9a3a" stroke="#1b1440" stroke-width="3"/></svg>
-<p id="meter-title" aria-hidden="true">1 · Naar de maan</p><div id="meter" aria-hidden="true"><span>🌙</span><span>🚀</span><span>✈️</span><span>☁️</span><span>🏡</span><b id="meter-pin">1</b></div>
+<p id="meter-title" aria-hidden="true">1 · To the moon</p><div id="meter" aria-hidden="true"><span>🌙</span><span>🚀</span><span>✈️</span><span>☁️</span><span>🏡</span><b id="meter-pin">1</b></div>
 <div id="chapter" aria-live="polite"><p class="ch-big"></p><p class="ch-small"></p></div>
 
 <div id="hud" aria-live="polite">
   <div id="score">1</div>
-  <div id="score-label">BLOKKEN</div>
-  <div id="mode-chip">MAKKELIJK</div>
+  <div id="score-label" data-nl="BLOKKEN">BLOCKS</div>
+  <div id="mode-chip">EASY</div>
   <div id="challenge-hud"></div>
-  <ol id="goals-hud" class="goals mini" aria-label="Doelen"></ol>
+  <ol id="goals-hud" class="goals mini" aria-label="Goals" data-nl-label="Doelen"></ol>
   <div id="effects"></div>
 </div>
-<div id="tools" aria-label="Gereedschap"></div>
+<div id="tools" aria-label="Tools" data-nl-label="Gereedschap"></div>
 <div id="callout"></div>
 
-<button id="settings-btn" type="button" aria-label="Instellingen" aria-expanded="false" aria-controls="settings">⚙️</button>
-<div id="settings" role="dialog" aria-label="Instellingen" hidden>
-  <p class="set-title">Instellingen</p>
-  <button id="set-sound" class="set-row" type="button" aria-pressed="true"><span>🔊 Geluid</span><span class="switch"></span></button>
-  <button id="set-music" class="set-row" type="button" aria-pressed="true"><span>🎵 Muziek</span><span class="switch"></span></button>
-  <p class="set-paused" id="set-paused">Het spel staat even op pauze.</p>
+<button id="settings-btn" type="button" aria-label="Settings" data-nl-label="Instellingen" aria-expanded="false" aria-controls="settings">⚙️</button>
+<div id="settings" role="dialog" aria-label="Settings" data-nl-label="Instellingen" hidden>
+  <p class="set-title" data-nl="Instellingen">Settings</p>
+  <button id="set-sound" class="set-row" type="button" aria-pressed="true"><span data-nl="🔊 Geluid">🔊 Sound</span><span class="switch"></span></button>
+  <button id="set-music" class="set-row" type="button" aria-pressed="true"><span data-nl="🎵 Muziek">🎵 Music</span><span class="switch"></span></button>
+  <button id="set-lang" class="set-row" type="button"><span data-nl="🌐 Taal">🌐 Language</span><span class="lang-val" data-nl="Nederlands">English</span></button>
+  <p class="set-paused" id="set-paused" data-nl="Het spel staat even op pauze.">The game is paused for a moment.</p>
   <p class="set-version" id="set-version"></p>
 </div>
 
 <button id="stop" class="btn" type="button">STOP!</button>
 
 <section id="menu" class="screen show">
-  <button id="menu-kit" class="corner-btn" type="button" aria-label="Gereedschapskist bekijken">🧰<span class="n" id="menu-kit-n"></span></button>
-  <button id="menu-goals-btn" class="corner-btn" type="button" aria-label="Doelen bekijken">🎯<span class="n" id="menu-goals-n"></span></button>
-  <button id="menu-themes" class="corner-btn" type="button" aria-label="Thema kiezen">🎨<span class="new" id="themes-new">NEW</span></button>
-  <div id="menu-lives"><span class="lives-hearts" aria-label="Levens"></span><button id="menu-video" class="life-btn life-video" type="button" aria-label="Kijk een filmpje voor 1 extra leven"><span class="play" aria-hidden="true">▶</span>+1 ❤️</button></div>
+  <button id="menu-kit" class="corner-btn" type="button" aria-label="View toolbox" data-nl-label="Gereedschapskist bekijken">🧰<span class="n" id="menu-kit-n"></span></button>
+  <button id="menu-goals-btn" class="corner-btn" type="button" aria-label="View goals" data-nl-label="Doelen bekijken">🎯<span class="n" id="menu-goals-n"></span></button>
+  <button id="menu-themes" class="corner-btn" type="button" aria-label="Pick a theme" data-nl-label="Thema kiezen">🎨<span class="new" id="themes-new">NEW</span></button>
+  <div id="menu-lives"><span class="lives-hearts" aria-label="Lives" data-nl-label="Levens"></span><button id="menu-video" class="life-btn life-video" type="button" aria-label="Watch a video for 1 extra life" data-nl-label="Kijk een filmpje voor 1 extra leven"><span class="play" aria-hidden="true">▶</span>+1 ❤️</button></div>
   <div class="logo">
-    <h1>STAPEL<br>GEK</h1>
+    <h1>STACKING<br>MAD</h1>
   </div>
   <div class="card">
     <button id="challenge-btn" class="challenge" type="button">
       <span class="c-face" id="challenge-face"></span>
-      <span class="c-text"><b>Opa Joop daagt je uit</b><span id="challenge-sub"></span></span>
+      <span class="c-text"><b data-nl="Opa Joop daagt je uit">Grandpa Joop challenges you</b><span id="challenge-sub"></span></span>
       <span class="c-go" aria-hidden="true">›</span>
     </button>
     <p class="best" id="menu-best"></p>
     <div class="modes">
-      <button id="start-easy" class="btn btn-start" type="button">MAKKELIJK</button>
-      <button id="start-hard" class="btn btn-hard" type="button">MOEILIJK</button>
+      <button id="start-easy" class="btn btn-start" type="button" data-nl="MAKKELIJK">EASY</button>
+      <button id="start-hard" class="btn btn-hard" type="button" data-nl="MOEILIJK">HARD</button>
     </div>
-    <p class="mode-hint"><span>Tempo blijft gelijk</span><span>Steeds sneller</span></p>
+    <p class="mode-hint"><span data-nl="Tempo blijft gelijk">Speed stays the same</span><span data-nl="Steeds sneller">Keeps getting faster</span></p>
     <div class="links">
-      <button id="menu-scores" class="btn btn-small" type="button">Scorebord</button>
-      <button id="menu-help" class="btn btn-small" type="button">Uitleg van Joop</button>
-      <a id="get-app" class="btn btn-small" href="stapelgek-full.apk" download>Android-app</a>
+      <button id="menu-scores" class="btn btn-small" type="button" data-nl="Scorebord">Scoreboard</button>
+      <button id="menu-help" class="btn btn-small" type="button" data-nl="Uitleg van Joop">How to play</button>
+      <a id="get-app" class="btn btn-small" href="stapelgek-full.apk" download data-nl="Android-app">Android app</a>
     </div>
   </div>
 </section>
 
 <section id="over" class="screen">
   <div class="card">
-    <button id="card-toggle" class="card-toggle" type="button" aria-expanded="true">▾ Bekijk je toren</button>
-    <p class="over-title">Mis!</p>
+    <button id="card-toggle" class="card-toggle" type="button" aria-expanded="true" data-nl="▾ Bekijk je toren">▾ See your tower</button>
+    <p class="over-title" data-nl="Mis!">Missed!</p>
     <p class="over-score" id="over-score">0</p>
-    <p class="over-unit">BLOKKEN HOOG</p>
-    <p class="new-best" id="new-best">Nieuw record!</p>
+    <p class="over-unit" data-nl="BLOKKEN HOOG">BLOCKS HIGH</p>
+    <p class="new-best" id="new-best" data-nl="Nieuw record!">New record!</p>
     <p class="best" id="over-best"></p>
     <p class="over-life" id="over-life"></p>
     <p class="loot" id="loot"></p>
     <div class="video-row">
-      <button id="continue" class="btn btn-video" type="button">📺 Ga verder</button>
-      <button id="double" class="btn btn-video" type="button">📺 Buit ×2</button>
+      <button id="continue" class="btn btn-video" type="button" data-nl="📺 Ga verder">📺 Continue</button>
+      <button id="double" class="btn btn-video" type="button" data-nl="📺 Buit ×2">📺 Loot ×2</button>
     </div>
-    <button id="again" class="btn btn-start" type="button">NOG EEN KEER</button>
-    <div class="lives-row"><span class="lives-hearts" aria-label="Levens"></span></div>
+    <button id="again" class="btn btn-start" type="button" data-nl="NOG EEN KEER">PLAY AGAIN</button>
+    <div class="lives-row"><span class="lives-hearts" aria-label="Lives" data-nl-label="Levens"></span></div>
     <div class="links">
-      <button id="over-scores" class="btn btn-small" type="button">Scorebord</button>
+      <button id="over-scores" class="btn btn-small" type="button" data-nl="Scorebord">Scoreboard</button>
       <button id="to-menu" class="btn btn-small" type="button">Menu</button>
     </div>
   </div>
@@ -679,85 +681,85 @@
 
 <section id="themes" class="screen">
   <div class="card">
-    <p class="board-title">Thema's</p>
-    <p class="goals-note">Kies hoe je toren eruitziet. Je kunt altijd terug naar klassiek.</p>
+    <p class="board-title" data-nl="Thema's">Themes</p>
+    <p class="goals-note" data-nl="Kies hoe je toren eruitziet. Je kunt altijd terug naar klassiek.">Pick how your tower looks. You can always go back to classic.</p>
     <div class="theme-grid" id="theme-grid"></div>
-    <button id="themes-back" class="btn btn-start" type="button">TERUG</button>
+    <button id="themes-back" class="btn btn-start" type="button" data-nl="TERUG">BACK</button>
   </div>
 </section>
 
 <section id="scores" class="screen">
   <div class="card">
-    <p class="board-title">Scorebord</p>
+    <p class="board-title" data-nl="Scorebord">Scoreboard</p>
     <p class="board-best" id="board-best"></p>
     <ol class="board" id="board"></ol>
-    <p class="board-empty" id="board-empty">Nog geen scores. Ga snel stapelen!</p>
-    <button id="scores-back" class="btn btn-start" type="button">TERUG</button>
+    <p class="board-empty" id="board-empty" data-nl="Nog geen scores. Ga snel stapelen!">No scores yet. Go stack something!</p>
+    <button id="scores-back" class="btn btn-start" type="button" data-nl="TERUG">BACK</button>
   </div>
 </section>
 
 <section id="goals" class="screen">
   <div class="card">
-    <p class="board-title">Doelen</p>
+    <p class="board-title" data-nl="Doelen">Goals</p>
     <ol id="menu-goals" class="goals"></ol>
-    <p class="goals-note">Haal een doel en je krijgt het gereedschap dat erachter staat. Daarna komt er een nieuw, iets moeilijker doel voor in de plaats.</p>
-    <button id="goals-back" class="btn btn-start" type="button">TERUG</button>
+    <p class="goals-note" data-nl="Haal een doel en je krijgt het gereedschap dat erachter staat. Daarna komt er een nieuw, iets moeilijker doel voor in de plaats.">Reach a goal and you get the tool shown next to it. A new, slightly harder goal then takes its place.</p>
+    <button id="goals-back" class="btn btn-start" type="button" data-nl="TERUG">BACK</button>
   </div>
 </section>
 
 <section id="toolbox" class="screen">
   <div class="card">
-    <p class="board-title">Gereedschapskist</p>
+    <p class="board-title" data-nl="Gereedschapskist">Toolbox</p>
     <p class="board-best" id="toolbox-count"></p>
     <div class="toolbox-scroll">
       <ul class="kit-list" id="toolbox-list"></ul>
       <div class="how">
-        <p class="box-title">ZO WERKT HET</p>
+        <p class="box-title" data-nl="ZO WERKT HET">HOW IT WORKS</p>
         <ul>
-          <li><span>🎯</span><span>Haal de doelen in het menu. Elk doel levert gereedschap op.</span></li>
-          <li><span>💎</span><span>Bij 50, 100, 150 ... hoog krijg je een diamant.</span></li>
-          <li><span>🥇</span><span>Bij 75, 125, 175 ... valt er vanzelf een gouden blok, perfect en zonder snee.</span></li>
-          <li><span>🧰</span><span>Voor elk potje neem je maximaal 3 stuks mee. Tik tijdens het spelen op een knop rechts om het te gebruiken. Wat je niet gebruikt, houd je.</span></li>
-          <li><span>📺</span><span>Na een potje kun je een filmpje kijken, dan telt je buit dubbel.</span></li>
-          <li><span>❤️</span><span>Je hebt 5 levens per dag. Een nieuw record of 40 hoog geeft een extra leven.</span></li>
+          <li><span>🎯</span><span data-nl="Haal de doelen in het menu. Elk doel levert gereedschap op.">Reach the goals in the menu. Every goal earns you a tool.</span></li>
+          <li><span>💎</span><span data-nl="Bij 50, 100, 150 ... hoog krijg je een diamant.">At 50, 100, 150 ... high you get a diamond.</span></li>
+          <li><span>🥇</span><span data-nl="Bij 75, 125, 175 ... valt er vanzelf een gouden blok, perfect en zonder snee.">At 75, 125, 175 ... a golden block drops in by itself, perfect and without a cut.</span></li>
+          <li><span>🧰</span><span data-nl="Voor elk potje neem je maximaal 3 stuks mee. Tik tijdens het spelen op een knop rechts om het te gebruiken. Wat je niet gebruikt, houd je.">Take up to 3 tools into each game. Tap a button on the right while playing to use one. Whatever you don't use, you keep.</span></li>
+          <li><span>📺</span><span data-nl="Na een potje kun je een filmpje kijken, dan telt je buit dubbel.">After a game you can watch a video to double your loot.</span></li>
+          <li><span>❤️</span><span data-nl="Je hebt 5 levens per dag. Een nieuw record of 40 hoog geeft een extra leven.">You have 5 lives a day. A new record or 40 high gives an extra life.</span></li>
         </ul>
       </div>
     </div>
-    <button id="toolbox-back" class="btn btn-start" type="button">TERUG</button>
+    <button id="toolbox-back" class="btn btn-start" type="button" data-nl="TERUG">BACK</button>
   </div>
 </section>
 
 <section id="loadout" class="screen">
   <div class="card">
-    <p class="board-title">Gereedschapskist</p>
+    <p class="board-title" data-nl="Gereedschapskist">Toolbox</p>
     <p class="board-best" id="loadout-count"></p>
     <div class="kits" id="loadout-grid"></div>
     <button id="loadout-go" class="btn btn-start" type="button">START</button>
     <div class="links">
-      <button id="loadout-none" class="btn btn-small" type="button">Zonder gereedschap</button>
-      <button id="loadout-back" class="btn btn-small" type="button">Terug</button>
+      <button id="loadout-none" class="btn btn-small" type="button" data-nl="Zonder gereedschap">No tools</button>
+      <button id="loadout-back" class="btn btn-small" type="button" data-nl="Terug">Back</button>
     </div>
   </div>
 </section>
 
 <section id="nolives" class="screen">
   <div class="card">
-    <p class="board-title">Geen levens meer</p>
+    <p class="board-title" data-nl="Geen levens meer">No lives left</p>
     <p class="lives-hearts big"></p>
     <p class="board-best" id="nolives-wait"></p>
-    <button id="nolives-video" class="btn btn-video life-video" type="button">📺 Filmpje kijken: +1 leven</button>
-    <button id="nolives-back" class="btn btn-small" type="button">Terug</button>
+    <button id="nolives-video" class="btn btn-video life-video" type="button" data-nl="📺 Filmpje kijken: +1 leven">📺 Watch a video: +1 life</button>
+    <button id="nolives-back" class="btn btn-small" type="button" data-nl="Terug">Back</button>
   </div>
 </section>
 
-<div id="ad" role="dialog" aria-modal="true" aria-label="Filmpje">
+<div id="ad" role="dialog" aria-modal="true" aria-label="Video" data-nl-label="Filmpje">
   <div class="ad-box">
-    <p class="ad-tag">TESTFILMPJE</p>
-    <p class="ad-title">Hier komt straks een reclamefilmpje</p>
+    <p class="ad-tag" data-nl="TESTFILMPJE">TEST VIDEO</p>
+    <p class="ad-title" data-nl="Hier komt straks een reclamefilmpje">An advert will play here later</p>
     <p id="ad-reason"></p>
     <div class="ad-track"><div id="ad-bar"></div></div>
-    <p class="ad-count">Nog <span id="ad-count">5</span> seconden</p>
-    <button id="ad-skip" class="btn btn-small" type="button">Sluiten zonder beloning</button>
+    <p class="ad-count"><span id="ad-count">5</span> <span data-nl="seconden">seconds</span></p>
+    <button id="ad-skip" class="btn btn-small" type="button" data-nl="Sluiten zonder beloning">Close without reward</button>
   </div>
 </div>
 

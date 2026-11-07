@@ -1,4 +1,4 @@
-package com.naberiusgames.stapelgekfull;
+package com.naberiusgames.stackingmad;
 
 import android.app.Activity;
 import android.os.Bundle;

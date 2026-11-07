@@ -1,14 +1,15 @@
 // What the player keeps between games: the toolbox, the goals and the lives of the day.
 import { store } from './store.js';
+import { tr } from './lang.js';
 
 export const ITEMS = {
-  diamond: { icon: '💎', name: 'Diamant', info: 'Je blok wordt een diamant, zo groot als vóór je laatste snee. Wordt nooit gesneden.' },
-  pump: { icon: '🎈', name: 'Pomp', info: 'Maakt de bovenkant van je toren weer een stuk breder.' },
-  slow: { icon: '🐌', name: 'Slakje', info: 'De volgende 5 blokken op halve snelheid.' },
-  magnet: { icon: '🧲', name: 'Magneet', info: 'Trekt de volgende 3 blokken recht als je dichtbij zit.' },
-  buoy: { icon: '🛟', name: 'Reddingsboei', info: 'Helemaal mis? Dan krijg je nog een kans. Werkt vanzelf.' },
-  bomb: { icon: '💣', name: 'Bom', info: 'Blaast 5 lagen weg: lager, maar weer breed.' },
-  dynamite: { icon: '🧨', name: 'Dynamiet', info: 'Blaast 10 lagen weg: veel lager, maar weer breed.' },
+  diamond: { icon: '💎', name: tr('Diamond', 'Diamant'), info: tr('Your block turns into a diamond, as big as before your last cut. Never gets cut.', 'Je blok wordt een diamant, zo groot als vóór je laatste snee. Wordt nooit gesneden.') },
+  pump: { icon: '🎈', name: tr('Pump', 'Pomp'), info: tr('Makes the top of your tower a good bit wider again.', 'Maakt de bovenkant van je toren weer een stuk breder.') },
+  slow: { icon: '🐌', name: tr('Snail', 'Slakje'), info: tr('The next 5 blocks at half speed.', 'De volgende 5 blokken op halve snelheid.') },
+  magnet: { icon: '🧲', name: tr('Magnet', 'Magneet'), info: tr('Pulls the next 3 blocks straight when you are close.', 'Trekt de volgende 3 blokken recht als je dichtbij zit.') },
+  buoy: { icon: '🛟', name: tr('Life buoy', 'Reddingsboei'), info: tr('Missed completely? You get another chance. Works by itself.', 'Helemaal mis? Dan krijg je nog een kans. Werkt vanzelf.') },
+  bomb: { icon: '💣', name: tr('Bomb', 'Bom'), info: tr('Blows away 5 layers: lower, but wide again.', 'Blaast 5 lagen weg: lager, maar weer breed.') },
+  dynamite: { icon: '🧨', name: tr('Dynamite', 'Dynamiet'), info: tr('Blows away 10 layers: much lower, but wide again.', 'Blaast 10 lagen weg: veel lager, maar weer breed.') },
 };
 export const ITEM_IDS = Object.keys(ITEMS);
 export const LOADOUT_MAX = 3;
@@ -66,13 +67,15 @@ export const lives = {
   },
 };
 
-// Time until the lives come back, as "3 uur en 12 minuten".
+// Time until the lives come back, as "3 hours and 12 minutes".
 export function untilTomorrow() {
   const now = new Date();
   const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
   const min = Math.ceil((midnight - now) / 60000);
   const h = Math.floor(min / 60);
-  return h ? `${h} uur en ${min % 60} minuten` : `${min} minuten`;
+  const m = min % 60;
+  if (!h) return tr(`${min} minutes`, `${min} minuten`);
+  return tr(`${h} hour${h > 1 ? 's' : ''} and ${m} minutes`, `${h} uur en ${m} minuten`);
 }
 
 // ---------- Goals ----------
@@ -80,13 +83,13 @@ export function untilTomorrow() {
 // Every goal done makes the next ones a bit harder.
 
 const GOAL_KINDS = {
-  height: { text: (n) => `Bouw een toren van ${n}`, base: 15, step: 8 },
-  streak: { text: (n) => `Haal ${n}× perfect op rij`, base: 3, step: 1 },
-  perfects: { text: (n) => `Haal ${n} perfects in één potje`, base: 5, step: 3 },
-  hard: { text: (n) => `Haal ${n} hoog in Moeilijk`, base: 12, step: 6 },
-  games: { text: (n) => `Speel ${n} potjes`, base: 3, step: 2, total: true },
-  blocks: { text: (n) => `Stapel in totaal ${n} blokken`, base: 80, step: 60, total: true },
-  tools: { text: (n) => `Gebruik ${n}× gereedschap`, base: 2, step: 1, total: true },
+  height: { text: (n) => tr(`Build a tower of ${n}`, `Bouw een toren van ${n}`), base: 15, step: 8 },
+  streak: { text: (n) => tr(`Get ${n}× perfect in a row`, `Haal ${n}× perfect op rij`), base: 3, step: 1 },
+  perfects: { text: (n) => tr(`Get ${n} perfects in one game`, `Haal ${n} perfects in één potje`), base: 5, step: 3 },
+  hard: { text: (n) => tr(`Reach ${n} high in Hard`, `Haal ${n} hoog in Moeilijk`), base: 12, step: 6 },
+  games: { text: (n) => tr(`Play ${n} games`, `Speel ${n} potjes`), base: 3, step: 2, total: true },
+  blocks: { text: (n) => tr(`Stack ${n} blocks in total`, `Stapel in totaal ${n} blokken`), base: 80, step: 60, total: true },
+  tools: { text: (n) => tr(`Use ${n} tools`, `Gebruik ${n}× gereedschap`), base: 2, step: 1, total: true },
 };
 const REWARD_WEIGHTS = { pump: 4, slow: 4, magnet: 4, buoy: 3, bomb: 3, dynamite: 1, diamond: 1 };
 

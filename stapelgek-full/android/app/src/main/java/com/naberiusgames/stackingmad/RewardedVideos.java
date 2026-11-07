@@ -11,6 +11,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.ump.ConsentInformation;
@@ -21,7 +22,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Rewarded AdMob videos for the game, always started by the player (window.StapelgekFullAds in JavaScript).
- * Where the law asks for it (Europe, the UK) Google's consent form comes first.
+ * Nothing starts before the game has told the player's age group (setAudience), asked once at the first start:
+ * children get only non-personalized ads suitable for everyone, and no consent form; under 16 never personalized.
+ * For the others, where the law asks for it (Europe, the UK), Google's consent form comes first.
  * The game hears back through window.stapelgekfullAdDone(id, rewarded, why).
  */
 final class RewardedVideos {
@@ -30,6 +33,7 @@ final class RewardedVideos {
     private final Activity activity;
     private final WebView web;
     private final ConsentInformation consent;
+    private final AtomicBoolean told = new AtomicBoolean(false);
     private final Handler main = new Handler(Looper.getMainLooper());
     private final AtomicBoolean started = new AtomicBoolean(false);
     private RewardedAd ad;
@@ -40,10 +44,36 @@ final class RewardedVideos {
         this.activity = activity;
         this.web = web;
         consent = UserMessagingPlatform.getConsentInformation(activity);
-        consent.requestConsentInfoUpdate(activity, new ConsentRequestParameters.Builder().build(),
-                () -> UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity, error -> startAds()),
-                error -> startAds());
-        startAds(); // a choice made on an earlier day may already allow ads
+    }
+
+    /** "child" (under 13), "teen" (13 to 15) or "adult"; only the first call of a run counts. */
+    @JavascriptInterface
+    public void setAudience(final String who) {
+        if (told.getAndSet(true)) return;
+        main.post(() -> {
+            boolean child = "child".equals(who);
+            boolean young = child || "teen".equals(who);
+            MobileAds.setRequestConfiguration(new RequestConfiguration.Builder()
+                    .setTagForChildDirectedTreatment(child
+                            ? RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE
+                            : RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_FALSE)
+                    .setTagForUnderAgeOfConsent(young
+                            ? RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE
+                            : RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_FALSE)
+                    .setMaxAdContentRating(child
+                            ? RequestConfiguration.MAX_AD_CONTENT_RATING_G
+                            : RequestConfiguration.MAX_AD_CONTENT_RATING_PG)
+                    .build());
+            // Under the age of consent the form is never shown; Google then serves only non-personalized ads.
+            consent.requestConsentInfoUpdate(activity,
+                    new ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(young).build(),
+                    () -> {
+                        if (young) startAds();
+                        else UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity, error -> startAds());
+                    },
+                    error -> startAds());
+            startAds(); // a choice made on an earlier day may already allow ads
+        });
     }
 
     private void startAds() {

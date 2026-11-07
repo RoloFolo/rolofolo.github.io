@@ -9,7 +9,7 @@ import { store } from './store.js';
 import {
   ITEMS, ITEM_IDS, LOADOUT_MAX, MAX_LIVES, addItem, challenge, goals, inventory, itemCount, lives, takeItem, untilTomorrow,
 } from './progress.js';
-import { privacyOptions, showPrivacyOptions, showRewardedAd } from './ads.js';
+import { audience, privacyOptions, setBirthYear, showPrivacyOptions, showRewardedAd, tellAudience } from './ads.js';
 import { NAME, NL, switchLanguage, tr } from './lang.js';
 
 const BASE = 3;          // footprint of the first block
@@ -1631,5 +1631,19 @@ function frame(now) {
 }
 
 if (location.search.includes('debug')) window.stapelgekfull = { game, grant, useTool, lives, goals, inventory };
-menu();
+// The first start asks for the birth year, the same neutral way for everyone, before the ads may start.
+function askAge() {
+  reset();
+  const pickYear = $('age-year');
+  const now = new Date().getFullYear();
+  for (let y = now; y >= now - 100; y--) pickYear.add(new Option(String(y), String(y)));
+  pickYear.addEventListener('change', () => { $('age-ok').disabled = !pickYear.value; });
+  $('age-ok').addEventListener('click', () => {
+    if (!pickYear.value) return;
+    setBirthYear(Number(pickYear.value));
+    menu();
+  });
+  showScreen('age');
+}
+if (audience()) { tellAudience(); menu(); } else askAge();
 requestAnimationFrame(frame);

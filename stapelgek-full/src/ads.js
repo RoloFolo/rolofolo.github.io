@@ -3,6 +3,7 @@
 // with window.stapelgekfullAdDone(id, rewarded, why); why is 'none' when no video could be had.
 // In a browser a test screen stands in for the video.
 // The page hears 'ad-start' and 'ad-end' around a video, and 'ad-unavailable' when there was none.
+import { store } from './store.js';
 
 const TEST_SECONDS = 5;
 let pending = null;
@@ -19,6 +20,24 @@ window.stapelgekfullAdDone = (id, rewarded, why) => {
 };
 
 const bridge = () => (window.StapelgekFullAds && typeof window.StapelgekFullAds.show === 'function' ? window.StapelgekFullAds : null);
+
+// The birth year asked at the first start stays on the phone; it only decides which ads may be shown.
+// The age counts low (born this year minus one), so a player who might still be 12 counts as a child.
+const BORN_KEY = 'stapelgekfull-born';
+export function audience() {
+  const born = parseInt(store.get(BORN_KEY, ''), 10);
+  if (!born) return null;
+  const age = new Date().getFullYear() - born - 1;
+  return age < 13 ? 'child' : age < 16 ? 'teen' : 'adult';
+}
+export function tellAudience() {
+  const who = audience();
+  if (who && bridge() && typeof bridge().setAudience === 'function') bridge().setAudience(who);
+}
+export function setBirthYear(year) {
+  store.set(BORN_KEY, String(year));
+  tellAudience();
+}
 
 // Europe and the UK: the settings offer a way to change the ads choice.
 export const privacyOptions = () => { try { return !!(bridge() && bridge().privacyOptions()); } catch (e) { return false; } };

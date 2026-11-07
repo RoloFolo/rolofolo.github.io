@@ -463,6 +463,13 @@
     .goals li { padding: 4px 8px; }
   }
 
+  /* The birth year at the first start */
+  .age-year {
+    width: 100%; margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; border: 3px solid var(--ink);
+    font: 900 20px Nunito, "Arial Rounded MT Bold", sans-serif; color: var(--ink); background: var(--white); text-align: center;
+  }
+  #age-ok:disabled { opacity: 0.45; }
+
   /* ---------- Themes ---------- */
   #menu-themes { top: calc(env(safe-area-inset-top, 0px) + 182px); }
   .corner-btn .new {
@@ -677,6 +684,17 @@
       <button id="over-scores" class="btn btn-small" type="button" data-nl="Scorebord">Scoreboard</button>
       <button id="to-menu" class="btn btn-small" type="button">Menu</button>
     </div>
+  </div>
+</section>
+
+<section id="age" class="screen">
+  <div class="card">
+    <p class="board-title" data-nl="Welkom!">Welcome!</p>
+    <p class="goals-note" data-nl="In welk jaar ben je geboren?">What year were you born?</p>
+    <select id="age-year" class="age-year" aria-label="Year of birth" data-nl-label="Geboortejaar">
+      <option value="" data-nl="Kies een jaar">Pick a year</option>
+    </select>
+    <button id="age-ok" class="btn btn-start" type="button" disabled>OK</button>
   </div>
 </section>
 

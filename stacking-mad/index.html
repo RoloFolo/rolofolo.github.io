@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stacking Mad</title>
+<meta name="description" content="Stacking Mad: stop the floating block right above your tower and stack as high as you can, with Grandpa Joop cheering you on. A free stacking game for Android by Naberius Games.">
+<link rel="icon" href="/assets/naberius-mark-mini-zwavel.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* The game page: a strip of phone screenshots and a few feature rows. */
+  .shots { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
+  .shots figure { margin: 0; flex: 0 0 auto; width: min(60vw, 230px); scroll-snap-align: start; display: grid; gap: 6px; }
+  .shots img { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 12px; border: 1px solid #2c2634; display: block; }
+  .shots figcaption { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: center; }
+  @media (min-width: 720px) { .feature { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); } .feature.flip > img { order: -1; } }
+  .feature > img { width: 100%; max-width: 240px; justify-self: center; height: auto; border-radius: 14px; border: 1px solid #2c2634; }
+  .feature .stack { gap: 10px; }
+  .feature h2 { font-size: clamp(1.7rem, 4vw, 2.2rem); }
+  .banner { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid #2c2634; }
+  .themes { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 12px; }
+  .themes div { background: var(--raised); border: 1px solid #241f2b; border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+  .themes span { font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a href="/" aria-label="Naberius Games home"><img src="/assets/naberius-lockup-bot.svg" alt="Naberius Games"></a>
+    <nav aria-label="Main">
+      <a href="/">Studio</a>
+      <a href="/implegion/">ImpLegion</a>
+      <a href="/gloryfield/">Gloryfield</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <img class="banner" src="/stacking-mad/feature.jpg" alt="Stacking Mad: Grandpa Joop asks how high you can go, next to a tower of colourful blocks" width="1024" height="500">
+    <div class="icon-title">
+      <img src="/stacking-mad/icon.png" alt="Stacking Mad icon: Grandpa Joop" width="512" height="512">
+      <div class="stack" style="gap: 4px">
+        <h1>Stacking Mad</h1>
+        <p class="label">Android · Coming soon</p>
+      </div>
+    </div>
+    <p class="lead">A block floats in from the side. Stop it right above your tower. Whatever sticks out gets sliced off, so every block gets a little harder. How high can you go? Grandpa Joop explains the game, cheers you on and dares you to beat his score.</p>
+    <div class="row">
+      <a class="button quiet" href="/stacking-mad/privacy.html">Privacy policy</a>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="shots-title">
+    <p class="label" id="shots-title">Screenshots</p>
+    <div class="shots" role="list">
+      <figure role="listitem"><img src="/stacking-mad/shots/sky-journey.jpg" alt="The Sky Journey theme: past the moon at 105 blocks" width="540" height="960" loading="lazy"><figcaption>Sky Journey</figcaption></figure>
+      <figure role="listitem"><img src="/stacking-mad/shots/neon-night.jpg" alt="The Neon Night theme: glowing blocks over a retro sun" width="540" height="960" loading="lazy"><figcaption>Neon Night</figcaption></figure>
+      <figure role="listitem"><img src="/stacking-mad/shots/pixel-arcade.jpg" alt="The Pixel Arcade theme: a chunky pixel tower over a pixel city" width="540" height="960" loading="lazy"><figcaption>Pixel Arcade</figcaption></figure>
+      <figure role="listitem"><img src="/stacking-mad/shots/themes.jpg" alt="The theme picker with Classic, Sky Journey, Pixel Arcade and Neon Night" width="540" height="960" loading="lazy"><figcaption>Pick a theme</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="feature" aria-labelledby="f-stack">
+    <div class="stack">
+      <p class="label">One tap</p>
+      <h2 id="f-stack">Stop, slice, stack</h2>
+      <p>Tap STOP when the block hangs right above your tower. Spot on is PERFECT, and three perfects in a row make your block grow again. Pick Easy, where the speed stays the same, or Hard, where it keeps getting faster.</p>
+    </div>
+    <img src="/stacking-mad/shots/classic.jpg" alt="" width="540" height="960" loading="lazy">
+  </section>
+
+  <section class="feature flip" aria-labelledby="f-joop">
+    <div class="stack">
+      <p class="label">Your coach</p>
+      <h2 id="f-joop">Grandpa Joop is watching</h2>
+      <p>Joop, the stacking champion of the family, explains how it works, cheers at every milestone and keeps your last ten scores. Every day he sets a challenge just above what you usually reach. Beat him for a reward.</p>
+    </div>
+    <img src="/stacking-mad/shots/menu.jpg" alt="" width="540" height="960" loading="lazy">
+  </section>
+
+  <section class="feature" aria-labelledby="f-tools">
+    <div class="stack">
+      <p class="label">Goals and tools</p>
+      <h2 id="f-tools">A bomb for a bad cut</h2>
+      <p>Reach your goals and earn tools: a pump that makes your tower wider, a snail that slows things down, a magnet, a life buoy, and a bomb or dynamite to blow away a few layers and start wide again. At 50 high you get a diamond block, at 75 a golden one drops in perfectly by itself.</p>
+    </div>
+    <img src="/stacking-mad/shots/toolbox.jpg" alt="" width="540" height="960" loading="lazy">
+  </section>
+
+  <section class="stack" aria-labelledby="f-themes">
+    <p class="label">Four looks</p>
+    <h2 id="f-themes">Pick a theme</h2>
+    <div class="themes">
+      <div><span>The original</span><strong>Classic</strong></div>
+      <div><span>From the village to the sun</span><strong>Sky Journey</strong></div>
+      <div><span>Chunky and retro</span><strong>Pixel Arcade</strong></div>
+      <div><span>Glow in the dark</span><strong>Neon Night</strong></div>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="fair">
+    <p class="label" id="fair">Fair play</p>
+    <h2>Free, and fair for kids</h2>
+    <p>No purchases with real money. An ad only plays when you choose to watch a video, for an extra life, another go at your tower or double loot. Made for players of all ages, in English and Dutch, with a privacy-friendly setup for children.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 Naberius Games</p>
+    <p><a href="/">Naberius Games</a> · <a href="https://www.youtube.com/@NaberiusGames" rel="noopener">YouTube</a> · <a href="/stacking-mad/privacy.html">Privacy policy</a></p>
+  </div>
+</footer>
+</body>
+</html>

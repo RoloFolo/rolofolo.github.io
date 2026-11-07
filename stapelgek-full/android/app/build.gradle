@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The version name is the one in package.json, the same number the game shows in its settings.
+def gameVersion = new groovy.json.JsonSlurper().parse(file('../../package.json')).version
+
+// The upload key for Google Play lives outside the repository, in keystore.properties next to this project.
+def keyProps = new Properties()
+def keyFile = rootProject.file('keystore.properties')
+if (keyFile.exists()) keyFile.withInputStream { keyProps.load(it) }
+
+android {
+    namespace 'com.naberiusgames.stackingmad'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.naberiusgames.stackingmad'
+        minSdk 24
+        targetSdk 36
+        versionCode 12
+        versionName gameVersion
+        manifestPlaceholders = [admobAppId: project.property('admobAppId')]
+        buildConfigField 'String', 'REWARDED_ID', "\"${project.property('admobRewardedId')}\""
+    }
+
+    buildFeatures { buildConfig true }
+
+    signingConfigs {
+        if (keyFile.exists()) {
+            upload {
+                storeFile rootProject.file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Without the upload key (a fresh checkout) the release build is signed with the debug key, to try out.
+            signingConfig keyFile.exists() ? signingConfigs.upload : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // The web game is copied in as assets on every build.
+    sourceSets.main.assets.srcDirs = ["$buildDir/web"]
+}
+
+tasks.register('copyWeb', Copy) {
+    from('../..') { include 'index.html', 'game.js', 'icon.png', 'fonts/**', 'themes/**' }
+    into "$buildDir/web"
+}
+preBuild.dependsOn 'copyWeb'
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:25.5.0'
+    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+}

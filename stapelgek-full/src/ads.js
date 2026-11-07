@@ -1,26 +1,36 @@
 // Rewarded video ads, always the player's own choice.
-// The Android app can supply a bridge (window.StapelgekFullAds.show(id)) that plays a real AdMob video and answers
-// with window.stapelgekfullAdDone(id, rewarded). Until that exists, a test screen stands in for the video.
+// The Android app supplies a bridge (window.StapelgekFullAds.show(id)) that plays a real AdMob video and answers
+// with window.stapelgekfullAdDone(id, rewarded, why); why is 'none' when no video could be had.
+// In a browser a test screen stands in for the video.
+// The page hears 'ad-start' and 'ad-end' around a video, and 'ad-unavailable' when there was none.
 
 const TEST_SECONDS = 5;
 let pending = null;
 let nextId = 1;
 
-window.stapelgekfullAdDone = (id, rewarded) => {
+window.stapelgekfullAdDone = (id, rewarded, why) => {
   if (pending && pending.id === id) {
     const { resolve } = pending;
     pending = null;
+    window.dispatchEvent(new Event('ad-end'));
+    if (why === 'none') window.dispatchEvent(new Event('ad-unavailable'));
     resolve(!!rewarded);
   }
 };
+
+const bridge = () => (window.StapelgekFullAds && typeof window.StapelgekFullAds.show === 'function' ? window.StapelgekFullAds : null);
+
+// Europe and the UK: the settings offer a way to change the ads choice.
+export const privacyOptions = () => { try { return !!(bridge() && bridge().privacyOptions()); } catch (e) { return false; } };
+export const showPrivacyOptions = () => bridge() && bridge().showPrivacyOptions();
 
 export function showRewardedAd(reason) {
   if (pending) return Promise.resolve(false);
   return new Promise((resolve) => {
     const id = nextId++;
     pending = { id, resolve };
-    const bridge = window.StapelgekFullAds;
-    if (bridge && typeof bridge.show === 'function') bridge.show(id);
+    window.dispatchEvent(new Event('ad-start'));
+    if (bridge()) bridge().show(id);
     else testVideo(id, reason);
   });
 }

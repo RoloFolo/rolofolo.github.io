@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.naberiusgames.stackingmad">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -11,6 +10,11 @@
         android:theme="@style/StapelgekFull"
         android:allowBackup="true"
         android:hardwareAccelerated="true">
+
+        <!-- The AdMob app id comes from gradle.properties. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
 
         <activity
             android:name=".MainActivity"

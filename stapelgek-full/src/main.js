@@ -9,7 +9,7 @@ import { store } from './store.js';
 import {
   ITEMS, ITEM_IDS, LOADOUT_MAX, MAX_LIVES, addItem, challenge, goals, inventory, itemCount, lives, takeItem, untilTomorrow,
 } from './progress.js';
-import { showRewardedAd } from './ads.js';
+import { privacyOptions, showPrivacyOptions, showRewardedAd } from './ads.js';
 import { NAME, NL, switchLanguage, tr } from './lang.js';
 
 const BASE = 3;          // footprint of the first block
@@ -375,9 +375,19 @@ function paintSound() {
 }
 paintSound();
 $('set-lang').addEventListener('click', switchLanguage);
+$('set-privacy').addEventListener('click', () => { openSettings(false); showPrivacyOptions(); });
+
+// The music rests while a video plays. When there is no video to be had, Joop says so.
+let musicBeforeAd = false;
+window.addEventListener('ad-start', () => { musicBeforeAd = music.playing; music.stop(0.1); });
+window.addEventListener('ad-end', () => { if (musicBeforeAd) music.start(); });
+window.addEventListener('ad-unavailable', () => {
+  joop.say([tr('No video available right now. Try again in a little while!', 'Er is nu even geen filmpje. Probeer het straks nog eens!')]);
+});
 $('set-version').textContent = tr(`${NAME} version ${__VERSION__}`, `${NAME} versie ${__VERSION__}`);
 
 function openSettings(open) {
+  $('set-privacy').hidden = !privacyOptions(); // known only once Google has answered
   $('settings').hidden = !open;
   $('settings-btn').setAttribute('aria-expanded', String(open));
   paused = open && game.state === 'play';

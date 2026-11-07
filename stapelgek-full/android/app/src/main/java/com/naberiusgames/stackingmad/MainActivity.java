@@ -10,7 +10,7 @@ import android.webkit.WebViewClient;
 
 /** Shows the game (assets/index.html) full screen. */
 public class MainActivity extends Activity {
-    // View.SYSTEM_UI_FLAG_* values; the newer ones are not in the API 16 stubs we compile against.
+    // View.SYSTEM_UI_FLAG_* values.
     private static final int IMMERSIVE = 0x1000 /* IMMERSIVE_STICKY */ | 0x0004 /* FULLSCREEN */
             | 0x0002 /* HIDE_NAVIGATION */ | 0x0200 /* LAYOUT_HIDE_NAVIGATION */
             | 0x0400 /* LAYOUT_FULLSCREEN */ | 0x0100 /* LAYOUT_STABLE */;
@@ -31,6 +31,8 @@ public class MainActivity extends Activity {
         web.setVerticalScrollBarEnabled(false);
         web.setHorizontalScrollBarEnabled(false);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        // Rewarded videos for the game; the page finds them as window.StapelgekFullAds.
+        web.addJavascriptInterface(new RewardedVideos(this, web), "StapelgekFullAds");
         setContentView(web);
 
         if (state == null) web.loadUrl("file:///android_asset/index.html");

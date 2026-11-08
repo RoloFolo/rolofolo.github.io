@@ -17,15 +17,16 @@
 
 ## Nog te doen
 
-1. In AdMob: app "Stacking Mad" (Android) toevoegen en één beloond advertentieblok maken.
-2. De twee id's in `gradle.properties` zetten (`admobAppId`, `admobRewardedId`),
-   `versionCode` in `app/build.gradle` ophogen, en bouwen:
+1. ~~AdMob: app en beloond advertentieblok~~ klaar: `ca-app-pub-1349513335917341~4329559917` en
+   `…/8077233231` staan in `gradle.properties`; Stacking Mad hangt aan het GDPR-bericht van ImpLegion;
+   testtoestellen zijn al aangemeld. Versie 1.3.0, versionCode 13 is gebouwd.
+2. Voor elke volgende Play-upload: `versionCode` in `app/build.gradle` ophogen, dan
    `cd .. && npm run build && cd android && ./gradlew bundleRelease assembleRelease`.
-   Test daarna niet met echte reclames op je eigen telefoon: zet je telefoon in AdMob als testtoestel.
 3. Play Console: app aanmaken, winkelpagina vullen, formulieren hieronder, AAB in een gesloten test.
 4. Gesloten test: 12 testers, 14 dagen achter elkaar (geldt per app voor persoonlijke accounts
    die na november 2023 zijn aangemaakt). Daarna productie aanvragen.
-5. Daarna: knop "Get it on Google Play" op de webpagina en de homepage.
+5. In AdMob de app aan Google Play koppelen (App-instellingen > App-winkel toevoegen).
+6. Daarna: knop "Get it on Google Play" op de webpagina en de homepage.
 
 ## Antwoorden voor de formulieren in de Play Console
 

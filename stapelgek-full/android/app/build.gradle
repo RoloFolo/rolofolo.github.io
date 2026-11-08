@@ -18,7 +18,7 @@ android {
         applicationId 'com.naberiusgames.stackingmad'
         minSdk 24
         targetSdk 36
-        versionCode 12
+        versionCode 13
         versionName gameVersion
         manifestPlaceholders = [admobAppId: project.property('admobAppId')]
         buildConfigField 'String', 'REWARDED_ID', "\"${project.property('admobRewardedId')}\""

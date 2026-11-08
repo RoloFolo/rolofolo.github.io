@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
             | 0x0400 /* LAYOUT_FULLSCREEN */ | 0x0100 /* LAYOUT_STABLE */;
 
     private WebView web;
+    private RewardedVideos videos;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -32,7 +33,8 @@ public class MainActivity extends Activity {
         web.setHorizontalScrollBarEnabled(false);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         // Rewarded videos for the game; the page finds them as window.StapelgekFullAds.
-        web.addJavascriptInterface(new RewardedVideos(this, web), "StapelgekFullAds");
+        videos = new RewardedVideos(this, web);
+        web.addJavascriptInterface(videos, "StapelgekFullAds");
         setContentView(web);
 
         if (state == null) web.loadUrl("file:///android_asset/index.html");
@@ -54,7 +56,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         web.onPause();
-        web.pauseTimers(); // stops the music loop while the app is in the background
+        // Stops the music loop while the app is in the background. pauseTimers() holds every WebView in the app,
+        // also the one a video ad plays in, so not while a video is on screen: its countdown and close button would stop.
+        if (!videos.isShowing()) web.pauseTimers();
         super.onPause();
     }
 

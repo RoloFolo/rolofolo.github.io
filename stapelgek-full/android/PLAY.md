@@ -19,7 +19,7 @@
 
 1. ~~AdMob: app en beloond advertentieblok~~ klaar: `ca-app-pub-1349513335917341~4329559917` en
    `…/8077233231` staan in `gradle.properties`; Stacking Mad hangt aan het GDPR-bericht van ImpLegion;
-   testtoestellen zijn al aangemeld. Versie 1.3.0, versionCode 13 is gebouwd.
+   testtoestellen zijn al aangemeld. Versie 1.3.0, versionCode 14 is gebouwd.
 2. Voor elke volgende Play-upload: `versionCode` in `app/build.gradle` ophogen, dan
    `cd .. && npm run build && cd android && ./gradlew bundleRelease assembleRelease`.
 3. Play Console: app aanmaken, winkelpagina vullen, formulieren hieronder, AAB in een gesloten test.

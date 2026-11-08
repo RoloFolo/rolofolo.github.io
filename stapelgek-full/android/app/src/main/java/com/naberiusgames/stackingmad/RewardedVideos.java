@@ -39,6 +39,7 @@ final class RewardedVideos {
     private RewardedAd ad;
     private boolean loading;
     private int waitingId = -1; // a video the player asked for while it was still loading
+    private boolean showing;
 
     RewardedVideos(Activity activity, WebView web) {
         this.activity = activity;
@@ -124,23 +125,31 @@ final class RewardedVideos {
     }
 
     private void play(final int id) {
-        RewardedAd showing = ad;
+        RewardedAd video = ad;
         ad = null;
+        showing = true;
         final boolean[] earned = {false};
-        showing.setFullScreenContentCallback(new FullScreenContentCallback() {
+        video.setFullScreenContentCallback(new FullScreenContentCallback() {
             @Override
             public void onAdDismissedFullScreenContent() {
+                showing = false;
                 answer(id, earned[0], "");
                 load();
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(AdError error) {
+                showing = false;
                 answer(id, false, "none");
                 load();
             }
         });
-        showing.show(activity, reward -> earned[0] = true);
+        video.show(activity, reward -> earned[0] = true);
+    }
+
+    /** Whether a video is on screen; the ad plays in a WebView of its own, which must keep running. */
+    boolean isShowing() {
+        return showing;
     }
 
     /** Whether the settings must offer a way to change the ads choice (Europe, the UK). */

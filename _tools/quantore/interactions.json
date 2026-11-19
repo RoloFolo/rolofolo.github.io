@@ -1,0 +1,91 @@
+[
+ {
+  "v": "t",
+  "trigger": "styles__RealButton-sc-86mj6c-0 colQth styles__SliderButton-sc-qkqhq1-1 hbMaof button-next",
+  "up": 1,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "t",
+  "trigger": "styles__ChevronButton-sc-86mj6c-5 ljzNuq",
+  "up": 2,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "t",
+  "trigger": "button-background",
+  "up": 3,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "t",
+  "trigger": "chevron-icon",
+  "up": 3,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "m",
+  "trigger": "styles__Toggle-sc-16to5sm-2 OzkKT",
+  "up": 1,
+  "swaps": {
+   "styles__Toggle-sc-16to5sm-2 OzkKT": "styles__Toggle-sc-16to5sm-2 SgZiq",
+   "styles__Content-sc-16to5sm-3 hGGpbT": "styles__Content-sc-16to5sm-3 gnUrTM"
+  }
+ },
+ {
+  "v": "d",
+  "trigger": "styles__RealButton-sc-86mj6c-0 colQth styles__SliderButton-sc-qkqhq1-1 hbMaof button-next",
+  "up": 1,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "d",
+  "trigger": "styles__ChevronButton-sc-86mj6c-5 ljzNuq",
+  "up": 2,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "d",
+  "trigger": "button-background",
+  "up": 3,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ },
+ {
+  "v": "d",
+  "trigger": "chevron-icon",
+  "up": 3,
+  "swaps": {
+   "swiper-slide swiper-slide-active": "swiper-slide swiper-slide-prev",
+   "swiper-slide swiper-slide-next": "swiper-slide swiper-slide-active",
+   "swiper-slide": "swiper-slide swiper-slide-next"
+  }
+ }
+]

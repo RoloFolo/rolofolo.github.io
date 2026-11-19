@@ -3,9 +3,9 @@
     "site": "quantore-prototype",
     "public": ".",
     "ignore": ["firebase.json", ".firebaserc", "**/.*"],
+    "cleanUrls": false,
     "headers": [
-      { "source": "**", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
-      { "source": "content.json", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+      { "source": "**", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] }
     ]
   }
 }

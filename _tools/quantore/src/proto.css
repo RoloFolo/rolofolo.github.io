@@ -1,0 +1,5 @@
+/* Toevoegingen van het prototype (niet van het origineel). */
+.qp-proto{position:fixed;left:12px;bottom:12px;z-index:2147483647;background:#1d1d1b;color:#fff!important;font:600 12px/1 system-ui,sans-serif;padding:8px 12px;border-radius:999px;text-decoration:none!important;opacity:.85;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.qp-proto:hover{opacity:1}
+.qp-note{margin:12px 0;padding:10px 14px;border-radius:8px;background:#fff4e0;color:#6b3d00;font:14px/1.4 system-ui,sans-serif}
+[hidden]{display:none!important}

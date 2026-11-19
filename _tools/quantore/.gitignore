@@ -4,3 +4,5 @@ site/
 assets.json
 top-urls.txt
 *.png
+verkooppunten/geo/
+verkooppunten/geocode.log

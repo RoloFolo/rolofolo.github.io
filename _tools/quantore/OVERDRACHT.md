@@ -83,7 +83,9 @@ Aandachtspunten:
 1. **Waar komt het live?** GitHub Pages (merge naar `main`) of Firebase (project-ID van het vriendenweekend nodig). Dit is nog niet gekozen.
 2. **Rechten:** Adelle is een betaald lettertype, en de teksten en foto's zijn van Quantore. Zet de kopie alleen openbaar als jij of Quantore daar toestemming voor heeft.
 3. **Klein verschil:** in het mobiele menu kan het derde submenu (Duurzaamheid) niet worden ingeklapt als alle drie de submenu's open staan. Het lag tijdens het vastleggen onder de rand van het scherm.
-4. **Verkooppunten:** `/verkooppunten/overzicht` is een momentopname. Zoeken en filteren werken niet, want dat deed het origineel met React.
+4. **Verkooppunten (opgelost 19-11-2026):** `/verkooppunten/overzicht` heeft nu een eigen interactieve kaart met zoeken en filteren; zie "Verkooppuntenkaart" in `README.md`. Wel letten op:
+   - De Belgische gemeentegrenzen zijn van 2018, dus van vóór de fusies van 2019 en 2025.
+   - Op quantore.com staat bij Den Otter (Ridderkerk) postcode 2984 DE. Volgens de BAG is het 2984 BE. De kaart gebruikt het adres uit de BAG.
 5. **Inhoud aanpassen:** er is geen CMS. Wijzigingen gaan in de HTML. Elke pagina heeft drie versies, dus pas `index.html`, `t.html` en `m.html` alle drie aan.
 
 ## Startprompt voor een lokale Claude Code-sessie

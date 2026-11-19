@@ -13,7 +13,7 @@
   var rt;
   addEventListener('resize', function () {
     clearTimeout(rt);
-    rt = setTimeout(function () { if (want() !== v) location.replace({ d: './', t: 't.html', m: 'm.html' }[want()] + location.hash); }, 200);
+    rt = setTimeout(function () { if (want() !== v) location.replace({ d: 'index.html', t: 't.html', m: 'm.html' }[want()] + location.hash); }, 200);
   });
 
   // ---------- Klassen vervangen: laatste (hash-)token van een styled-components klasse ----------

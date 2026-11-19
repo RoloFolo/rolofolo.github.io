@@ -17,7 +17,7 @@ Links naar diepere pagina's (artikelen, nieuws) gaan naar de echte site.
 
 ## Opnieuw kopiëren
 
-Nodig: Node met Playwright (al aanwezig in Claude Code-cloudsessies), `npm i cheerio@1.0.0`, Python met Pillow.
+Nodig: Node 20+, `npm install` en `npx playwright install chromium` in deze map, Python met Pillow. Zie ook OVERDRACHT.md.
 Netwerktoegang tot www.quantore.com en images.ctfassets.net.
 
 ```sh
@@ -29,6 +29,7 @@ node build.js raw site                   # omzetten naar statische site
 cp src/* site/assets/
 node fetch-assets.js assets.json site/assets
 python3 -I shrink.py site/assets         # te grote afbeeldingen verkleinen
+python3 -I explicit-index.py site        # links expliciet naar index.html
 node test.js http://localhost:8000/      # testen (eerst: cd site && python3 -m http.server 8000)
 ```
 

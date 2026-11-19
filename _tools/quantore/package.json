@@ -1,0 +1,9 @@
+{
+  "name": "quantore-prototype-tools",
+  "private": true,
+  "description": "Scripts om de bovenste laag van quantore.com statisch te kopiëren (zie README.md en OVERDRACHT.md).",
+  "dependencies": {
+    "cheerio": "1.0.0",
+    "playwright": "1.63.0"
+  }
+}

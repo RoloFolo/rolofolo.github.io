@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 (async () => {
   const base = process.argv[2];
-  const routes = fs.readFileSync('top.txt', 'utf8').split('\n').filter(Boolean).map(r => r === '/' ? '' : r.slice(1) + '/');
+  const routes = fs.readFileSync(require('path').join(__dirname, 'top.txt'), 'utf8').split('\n').filter(Boolean).map(r => r === '/' ? '' : r.slice(1) + '/');
   const b = await chromium.launch();
   const errs = [];
   for (const [w, tag] of [[1280, 'd'], [900, 't'], [390, 'm']]) {

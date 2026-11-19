@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "quantore-prototype",
+    "public": ".",
+    "ignore": ["firebase.json", ".firebaserc", "**/.*"],
+    "headers": [
+      { "source": "**", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
+      { "source": "content.json", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    ]
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "_uitleg": "Dit is het CMS. Alle teksten, menu's, categorieën, nieuws en verkooppunten staan hier. Pas dit bestand aan (of vraag het Claude) en de site toont het direct.",
+  "site": {
+    "naam": "Quantore",
+    "tagline": "Samen sterk in kantoorartikelen",
+    "prototypeMelding": "Prototype — dit is een nagebouwde demo, niet de officiële website van Quantore. Bestellen en inloggen werken niet."
+  },
+  "menu": [
+    { "label": "Assortiment", "href": "#/assortiment" },
+    { "label": "Verkooppunten", "href": "#/verkooppunten" },
+    { "label": "Coöperatie", "href": "#/cooperatie" },
+    { "label": "Duurzaamheid", "href": "#/duurzaamheid" },
+    { "label": "Nieuws & verhalen", "href": "#/nieuws" },
+    { "label": "Contact", "href": "#/contact" }
+  ],
+  "home": {
+    "hero": {
+      "label": "Groothandel en coöperatie · Benelux",
+      "titel": "Alles voor op kantoor, via de vakhandel bij jou om de hoek.",
+      "tekst": "Quantore koopt in en levert uit voor zo'n 450 zelfstandige kantoorvakhandelaren in Nederland en België. Zij helpen jou persoonlijk, online en in de winkel.",
+      "knoppen": [
+        { "label": "Vind een verkooppunt", "href": "#/verkooppunten", "stijl": "primair" },
+        { "label": "Bekijk het assortiment", "href": "#/assortiment", "stijl": "secundair" }
+      ]
+    },
+    "cijfers": [
+      { "waarde": "± 450", "label": "aangesloten kantoorvakhandelaren" },
+      { "waarde": "24.000", "label": "artikelen in het assortiment" },
+      { "waarde": "98%", "label": "van de orders binnen 24 uur geleverd" },
+      { "waarde": "100+", "label": "jaar samenwerking in de kantoorbranche" }
+    ],
+    "uitgelichtTitel": "Ontdek het assortiment",
+    "uitgelichtTekst": "Van pen tot printerpapier en van koffiebeker tot bureaustoel. A-merken en ons eigen huismerk, altijd via jouw vakhandelaar.",
+    "blokken": [
+      {
+        "titel": "Quantore huismerk",
+        "tekst": "Kwaliteit die je kunt vergelijken met A-merken, voor een scherpere prijs. 71% van onze huismerkproducten is duurzaam.",
+        "link": { "label": "Meer over het huismerk", "href": "#/assortiment" },
+        "kleur": "accent"
+      },
+      {
+        "titel": "Een coöperatie van ondernemers",
+        "tekst": "Onze leden zijn zelfstandige kantoorvakhandelaren. Samen kopen we slim in, zodat zij lokaal het verschil kunnen maken.",
+        "link": { "label": "Over de coöperatie", "href": "#/cooperatie" },
+        "kleur": "donker"
+      },
+      {
+        "titel": "Duurzaam vooruit",
+        "tekst": "EcoVadis zilver, niveau 3 op de CO₂-prestatieladder en 4.500 zonnepanelen op ons dak.",
+        "link": { "label": "Onze aanpak", "href": "#/duurzaamheid" },
+        "kleur": "groen"
+      }
+    ],
+    "nieuwsTitel": "Nieuws & verhalen",
+    "cta": {
+      "titel": "Op zoek naar een kantoorvakhandel in de buurt?",
+      "tekst": "Zoek op plaats of postcode en vind een verkooppunt met persoonlijk advies.",
+      "knop": { "label": "Zoek een verkooppunt", "href": "#/verkooppunten" }
+    }
+  },
+  "categorieen": [
+    {
+      "slug": "papier-en-etiketten",
+      "naam": "Papier & etiketten",
+      "icoon": "papier",
+      "intro": "Kopieerpapier, gekleurd papier, enveloppen en etiketten voor elke printer.",
+      "subs": ["Kopieerpapier", "Gekleurd papier", "Enveloppen", "Etiketten", "Notitieblokken", "Archiefdozen"]
+    },
+    {
+      "slug": "schrijven-en-hobby",
+      "naam": "Schrijven & hobby",
+      "icoon": "pen",
+      "intro": "Balpennen, markers, potloden en alles om creatief mee aan de slag te gaan.",
+      "subs": ["Balpennen", "Markeerstiften", "Potloden", "Viltstiften", "Correctiemiddelen", "Knutselmaterialen"]
+    },
+    {
+      "slug": "kantoor-en-opbergen",
+      "naam": "Kantoor & opbergen",
+      "icoon": "map",
+      "intro": "Ordners, mappen, nietmachines en alles om je bureau op orde te houden.",
+      "subs": ["Ordners", "Mappen", "Nieten en nietmachines", "Perforators", "Bureau-accessoires", "Lamineren"]
+    },
+    {
+      "slug": "printen-en-inkt",
+      "naam": "Printen & inkt",
+      "icoon": "printer",
+      "intro": "Inktcartridges, toners en printers. Ook circulaire cartridges.",
+      "subs": ["Inktcartridges", "Toners", "Printers", "Labelprinters", "Circulaire cartridges"]
+    },
+    {
+      "slug": "facilitair-en-schoonmaak",
+      "naam": "Facilitair & schoonmaak",
+      "icoon": "spray",
+      "intro": "Schoonmaakmiddelen, sanitair en hygiëneproducten voor elke werkplek.",
+      "subs": ["Handzeep", "Papieren handdoeken", "Toiletpapier", "Afvalzakken", "Reinigingsmiddelen", "Luchtverfrissers"]
+    },
+    {
+      "slug": "kantine-en-catering",
+      "naam": "Kantine & catering",
+      "icoon": "koffie",
+      "intro": "Koffie, thee, bekers en alles voor een goed gevulde pantry.",
+      "subs": ["Koffie en thee", "Bekers", "Suiker en melk", "Frisdrank en water", "Snoep en koek"]
+    },
+    {
+      "slug": "kantoormeubilair",
+      "naam": "Kantoormeubilair",
+      "icoon": "stoel",
+      "intro": "Bureaustoelen, bureaus en ergonomische hulpmiddelen.",
+      "subs": ["Bureaustoelen", "Bureaus", "Voetsteunen", "Monitorarmen", "Kasten"]
+    },
+    {
+      "slug": "presentatie-en-ict",
+      "naam": "Presentatie & ICT",
+      "icoon": "scherm",
+      "intro": "Whiteboards, flipovers, rekenmachines en computeraccessoires.",
+      "subs": ["Whiteboards", "Flipovers", "Rekenmachines", "Toetsenborden en muizen", "Kabels en opladers", "Batterijen"]
+    }
+  ],
+  "assortiment": {
+    "titel": "Assortiment",
+    "intro": "Ruim 24.000 artikelen, van topmerken tot ons eigen Quantore huismerk. Je bestelt ze bij een aangesloten kantoorvakhandelaar, online of in de winkel.",
+    "bestelTekst": "Dit product bestellen? Dat doe je bij een Quantore kantoorvakhandel.",
+    "bestelKnop": { "label": "Vind een verkooppunt", "href": "#/verkooppunten" }
+  },
+  "verkooppunten": {
+    "titel": "Vind jouw Quantore kantoorvakhandel",
+    "intro": "Onze aangesloten kantoorvakhandelaren zitten verspreid over Nederland en België, online en met fysieke winkels.",
+    "demoMelding": "Voorbeelddata: de verkooppunten hieronder zijn fictief en dienen alleen om de zoekfunctie te tonen.",
+    "lijst": [
+      { "naam": "Kantoorvakhandel Voorbeeld Amsterdam", "plaats": "Amsterdam", "postcode": "1012", "land": "NL", "winkel": true, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Rotterdam", "plaats": "Rotterdam", "postcode": "3011", "land": "NL", "winkel": true, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Utrecht", "plaats": "Utrecht", "postcode": "3511", "land": "NL", "winkel": true, "webshop": false },
+      { "naam": "Kantoorvakhandel Voorbeeld Nijmegen", "plaats": "Nijmegen", "postcode": "6511", "land": "NL", "winkel": true, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Groningen", "plaats": "Groningen", "postcode": "9711", "land": "NL", "winkel": false, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Eindhoven", "plaats": "Eindhoven", "postcode": "5611", "land": "NL", "winkel": true, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Zwolle", "plaats": "Zwolle", "postcode": "8011", "land": "NL", "winkel": true, "webshop": false },
+      { "naam": "Kantoorvakhandel Voorbeeld Maastricht", "plaats": "Maastricht", "postcode": "6211", "land": "NL", "winkel": true, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Antwerpen", "plaats": "Antwerpen", "postcode": "2000", "land": "BE", "winkel": true, "webshop": true },
+      { "naam": "Kantoorvakhandel Voorbeeld Gent", "plaats": "Gent", "postcode": "9000", "land": "BE", "winkel": false, "webshop": true }
+    ]
+  },
+  "cooperatie": {
+    "titel": "De coöperatie",
+    "intro": "Quantore is een coöperatie van en voor zelfstandige kantoorvakhandelaren. Al meer dan honderd jaar.",
+    "secties": [
+      {
+        "kop": "Samen inkopen, lokaal verkopen",
+        "tekst": "Onze leden zijn zelfstandige ondernemers. Door samen in te kopen via Quantore krijgen zij de schaal en prijzen van een grote speler, terwijl ze hun klanten persoonlijk blijven helpen. Quantore verzorgt daarnaast de inkoop en logistiek voor een aantal grote retailklanten."
+      },
+      {
+        "kop": "Hoe het werkt",
+        "tekst": "Leden storten aandelenkapitaal in de coöperatie en zijn daarmee mede-eigenaar. Wie stopt, krijgt dat kapitaal terug. Zo werken we met elkaar aan een sterke kantoorvakhandel."
+      },
+      {
+        "kop": "Logistiek waar je op kunt bouwen",
+        "tekst": "Vanuit ons distributiecentrum in Beuningen leveren we 98% van de orders binnen 24 uur, en 99,66% foutloos. In 2024 breidden we het distributiecentrum uit met ruim 11.200 m²."
+      }
+    ],
+    "tijdlijn": [
+      { "jaar": "1920", "tekst": "De eerste samenwerkingsverbanden in de kantoorvakbranche ontstaan." },
+      { "jaar": "Later", "tekst": "Inkoopverenigingen groeien uit tot één sterke coöperatie: Quantore." },
+      { "jaar": "2024", "tekst": "Uitbreiding van het distributiecentrum in Beuningen met ruim 11.200 m²." },
+      { "jaar": "Nu", "tekst": "Zo'n 450 aangesloten vakhandelaren in Nederland en België." }
+    ],
+    "werkenBij": {
+      "titel": "Werken bij Quantore",
+      "tekst": "Zo'n 250 collega's werken in Beuningen aan inkoop, logistiek, marketing en IT voor de vakhandel.",
+      "knop": { "label": "Bekijk vacatures", "href": "https://www.werkenbijquantore.com" }
+    }
+  },
+  "duurzaamheid": {
+    "titel": "Duurzaamheid",
+    "intro": "Duurzaamheid betekent voor ons toekomstbestendigheid in de breedste zin. We meten onze doelen met EcoVadis en gebruiken de Sustainable Development Goals van de VN als kompas.",
+    "kerncijfers": [
+      { "waarde": "Zilver", "label": "EcoVadis-medaille" },
+      { "waarde": "Niveau 3", "label": "CO₂-prestatieladder" },
+      { "waarde": "71%", "label": "van het huismerk is duurzaam" },
+      { "waarde": "4.500", "label": "zonnepanelen op ons gebouw" }
+    ],
+    "doel": "Ons doel: 90% minder CO₂-uitstoot in 2026 ten opzichte van 2022.",
+    "certificaten": ["FSC", "PEFC", "ISO", "SKAL", "EcoVadis", "CO₂-prestatieladder"],
+    "secties": [
+      {
+        "kop": "Een duurzamer assortiment",
+        "tekst": "We breiden het aandeel duurzame producten steeds verder uit, zoals FSC- en PEFC-papier en circulaire cartridges. Met de jaarlijkse Quantore duurzaamheidsaward belonen we leveranciers die vooroplopen."
+      },
+      {
+        "kop": "Slimmer leveren",
+        "tekst": "Volle vrachtwagens, slimme routes en minder verpakkingsmateriaal. Zo houden we de footprint per order zo laag mogelijk."
+      }
+    ]
+  },
+  "nieuws": [
+    {
+      "slug": "uitbreiding-distributiecentrum",
+      "titel": "Distributiecentrum Beuningen ruim 11.200 m² groter",
+      "datum": "2024-09-01",
+      "categorie": "Logistiek",
+      "samenvatting": "Met de uitbreiding van ons distributiecentrum zijn we klaar voor verdere groei van de vakhandel.",
+      "tekst": ["Ons distributiecentrum in Beuningen is uitgebreid met ruim 11.200 m². Daarmee maken we ruimte voor een groter assortiment en nog snellere levering aan onze aangesloten vakhandelaren.", "Ook na de uitbreiding blijft het doel hetzelfde: 98% van de orders binnen 24 uur bij de vakhandelaar, en vrijwel foutloos."]
+    },
+    {
+      "slug": "duurzaamheidsaward-2024",
+      "titel": "Quantore duurzaamheidsaward 2024 voor Altkin",
+      "datum": "2024-06-15",
+      "categorie": "Duurzaamheid",
+      "samenvatting": "Leverancier Altkin wint de award voor zijn inzet voor circulaire cartridges.",
+      "tekst": ["Met de Quantore duurzaamheidsaward belonen we elk jaar een leverancier die vooroploopt in duurzaam ondernemen.", "In 2024 ging de award naar Altkin, vanwege de doorlopende inzet voor de productie van circulaire cartridges."]
+    },
+    {
+      "slug": "relatiedag",
+      "titel": "Verbinden, versterken en verduurzamen op de Quantore Relatiedag",
+      "datum": "2024-04-10",
+      "categorie": "Coöperatie",
+      "samenvatting": "Leden en leveranciers kwamen samen om te praten over de toekomst van de kantoorvakhandel.",
+      "tekst": ["Tijdens de Quantore Relatiedag stonden drie woorden centraal: verbinden, versterken en verduurzamen.", "Leden en leveranciers deelden ervaringen en keken samen vooruit naar de kansen voor de vakhandel."]
+    },
+    {
+      "slug": "vierdaagse",
+      "titel": "Quantore loopt mee als sponsor van de Vierdaagse",
+      "datum": "2024-07-20",
+      "categorie": "Regio",
+      "samenvatting": "Als bedrijf uit de regio Nijmegen zijn we trots sponsor van de Vierdaagse.",
+      "tekst": ["Quantore is gevestigd in Beuningen, vlak bij Nijmegen. Daarom zijn we trots partner van de Vierdaagse.", "Zo dragen we bij aan een evenement dat de regio elk jaar samenbrengt."]
+    }
+  ],
+  "contact": {
+    "titel": "Contact",
+    "intro": "Heb je een vraag over een product of een bestelling? Neem dan eerst contact op met jouw kantoorvakhandelaar. Voor andere vragen kun je ons bereiken via:",
+    "bedrijf": "Quantore B.V.",
+    "adres": ["Zilverwerf 15", "6641 TC Beuningen", "Nederland"],
+    "telefoon": "+31 24 678 16 00",
+    "email": "info@quantore.com",
+    "formulierMelding": "Dit is een prototype: het formulier verstuurt niets. Je bericht opent als e-mail in je eigen mailprogramma."
+  },
+  "footer": {
+    "kolommen": [
+      { "kop": "Assortiment", "links": [
+        { "label": "Papier & etiketten", "href": "#/assortiment/papier-en-etiketten" },
+        { "label": "Schrijven & hobby", "href": "#/assortiment/schrijven-en-hobby" },
+        { "label": "Kantoor & opbergen", "href": "#/assortiment/kantoor-en-opbergen" },
+        { "label": "Alle categorieën", "href": "#/assortiment" }
+      ]},
+      { "kop": "Quantore", "links": [
+        { "label": "De coöperatie", "href": "#/cooperatie" },
+        { "label": "Duurzaamheid", "href": "#/duurzaamheid" },
+        { "label": "Nieuws & verhalen", "href": "#/nieuws" },
+        { "label": "Werken bij", "href": "https://www.werkenbijquantore.com" }
+      ]},
+      { "kop": "Service", "links": [
+        { "label": "Verkooppunten", "href": "#/verkooppunten" },
+        { "label": "Contact", "href": "#/contact" }
+      ]}
+    ],
+    "onderregel": "© Quantore B.V. · Prototype zonder login en CMS"
+  }
+}

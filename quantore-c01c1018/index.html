@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantore — prototype</title>
+<meta name="description" content="Prototype van quantore.com zonder login of CMS. Alle inhoud komt uit content.json.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="proto" id="proto"></div>
+<header class="kop">
+  <div class="wrap kop-in">
+    <a href="#/" class="logo" aria-label="Quantore home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="18" cy="18" r="13" fill="none" stroke="currentColor" stroke-width="6"/><path d="M25 25l9 9" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/></svg>
+      <span>quantore</span>
+    </a>
+    <button class="menuknop" id="menuknop" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav id="menu" class="menu" aria-label="Hoofdmenu"></nav>
+  </div>
+</header>
+<main id="app" tabindex="-1"><p class="wrap laden">Laden…</p></main>
+<footer class="voet" id="voet"></footer>
+<script src="app.js"></script>
+</body>
+</html>
